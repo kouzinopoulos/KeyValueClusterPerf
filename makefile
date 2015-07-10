@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-c -Wall
-LDFLAGS=
+LDFLAGS=-std=c++0x -LRAMCloud/obj.master -lramcloud -IRAMCloud/gtest/include -IRAMCloud/src -IRAMCloud/obj.master
 SOURCES=src/*
 OBJECTS=$(SOURCES:.cxx=.o)
 EXECUTABLE=keyvalueclusterperf

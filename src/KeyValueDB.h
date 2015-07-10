@@ -3,13 +3,15 @@
 
 #include <string>
 
+using namespace std;
+
 class KeyValueDB
 {
 	public:
 		virtual ~KeyValueDB() {};
-		virtual void putValue(std::string key, std::string value) = 0;
-		virtual std::string getValue(std::string key) = 0;
-		virtual void deleteValue(std::string key) = 0;
+		virtual void putValue(string key, string value) = 0;
+		virtual string getValue(string key) = 0;
+		virtual void deleteValue(string key) = 0;
 };
 
 #endif
