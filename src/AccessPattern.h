@@ -19,7 +19,7 @@ class AccessPattern
 		virtual ~AccessPattern() {};
 
 		virtual SingleAccess getNext() = 0;		// Get next access
-		virtual map<string,string> getInitialisationKeys() = 0; 
+		virtual map<string,string> getInitialisationKeyValuePairs() = 0; 
 };
 
 #endif

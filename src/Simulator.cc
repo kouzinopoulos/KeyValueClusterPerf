@@ -1,12 +1,15 @@
+#include <list>
 #include <map>
 #include <string>
 #include <time.h>
+#include <unistd.h>	// to get hostname
 
 #include "logger.h"
 #include "Simulator.h"
 #include "RamCloudKeyValueDB.h"
 #include "RiakKeyValueDB.h"
 #include "RandomAccessPattern.h"
+#include "ReadOnlyAccessPattern.h"
 
 // for debugging
 #include <sstream>
@@ -14,7 +17,6 @@
 Simulator::Simulator(map<string,string> databaseConfiguration, 
 	map<string,string> accessPatternConfiguration)
 {
-	LOG_DEBUG("Simulator created");
 	// Get the types to initialise from the configuration file
 	string databaseType = databaseConfiguration["databaseType"];
 	string accessPatternType = accessPatternConfiguration["accessPatternType"];
@@ -37,6 +39,10 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 	{
 		accessPattern = new RandomAccessPattern(accessPatternConfiguration);
 	}
+	else if(accessPatternType.compare("ReadOnly") == 0)
+	{
+		accessPattern = new ReadOnlyAccessPattern(accessPatternConfiguration);
+	}
 	else
 	{
 		// The requested accessPattern type does not exist
@@ -48,19 +54,17 @@ Simulator::~Simulator()
 {
 	delete accessPattern;
 	delete keyValueDB;
-	LOG_DEBUG("Simulator destroyed");
 }
 
 void Simulator::simulate(int runs)
 {
-	LOG_DEBUG("Simulation started");
 	// Initialise the keyValueDatabase
-	keyValueDB->initialise(accessPattern->getInitialisationKeys());
+	keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
 	// Initialise timers
-	struct timespec ts_start;
-	struct timespec ts_stop;
+	struct timespec timespecStart;
+	struct timespec timespecStop;
 	const clockid_t id = CLOCK_MONOTONIC_RAW;
-	clock_gettime(id, &ts_start);
+	clock_gettime(id, &timespecStart);
 	// Do the actual simulation
 	for(int i=0; i < runs; i++)
 	{
@@ -71,27 +75,38 @@ void Simulator::simulate(int runs)
 		}
 		else
 		{
-			keyValueDB->getValue(singleAccess.key);
-			//keyValueDB->putValue(singleAccess.key, singleAccess.value);
+			keyValueDB->putValue(singleAccess.key, singleAccess.value);
 		}
 	}
 	// Get final clock reading and print out difference
-	clock_gettime(id, &ts_stop);
-	/*stringstream ss;
-	LOG_RESULTS("OUTPUT:");
-	ss << ts_start.tv_sec << "." << ts_start.tv_nsec;
-	LOG_RESULTS(ss.str());
-	ss.str(string());
-	ss << ts_stop.tv_sec << "." << ts_stop.tv_nsec;
-	LOG_RESULTS(ss.str());*/
-	// Calculate duration
-	int seconds_difference = ts_stop.tv_sec - ts_start.tv_sec;
-	int nanoseconds_difference = ts_stop.tv_nsec - ts_start.tv_nsec;
-	nanoseconds_difference += seconds_difference*1000000000;
-	double microsecondsPerOperation = ((double) nanoseconds_difference) / (1000.0 * runs);
+	clock_gettime(id, &timespecStop);
+	double microsecondsPerOperation = calculateDurationMicroseconds(timespecStart, timespecStop) / runs;
 	LOG_RESULTS("OUTPUT:");
 	stringstream ss;
 	ss << microsecondsPerOperation;
 	LOG_RESULTS(ss.str());
-	LOG_DEBUG("Simulation stopped");
+}
+
+map<string, string> Simulator::getResults()
+{
+	map<string, string> results;
+	// Add hostname so that origin can be identified
+	char* hostname = new char[256];
+	gethostname(hostname, 256);
+	results["hostname"]=string(hostname);
+	// Add other results
+	return results;
+}
+
+void Simulator::mergeResults(list<map<string, string>> results)
+{
+	LOG_DEBUG("mergeResults called");
+}
+
+double Simulator::calculateDurationMicroseconds(struct timespec start, struct timespec stop)
+{
+	uint64_t secondsDifference = stop.tv_sec - start.tv_sec;
+	uint64_t nanosecondsDifference = stop.tv_nsec - start.tv_nsec;
+	nanosecondsDifference += secondsDifference*1000000000;
+	return nanosecondsDifference / 1000.0;
 }

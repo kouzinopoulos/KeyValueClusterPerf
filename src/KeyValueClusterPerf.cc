@@ -1,5 +1,6 @@
 #include <map>
 
+#include "ConfigurationManager.h"
 #include "logger.h"
 #include "KeyValueDB.h"
 #include "RamCloudKeyValueDB.h"
@@ -63,13 +64,17 @@ int main(int argc, char *argv[])
 	// remove access pattern
 	delete accessPattern;
 	*/
-
+	// create a configuration manager
+	ConfigurationManager cm;
 	// Create database configuration
 	map<string,string> databaseConfiguration;
 	databaseConfiguration["databaseType"]="RamCloud";
 	databaseConfiguration["communicationProtocol"]="tcp";
 	databaseConfiguration["coordinatorHost"]="cernvmbl031";
 	databaseConfiguration["coordinatorPort"]="11101";
+	string temp = cm.writeString(databaseConfiguration);
+	map<string, string> cfg = cm.readString(temp);
+	LOG_RESULTS(cm.writeString(cfg));
 	// Create accessPattern configuration
 	map<string,string> accessPatternConfiguration;
 	accessPatternConfiguration["accessPatternType"]="Random";
@@ -79,7 +84,12 @@ int main(int argc, char *argv[])
 	// Create the simulator
 	Simulator* simulator = new Simulator(databaseConfiguration, accessPatternConfiguration);
 	// Perform simulation
-	simulator->simulate(1000);
+	simulator->simulate(10000);
+	// Perform another simulation
+	delete simulator;
+	accessPatternConfiguration["accessPatternType"]="ReadOnly";
+	simulator = new Simulator(databaseConfiguration, accessPatternConfiguration);
+	simulator->simulate(10000);
 	// Destroy the simulator
 	delete simulator;
 }

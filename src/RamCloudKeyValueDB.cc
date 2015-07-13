@@ -6,8 +6,6 @@
 
 RamCloudKeyValueDB::RamCloudKeyValueDB(map<string,string> configuration)
 {
-	LOG_DEBUG("INSTANCE CREATED");
-
 	// Generate coordinatorLocator string
 	string coordinatorLocator;
 	coordinatorLocator = configuration["communicationProtocol"];	// add protocol
@@ -15,8 +13,6 @@ RamCloudKeyValueDB::RamCloudKeyValueDB(map<string,string> configuration)
 	coordinatorLocator += configuration["coordinatorHost"];			// add hostname
 	coordinatorLocator += ",port=";
 	coordinatorLocator += configuration["coordinatorPort"];			// add port
-	
-	LOG_DEBUG(coordinatorLocator);
 
 	// Setup the cluster connector
 	ramcloudContext = new RAMCloud::Context(false);
@@ -29,7 +25,6 @@ RamCloudKeyValueDB::RamCloudKeyValueDB(map<string,string> configuration)
 
 RamCloudKeyValueDB::~RamCloudKeyValueDB()
 {
-	LOG_DEBUG("INSTANCE DELETED");
 	// Tear down created table
 	ramcloudDB->dropTable("KeyValueClusterPerf");
 
@@ -40,14 +35,12 @@ RamCloudKeyValueDB::~RamCloudKeyValueDB()
 
 void RamCloudKeyValueDB::putValue(std::string key, std::string value)
 {
-	LOG_DEBUG("PUT CALLED");
 	// table_id, key, keylength, buffer, bufferlength
     ramcloudDB->write(tableID, key.c_str(), key.size(), value.c_str(), value.size());
 }
 
 string RamCloudKeyValueDB::getValue(std::string key)
 {
-	LOG_DEBUG("GET CALLED");
 	// Prepare buffer and read value
 	RAMCloud::Buffer buffer;
     ramcloudDB->read(tableID, key.c_str(), key.size(), &buffer);
@@ -58,6 +51,5 @@ string RamCloudKeyValueDB::getValue(std::string key)
 
 void RamCloudKeyValueDB::deleteValue(std::string key)
 {
-	LOG_DEBUG("DELETE CALLED");
 	ramcloudDB->remove(tableID, key.c_str(), key.size(), NULL, NULL);
 }
