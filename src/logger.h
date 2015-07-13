@@ -1,7 +1,8 @@
 #ifndef __LOGGER_H__
 #define __LOGGER_H__
 
-#define LOG_DEBUG_OUT
+//#define LOG_DEBUG_OUT		// Turn debug output on
+#define LOG_RESULTS_OUT		// Turn results log on
 
 #include <iostream>
 
@@ -11,6 +12,12 @@ using namespace std;
 #define LOG_DEBUG(msg)    cout << msg << endl
 #else
 #define LOG_DEBUG(msg)
+#endif
+
+#ifdef LOG_RESULTS_OUT
+#define LOG_RESULTS(msg)    cout << msg << endl
+#else
+#define LOG_RESULTS(msg)
 #endif
 
 #endif

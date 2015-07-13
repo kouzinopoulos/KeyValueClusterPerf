@@ -5,14 +5,15 @@
 #include "RamCloudKeyValueDB.h"
 #include "AccessPattern.h"
 #include "RandomAccessPattern.h"
+#include "Simulator.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-	try
+	/*try
 	{
-		/*LOG_DEBUG("Application started");
+		LOG_DEBUG("Application started");
 		// Building configuration for Ramcloud database
 		map<string,string> configuration;
 		configuration["communicationProtocol"]="tcp";
@@ -33,7 +34,7 @@ int main(int argc, char *argv[])
 		LOG_DEBUG("Reading value:");
 		LOG_DEBUG(s);
 		// Clean up database
-		delete testDB;*/
+		delete testDB;
 	}
 	catch (RAMCloud::ClientException& e) {
     	fprintf(stderr, "RAMCloud client exception caught: %s\n", e.str().c_str());
@@ -41,9 +42,9 @@ int main(int argc, char *argv[])
 	} catch (RAMCloud::Exception& e) {
     	fprintf(stderr, "RAMCloud exception caught: %s\n", e.str().c_str());
     	return 1;
-	}
+	}*/
 
-
+    /*
 	LOG_DEBUG("Testing RandomAccessPattern Class");
 	// setup configuration
 	map<string,string> configuration;
@@ -61,4 +62,24 @@ int main(int argc, char *argv[])
 	}
 	// remove access pattern
 	delete accessPattern;
+	*/
+
+	// Create database configuration
+	map<string,string> databaseConfiguration;
+	databaseConfiguration["databaseType"]="RamCloud";
+	databaseConfiguration["communicationProtocol"]="tcp";
+	databaseConfiguration["coordinatorHost"]="cernvmbl031";
+	databaseConfiguration["coordinatorPort"]="11101";
+	// Create accessPattern configuration
+	map<string,string> accessPatternConfiguration;
+	accessPatternConfiguration["accessPatternType"]="Random";
+	accessPatternConfiguration["minKey"]="10";
+	accessPatternConfiguration["maxKey"]="1000";
+	accessPatternConfiguration["readWriteRatio"]="2.0";
+	// Create the simulator
+	Simulator* simulator = new Simulator(databaseConfiguration, accessPatternConfiguration);
+	// Perform simulation
+	simulator->simulate(1000);
+	// Destroy the simulator
+	delete simulator;
 }

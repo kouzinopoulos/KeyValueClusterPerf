@@ -61,4 +61,3 @@ void RamCloudKeyValueDB::deleteValue(std::string key)
 	LOG_DEBUG("DELETE CALLED");
 	ramcloudDB->remove(tableID, key.c_str(), key.size(), NULL, NULL);
 }
-	

@@ -27,7 +27,6 @@ RandomAccessPattern::~RandomAccessPattern()
 
 SingleAccess RandomAccessPattern::getNext()
 {
-	//LOG_DEBUG("Get next called");
 	// First determine if it's a read or a write
 	double readOrWrite=(double) rand() / RAND_MAX;
 	bool read = readOrWrite > readWriteBorder ? false : true;
@@ -38,4 +37,19 @@ SingleAccess RandomAccessPattern::getNext()
 	// Return the generated values in a struct
 	SingleAccess nextSingleAccess = {read, ss.str(), "testValue"};
 	return nextSingleAccess;
+}
+
+map<string,string> RandomAccessPattern::getInitialisationKeys()
+{
+	LOG_DEBUG("returning initialisation keys");
+	map<string, string> keyValuePairs;
+	// Initialise with empty strings and every possible key (can be improved in future)
+	stringstream ss;
+	for(int i=minKey; i <= maxKey; i++)
+	{
+		ss << i;
+		keyValuePairs[ss.str()] = "";
+		ss.str(string());		// clear stringstream
+	}
+	return keyValuePairs;
 }

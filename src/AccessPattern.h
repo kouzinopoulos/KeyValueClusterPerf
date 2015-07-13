@@ -1,6 +1,7 @@
 #ifndef __ACCESSPATTERN_H__
 #define __ACCESSPATTERN_H__
 
+#include <map>
 #include <string>
 
 using namespace std;
@@ -18,6 +19,7 @@ class AccessPattern
 		virtual ~AccessPattern() {};
 
 		virtual SingleAccess getNext() = 0;		// Get next access
+		virtual map<string,string> getInitialisationKeys() = 0; 
 };
 
 #endif

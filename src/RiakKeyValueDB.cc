@@ -26,4 +26,3 @@ void RiakKeyValueDB::deleteValue(std::string key)
 {
 	LOG_DEBUG("DELETE CALLED, Not yet implemente");
 }
-	

@@ -12,6 +12,7 @@ class RandomAccessPattern : public AccessPattern
 		~RandomAccessPattern();
 
 		SingleAccess getNext();
+		map<string,string> getInitialisationKeys();
 
 	private:
 		int minKey;

@@ -17,6 +17,7 @@ class RamCloudKeyValueDB : public KeyValueDB
 		void putValue(string key, string value);
 		string getValue(string key);
 		void deleteValue(string key);
+
 	private:
 		string communicationProtocol;
 		string coordinatorHost;
