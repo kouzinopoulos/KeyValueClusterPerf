@@ -2,6 +2,7 @@
 #include <string>
 
 #include "KeyValueDB.h"
+#include "logger.h"
 
 void KeyValueDB::initialise(map<string, string> keyValuePairs)
 {
