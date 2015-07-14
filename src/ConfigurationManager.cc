@@ -2,18 +2,25 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <fstream>
 
 #include "ConfigurationManager.h"
 #include "logger.h"
 
 map<string, string> ConfigurationManager::readFile(string fileName)
 {
-
+	ifstream file(fileName);
+	stringstream ss;
+	ss << file.rdbuf();
+	return readString(ss.str());
 }
 
 void ConfigurationManager::writeFile(string fileName, map<string, string> configuration)
 {
-
+	ofstream file;
+	file.open(fileName);
+	file << writeString(configuration);
+	file.close();
 }
 
 map<string, string> ConfigurationManager::readString(string str)
