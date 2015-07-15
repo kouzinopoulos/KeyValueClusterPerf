@@ -48,9 +48,6 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 		// The requested accessPattern type does not exist
 		// add exception handling
 	}
-	LOG_DEBUG("Initialised with configuration:");
-	LOG_DEBUG(databaseType);
-	LOG_DEBUG(accessPatternType);
 }
 
 Simulator::~Simulator()
@@ -61,17 +58,13 @@ Simulator::~Simulator()
 
 void Simulator::simulate(int runs)
 {
-	LOG_DEBUG("Called simulate");
 	// Initialise the keyValueDatabase
 	keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
 	// Initialise timers
-	LOG_DEBUG("INIT timer");
 	struct timespec timespecStart;
 	struct timespec timespecStop;
 	const clockid_t id = CLOCK_MONOTONIC_RAW;
-	LOG_DEBUG("Get time");
 	clock_gettime(id, &timespecStart);
-	LOG_DEBUG("time successful");
 	// Do the actual simulation
 	for(int i=0; i < runs; i++)
 	{
@@ -88,7 +81,6 @@ void Simulator::simulate(int runs)
 	// Get final clock reading and print out difference
 	clock_gettime(id, &timespecStop);
 	double microsecondsPerOperation = calculateDurationMicroseconds(timespecStart, timespecStop) / runs;
-	LOG_RESULTS("OUTPUT:");
 	stringstream ss;
 	ss << microsecondsPerOperation;
 	LOG_RESULTS(ss.str());

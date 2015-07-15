@@ -1,7 +1,11 @@
 #ifndef __SIMULATIONCONTROLLER_H__
 #define __SIMULATIONCONTROLLER_H__
 
+#include <list>
+
 #include <zmq.hpp>
+
+using namespace std;
 
 class SimulationController
 {
@@ -17,7 +21,7 @@ class SimulationController
 		bool connected;
 
 		zmq::context_t* context;
-		zmq::socket_t* socket;
+		list<zmq::socket_t*> sockets;
 };
 
 #endif

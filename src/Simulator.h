@@ -1,3 +1,6 @@
+#ifndef __SIMULATOR_H__
+#define __SIMULATOR_H__
+
 #include <list>
 #include <map>
 #include <time.h>
@@ -25,3 +28,5 @@ class Simulator
 
 		double calculateDurationMicroseconds(struct timespec start, struct timespec stop);
 };
+
+#endif

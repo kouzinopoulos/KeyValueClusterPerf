@@ -9,13 +9,9 @@
 
 map<string, string> ConfigurationManager::readFile(string fileName)
 {
-	LOG_DEBUG("Reading file");
-	LOG_DEBUG(fileName);
 	ifstream file(fileName);
 	stringstream ss;
 	ss << file.rdbuf();
-	LOG_DEBUG("contents");
-	LOG_DEBUG(ss.str());
 	return readString(ss.str());
 }
 
