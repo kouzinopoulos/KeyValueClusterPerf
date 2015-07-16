@@ -2,6 +2,7 @@
 #define __SIMULATIONCONTROLLER_H__
 
 #include <list>
+#include <string>
 
 #include <zmq.hpp>
 
@@ -10,7 +11,7 @@ using namespace std;
 class SimulationController
 {
 	public:
-		SimulationController();
+		SimulationController(string hostFilePath);
 		~SimulationController();
 
 		void connect();
@@ -20,8 +21,9 @@ class SimulationController
 	private:
 		bool connected;
 
-		zmq::context_t* context;
-		list<zmq::socket_t*> sockets;
+		zmq::context_t* commandContext;
+		list<zmq::socket_t*> commandSockets;
+		list<string> hosts;
 };
 
 #endif

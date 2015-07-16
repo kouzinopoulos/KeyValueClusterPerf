@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 	bool controller = false;
 	string databaseCfgPath = "database.cfg";
 	string accessPatternCfgPath = "accessPattern.cfg";
+	string hostFilePath = "hostFile.cfg";
 
 	try 
 	{ 
@@ -31,7 +32,8 @@ int main(int argc, char *argv[])
 	      ("help", "Request help message") 
 	      ("controller", "Indicate this instance is the controller node") 
 	      ("databasecfg", boost::program_options::value<string>(&databaseCfgPath), "Path to the database configuration file")
-	      ("accesspatterncfg", boost::program_options::value<string>(&accessPatternCfgPath), "Path to the accessPattern configuraiton file");
+	      ("accesspatterncfg", boost::program_options::value<string>(&accessPatternCfgPath), "Path to the accessPattern configuraiton file")
+	      ("hostfile", boost::program_options::value<string>(&hostFilePath), "Path to the hostfile");
 	    boost::program_options::variables_map vm; 
 	    try 
 	    { 
@@ -64,7 +66,7 @@ int main(int argc, char *argv[])
 	if(controller)
 	{
 		LOG_DEBUG("Starting in controller mode");
-		SimulationController controller;
+		SimulationController controller(hostFilePath);
 		controller.connect();
 		controller.execute();
 	}
@@ -74,24 +76,4 @@ int main(int argc, char *argv[])
 		worker.openConnection();
 		worker.listen();
 	}
-
-	/*
-	// create a configuration manager
-	ConfigurationManager cm;
-	// Create database configuration
-	map<string,string> databaseConfiguration = cm.readFile(databaseCfgPath);
-	// Create accessPattern configuration
-	map<string,string> accessPatternConfiguration = cm.readFile(accessPatternCfgPath);
-	// Create the simulator
-	Simulator* simulator = new Simulator(databaseConfiguration, accessPatternConfiguration);
-	// Perform simulation
-	simulator->simulate(10000);
-	// Perform another simulation
-	delete simulator;
-	accessPatternConfiguration["accessPatternType"]="ReadOnly";
-	simulator = new Simulator(databaseConfiguration, accessPatternConfiguration);
-	simulator->simulate(10000);
-	// Destroy the simulator
-	delete simulator;
-	*/
 }

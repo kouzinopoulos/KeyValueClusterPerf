@@ -3,6 +3,8 @@
 #include <string>
 #include <time.h>
 #include <unistd.h>	// to get hostname
+#include <iostream>
+#include <fstream>
 
 #include "logger.h"
 #include "Simulator.h"
@@ -48,24 +50,71 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 		// The requested accessPattern type does not exist
 		// add exception handling
 	}
+	// Initialise the keyValueDatabase
+	keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
+	// Initialise variables
+	reads = 0;
+	writes = 0;
+}
+
+Simulator::Simulator()
+{
+	LOG_DEBUG("WARNING EMPTY CONSTRUCTOR CALLED");
+	accessPattern=NULL;
+	keyValueDB=NULL;
 }
 
 Simulator::~Simulator()
 {
-	delete accessPattern;
-	delete keyValueDB;
+	LOG_DEBUG("destructor called");
+	if(accessPattern!=NULL)
+	{
+		LOG_DEBUG("deleting");
+		delete accessPattern;
+	}
+	if(keyValueDB!=NULL)
+	{
+		LOG_DEBUG("deleting2");
+		delete keyValueDB;
+	}
+	LOG_DEBUG("destructor finished");
 }
 
 void Simulator::simulate(int runs)
 {
-	// Initialise the keyValueDatabase
-	keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
 	// Initialise timers
 	struct timespec timespecStart;
 	struct timespec timespecStop;
 	const clockid_t id = CLOCK_MONOTONIC_RAW;
 	clock_gettime(id, &timespecStart);
 	// Do the actual simulation
+	for(int i=0; i < runs; i++)
+	{
+		SingleAccess singleAccess = accessPattern->getNext();
+		if(singleAccess.read == true)
+		{
+			reads++;
+			keyValueDB->getValue(singleAccess.key);
+		}
+		else
+		{
+			writes++;
+			keyValueDB->putValue(singleAccess.key, singleAccess.value);
+		}
+	}
+	// Get final clock reading and print out difference
+	clock_gettime(id, &timespecStop);
+	double microsecondsTotal = calculateDurationMicroseconds(timespecStart, timespecStop);
+	double microsecondsPerOperation = microsecondsTotal / runs;
+	duration = microsecondsTotal;
+	stringstream ss;
+	ss << microsecondsPerOperation;
+	LOG_RESULTS(ss.str());
+}
+
+// some code duplication to prevent simulation function from being slowed down
+void Simulator::burnInOut(int runs)
+{
 	for(int i=0; i < runs; i++)
 	{
 		SingleAccess singleAccess = accessPattern->getNext();
@@ -78,28 +127,49 @@ void Simulator::simulate(int runs)
 			keyValueDB->putValue(singleAccess.key, singleAccess.value);
 		}
 	}
-	// Get final clock reading and print out difference
-	clock_gettime(id, &timespecStop);
-	double microsecondsPerOperation = calculateDurationMicroseconds(timespecStart, timespecStop) / runs;
-	stringstream ss;
-	ss << microsecondsPerOperation;
-	LOG_RESULTS(ss.str());
 }
 
 map<string, string> Simulator::getResults()
 {
+	stringstream ss;
 	map<string, string> results;
 	// Add hostname so that origin can be identified
 	char* hostname = new char[256];
 	gethostname(hostname, 256);
 	results["hostname"]=string(hostname);
-	// Add other results
+	// Add number of read operations
+	ss << reads;
+	results["reads"]=ss.str();
+	ss.str(string());
+	// Add number of write operations
+	ss << writes;
+	results["writes"]=ss.str();
+	ss.str(string());
+	// Add total runtime of actual simulation
+	ss << duration;
+	results["duration"]=ss.str();
+	ss.str(string());
+	// Maybe also add timestamps later on
 	return results;
 }
 
-void Simulator::mergeResults(list<map<string, string>> results)
+void Simulator::mergeResults(list<map<string, string>> results, string csvFilePath)
 {
 	LOG_DEBUG("mergeResults called");
+	ofstream csvFile(csvFilePath);
+	if(csvFile.is_open())
+	{
+		// Add header
+		csvFile << "HostName" << "," << "#reads" << "," << "#writes" << "," << "total_duration" << endl;
+		// Add results
+		for(list<map<string,string>>::iterator it = results.begin(); it != results.end(); it++)
+		{
+			map<string,string> hostResults = *it;
+			csvFile << hostResults["hostname"] << "," << hostResults["reads"] << "," << hostResults["writes"] << "," << hostResults["duration"] << endl;
+		}
+		csvFile.close();
+	}
+	LOG_DEBUG("Merge finished");
 }
 
 double Simulator::calculateDurationMicroseconds(struct timespec start, struct timespec stop)

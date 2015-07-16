@@ -1,3 +1,4 @@
+#include <list>
 #include <map>
 #include <string>
 #include <sstream>
@@ -53,4 +54,23 @@ string ConfigurationManager::writeString(map<string, string> configuration)
 		ss << endl << it->first << "=" << configuration[it->first];
 	}
 	return ss.str();
+}
+
+list<string> ConfigurationManager::readHostFile(string fileName)
+{
+	// do more efficient
+	list<string> hostList;
+
+	ifstream file(fileName);
+	stringstream ss;
+	ss << file.rdbuf();
+	string str = ss.str();
+
+	istringstream iss(str);
+	string line;
+	while(getline(iss,line))
+	{
+		hostList.push_back(line);
+	}
+	return hostList;
 }

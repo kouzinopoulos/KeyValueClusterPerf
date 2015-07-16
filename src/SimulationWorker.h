@@ -30,8 +30,8 @@ class SimulationWorker
 		string accessPatternCfgPath;
 		bool connectionOpen;		// indicates if a connection is open
 
-		zmq::context_t* context;
-		zmq::socket_t* socket;
+		zmq::context_t* commandContext;
+		zmq::socket_t* commandSocket;
 
 		Simulator* simulator;
 
