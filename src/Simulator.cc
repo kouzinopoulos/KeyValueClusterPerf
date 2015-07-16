@@ -12,16 +12,20 @@
 #include "RiakKeyValueDB.h"
 #include "RandomAccessPattern.h"
 #include "ReadOnlyAccessPattern.h"
+#include "ValueDistribution.h"
+#include "ConstantValueDistribution.h"
 
 // for debugging
 #include <sstream>
 
 Simulator::Simulator(map<string,string> databaseConfiguration, 
-	map<string,string> accessPatternConfiguration)
+	map<string,string> accessPatternConfiguration,
+	map<string,string> valueDistributionConfiguration)
 {
 	// Get the types to initialise from the configuration file
 	string databaseType = databaseConfiguration["databaseType"];
 	string accessPatternType = accessPatternConfiguration["accessPatternType"];
+	string valueDistributionType = valueDistributionConfiguration["valueDistributionType"];
 	// Create the requested database
 	if(databaseType.compare("RamCloud") == 0)
 	{
@@ -50,6 +54,18 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 		// The requested accessPattern type does not exist
 		// add exception handling
 	}
+	// Create the requested valueDistribution
+	if(valueDistributionType.compare("Constant")==0)
+	{
+		valueDistribution = new ConstantValueDistribution(valueDistributionConfiguration);
+	}
+	else
+	{
+		// The requested valueDistributionType type does not exist
+		// add exception handling
+		LOG_DEBUG("Unknown Value Distribution");
+	}
+	accessPattern->setValueDistribution(valueDistribution);
 	// Initialise the keyValueDatabase
 	keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
 	// Initialise variables
@@ -59,25 +75,25 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 
 Simulator::Simulator()
 {
-	LOG_DEBUG("WARNING EMPTY CONSTRUCTOR CALLED");
 	accessPattern=NULL;
 	keyValueDB=NULL;
+	valueDistribution=NULL;
 }
 
 Simulator::~Simulator()
 {
-	LOG_DEBUG("destructor called");
 	if(accessPattern!=NULL)
 	{
-		LOG_DEBUG("deleting");
 		delete accessPattern;
 	}
 	if(keyValueDB!=NULL)
 	{
-		LOG_DEBUG("deleting2");
 		delete keyValueDB;
 	}
-	LOG_DEBUG("destructor finished");
+	if(valueDistribution!=NULL)
+	{
+		delete valueDistribution;
+	}
 }
 
 void Simulator::simulate(int runs)
@@ -155,7 +171,6 @@ map<string, string> Simulator::getResults()
 
 void Simulator::mergeResults(list<map<string, string>> results, string csvFilePath)
 {
-	LOG_DEBUG("mergeResults called");
 	ofstream csvFile(csvFilePath);
 	if(csvFile.is_open())
 	{
@@ -169,7 +184,6 @@ void Simulator::mergeResults(list<map<string, string>> results, string csvFilePa
 		}
 		csvFile.close();
 	}
-	LOG_DEBUG("Merge finished");
 }
 
 double Simulator::calculateDurationMicroseconds(struct timespec start, struct timespec stop)

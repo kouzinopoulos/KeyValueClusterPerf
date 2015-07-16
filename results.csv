@@ -1,4 +1,4 @@
 HostName,#reads,#writes,total_duration
-cernvmbl003.cern.ch,6734,3266,2.14036e+06
-cernvmbl005.cern.ch,6718,3282,2.01936e+06
-cernvmbl007.cern.ch,6617,3383,2.10171e+06
+cernvmbl003.cern.ch,6569,3431,4.19023e+06
+cernvmbl005.cern.ch,6654,3346,1.84696e+06
+cernvmbl007.cern.ch,6653,3347,4.05842e+06

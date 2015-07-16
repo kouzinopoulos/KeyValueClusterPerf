@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+#include "ValueDistribution.h"
+
 using namespace std;
 
 // Define a single access in a struct for speed and for correct clearing of memory
@@ -19,7 +21,10 @@ class AccessPattern
 		virtual ~AccessPattern() {};
 
 		virtual SingleAccess getNext() = 0;		// Get next access
-		virtual map<string,string> getInitialisationKeyValuePairs() = 0; 
+		virtual map<string,string> getInitialisationKeyValuePairs() = 0;
+		void setValueDistribution(ValueDistribution* valueDistribution);
+	protected:
+		ValueDistribution* valueDistribution;
 };
 
 #endif

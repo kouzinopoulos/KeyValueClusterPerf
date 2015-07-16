@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 	bool controller = false;
 	string databaseCfgPath = "database.cfg";
 	string accessPatternCfgPath = "accessPattern.cfg";
+	string valueDistributionCfgPath = "valueDistribution.cfg";
 	string hostFilePath = "hostFile.cfg";
 
 	try 
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		SimulationWorker worker(databaseCfgPath, accessPatternCfgPath);
+		SimulationWorker worker(databaseCfgPath, accessPatternCfgPath, valueDistributionCfgPath);
 		worker.openConnection();
 		worker.listen();
 	}

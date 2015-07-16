@@ -34,7 +34,7 @@ SingleAccess RandomAccessPattern::getNext()
 	stringstream ss;
 	ss << key;
 	// Return the generated values in a struct
-	SingleAccess nextSingleAccess = {read, ss.str(), "testValue"};
+	SingleAccess nextSingleAccess = {read, ss.str(), valueDistribution->getNext()};
 	return nextSingleAccess;
 }
 
@@ -46,7 +46,7 @@ map<string,string> RandomAccessPattern::getInitialisationKeyValuePairs()
 	for(int i=minKey; i <= maxKey; i++)
 	{
 		ss << i;
-		keyValuePairs[ss.str()] = "";
+		keyValuePairs[ss.str()] = valueDistribution->getNext();
 		ss.str(string());		// clear stringstream
 	}
 	return keyValuePairs;

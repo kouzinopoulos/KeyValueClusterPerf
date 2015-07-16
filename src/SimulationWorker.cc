@@ -10,13 +10,14 @@
 #include "ConfigurationManager.h"
 #include "Simulator.h"
 
-SimulationWorker::SimulationWorker(string db, string ap)
+SimulationWorker::SimulationWorker(string db, string ap, string vd)
 {
 	connectionOpen = false;
 	//databaseCfgPath = databaseCfgPath;
 	//accessPatternCfgPath = accessPatternCfgPath;
 	databaseCfgPath = "database.cfg";
 	accessPatternCfgPath = "accessPattern.cfg";
+	valueDistributionCfgPath = "valueDistribution.cfg";
 	state=START;
 }
 
@@ -132,8 +133,10 @@ void SimulationWorker::initialiseSimulator()
 	map<string,string> databaseConfiguration = cm.readFile(databaseCfgPath);
 	// Create accessPattern configuration
 	map<string,string> accessPatternConfiguration = cm.readFile(accessPatternCfgPath);
+	// Create valueDistribution configuration
+	map<string, string> valueDistribution = cm.readFile(valueDistributionCfgPath);
 	// Create the simulator
-	simulator = new Simulator(databaseConfiguration, accessPatternConfiguration);
+	simulator = new Simulator(databaseConfiguration, accessPatternConfiguration, valueDistribution);
 }
 
 void SimulationWorker::deinitialiseSimulator()

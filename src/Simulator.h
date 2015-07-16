@@ -7,6 +7,7 @@
 
 #include "KeyValueDB.h"
 #include "AccessPattern.h"
+#include "ValueDistribution.h"
 
 using namespace std;
 
@@ -14,7 +15,8 @@ class Simulator
 {
 	public:
 		Simulator(map<string,string> databaseConfiguration, 
-			map<string,string> accessPatternConfiguration);
+			map<string,string> accessPatternConfiguration,
+			map<string,string> valueDistributionConfiguration);
 		Simulator();								// Only to be used by controller to call merge
 		~Simulator();
 
@@ -30,6 +32,7 @@ class Simulator
 
 		KeyValueDB* keyValueDB;				// The keyValueDB to use
 		AccessPattern* accessPattern;		// Access pattern to simulate
+		ValueDistribution* valueDistribution;	// Value distribution to simulate
 		map<string, string> results;		// Results from the simulation
 
 		double calculateDurationMicroseconds(struct timespec start, struct timespec stop);

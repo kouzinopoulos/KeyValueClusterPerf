@@ -21,6 +21,9 @@ class SimulationController
 	private:
 		bool connected;
 
+		void sendAllNodes(string command);
+		void getAllNodes(string command);
+
 		zmq::context_t* commandContext;
 		list<zmq::socket_t*> commandSockets;
 		list<string> hosts;

@@ -14,7 +14,7 @@ enum SimulatorState{START, RESULTS, EXIT, ERROR, DONE};
 class SimulationWorker
 {
 	public:
-		SimulationWorker(string databaseCfgPath, string accessPatternCfgPath);
+		SimulationWorker(string databaseCfgPath, string accessPatternCfgPath, string valueDistributionCfgPath);
 		~SimulationWorker();
 
 		void openConnection();			// Opens a port so that the controller can connect to it
@@ -28,6 +28,7 @@ class SimulationWorker
 		SimulatorState state;
 		string databaseCfgPath;
 		string accessPatternCfgPath;
+		string valueDistributionCfgPath;
 		bool connectionOpen;		// indicates if a connection is open
 
 		zmq::context_t* commandContext;

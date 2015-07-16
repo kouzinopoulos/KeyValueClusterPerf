@@ -44,7 +44,6 @@ void SimulationController::connect()
 			zmq::socket_t* socket = new zmq::socket_t(*commandContext, ZMQ_PAIR);
 			ss << *it << ":5555";
 			socket->connect(ss.str());
-			LOG_DEBUG(ss.str());
 			ss.str(string());
 			commandSockets.push_back(socket);
 		}
@@ -63,52 +62,21 @@ void SimulationController::disconnect()
 
 void SimulationController::execute()
 {
-	list<map<string,string>> allResults;
 	// All nodes start in the start state;
 	// Send GO command to all nodes
+	LOG_DEBUG("GO");
+	sendAllNodes("GO");
+	// All nodes should reply with RESULTSREADY
+	LOG_DEBUG("RESULTSREADY");
+	getAllNodes("RESULTSREADY");
+	// Get the results back	
+	list<map<string,string>> allResults;
 	int socketnum=1;
 	for(list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++)
 	{
 		zmq::socket_t* socket = *it;
-
-		zmq::message_t request(2);
-		memcpy ((void *) request.data (), "GO", 2);
-
-		stringstream ss;
-		ss << "Sending GO to: " << socketnum;
-		LOG_DEBUG(ss.str());
-
-		socket->send (request);
-		socketnum++;
-	}
-	// All nodes should reply with RESULTSREADY
-	socketnum=1;
-	for(list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++)
-	{
-		zmq::socket_t* socket = *it;
-		zmq::message_t reply;
-		socket->recv(&reply);
-		string replyStr = string(static_cast<char*>(reply.data()),reply.size());
-
-		stringstream ss;
-		ss << "Received reply: " << replyStr << ", from: " << socketnum;
-		LOG_DEBUG(ss.str());
-		socketnum++;
-	}
-
-	// Get the results back	
-	socketnum=1;
-	for(list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++)
-	{
-		zmq::socket_t* socket = *it;
-
 		zmq::message_t request(10);
 		memcpy ((void *) request.data (), "GETRESULTS", 10);
-
-		stringstream ss;
-		ss << "Sending GETRESULTS to: " << socketnum;
-		LOG_DEBUG(ss.str());
-
 		socket->send (request);
 
 		// Connect to the datasocket (this is because of the setup of zeromq)
@@ -126,7 +94,6 @@ void SimulationController::execute()
 		if(num>0)
 		{
 			buffer[num]='\0';
-			printf("receiver (%s)\n", buffer);
 		}
 		else{
 			LOG_DEBUG("call failed");
@@ -138,55 +105,46 @@ void SimulationController::execute()
 		allResults.push_back(results);
 		socketnum++;
 	}
-
 	// All nodes should reply with RESULTSDONE
-	socketnum=1;
-	for(list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++)
-	{
-		zmq::socket_t* socket = *it;
-		zmq::message_t reply;
-		socket->recv(&reply);
-		string replyStr = string(static_cast<char*>(reply.data()),reply.size());
-
-		stringstream ss;
-		ss << "Received reply: " << replyStr << ", from: " << socketnum;
-		LOG_DEBUG(ss.str());
-		socketnum++;
-	}
-
+	LOG_DEBUG("DONERESULTS");
+	getAllNodes("DONERESULTS");
 	// Shut down the nodes
-	socketnum=1;
-	for(list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++)
-	{
-		zmq::socket_t* socket = *it;
-
-		zmq::message_t request(4);
-		memcpy ((void *) request.data (), "EXIT", 4);
-
-		stringstream ss;
-		ss << "Sending EXIT to: " << socketnum;
-		LOG_DEBUG(ss.str());
-
-		socket->send (request);
-		socketnum++;
-	}
-		// All nodes should reply with EXIT
-	socketnum=1;
-	for(list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++)
-	{
-		zmq::socket_t* socket = *it;
-		zmq::message_t reply;
-		socket->recv(&reply);
-		string replyStr = string(static_cast<char*>(reply.data()),reply.size());
-
-		stringstream ss;
-		ss << "Received reply: " << replyStr << ", from: " << socketnum;
-		LOG_DEBUG(ss.str());
-		socketnum++;
-	}
-
-	LOG_DEBUG("calling merge");
+	LOG_DEBUG("EXIT");
+	sendAllNodes("EXIT");
+	// All nodes should reply with EXIT
+	LOG_DEBUG("EXITING");
+	getAllNodes("EXITING");
+	// Merge the results and write out to file
+	LOG_DEBUG("MERGING");
 	Simulator sim;
 	sim.mergeResults(allResults, "results.csv");
-	LOG_DEBUG("Getting here");
+	LOG_DEBUG("COMPLETE");
+}
+
+void SimulationController::sendAllNodes(string command)
+{
+	for(list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++)
+	{
+		zmq::socket_t* socket = *it;
+
+		zmq::message_t request(command.length());
+		memcpy ((void *) request.data (), command.c_str(), command.length());
+		socket->send (request);
+	}
+}
+
+void SimulationController::getAllNodes(string command)
+{
+	for(list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++)
+	{
+		zmq::socket_t* socket = *it;
+		zmq::message_t reply;
+		socket->recv(&reply);
+		string replyStr = string(static_cast<char*>(reply.data()),reply.size());
+		if(replyStr.compare(command)!=0)
+		{
+			// Handle error
+			LOG_DEBUG("WRONG REPLY");
+		}
+	}
 }
