@@ -36,6 +36,8 @@ class Simulator
 		map<string, string> results;		// Results from the simulation
 
 		double calculateDurationMicroseconds(struct timespec start, struct timespec stop);
+
+		const static clockid_t idMonotonicRaw = CLOCK_MONOTONIC_RAW;
 };
 
 #endif

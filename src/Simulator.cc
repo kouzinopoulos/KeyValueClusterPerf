@@ -14,6 +14,7 @@
 #include "ReadOnlyAccessPattern.h"
 #include "ValueDistribution.h"
 #include "ConstantValueDistribution.h"
+#include "DummyKeyValueDB.h"
 
 // for debugging
 #include <sstream>
@@ -34,6 +35,10 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 	else if(databaseType.compare("Riak") == 0)
 	{
 		keyValueDB = new RiakKeyValueDB(databaseConfiguration);
+	}
+	else if(databaseType.compare("Dummy") == 0)
+	{
+		keyValueDB = new DummyKeyValueDB(databaseConfiguration);
 	}
 	else
 	{
@@ -57,7 +62,9 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 	// Create the requested valueDistribution
 	if(valueDistributionType.compare("Constant")==0)
 	{
+		LOG_DEBUG("Creating valueDistribution");
 		valueDistribution = new ConstantValueDistribution(valueDistributionConfiguration);
+		LOG_DEBUG("Done creating ValueDistribution");
 	}
 	else
 	{
@@ -67,7 +74,9 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 	}
 	accessPattern->setValueDistribution(valueDistribution);
 	// Initialise the keyValueDatabase
+	LOG_DEBUG("Initialise kvdb");
 	keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
+	LOG_DEBUG("Finished init kvdb");
 	// Initialise variables
 	reads = 0;
 	writes = 0;
@@ -101,8 +110,8 @@ void Simulator::simulate(int runs)
 	// Initialise timers
 	struct timespec timespecStart;
 	struct timespec timespecStop;
-	const clockid_t id = CLOCK_MONOTONIC_RAW;
-	clock_gettime(id, &timespecStart);
+
+	clock_gettime(idMonotonicRaw, &timespecStart);
 	// Do the actual simulation
 	for(int i=0; i < runs; i++)
 	{
@@ -119,7 +128,7 @@ void Simulator::simulate(int runs)
 		}
 	}
 	// Get final clock reading and print out difference
-	clock_gettime(id, &timespecStop);
+	clock_gettime(idMonotonicRaw, &timespecStop);
 	double microsecondsTotal = calculateDurationMicroseconds(timespecStart, timespecStop);
 	double microsecondsPerOperation = microsecondsTotal / runs;
 	duration = microsecondsTotal;

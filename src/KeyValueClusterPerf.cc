@@ -14,6 +14,10 @@
 #include "SimulationController.h"
 #include "SimulationWorker.h"
 
+#include "ValueDistribution.h"
+#include "ConstantValueDistribution.h"
+#include <time.h>
+
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -66,7 +70,6 @@ int main(int argc, char *argv[])
 
 	if(controller)
 	{
-		LOG_DEBUG("Starting in controller mode");
 		SimulationController controller(hostFilePath);
 		controller.connect();
 		controller.execute();

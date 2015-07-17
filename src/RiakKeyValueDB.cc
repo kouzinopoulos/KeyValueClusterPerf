@@ -12,7 +12,7 @@ RiakKeyValueDB::~RiakKeyValueDB()
 	LOG_DEBUG("INSTANCE DELETED, Not yet implemente");
 }
 
-void RiakKeyValueDB::putValue(std::string key, std::string value)
+void RiakKeyValueDB::putValue(std::string key, std::string* value)
 {
 	LOG_DEBUG("PUT CALLED, Not yet implemente");
 }

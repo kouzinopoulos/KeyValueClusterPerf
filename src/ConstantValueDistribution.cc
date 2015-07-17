@@ -11,15 +11,16 @@ ConstantValueDistribution::ConstantValueDistribution(map<string,string> configur
 	valueBuffer = new char[size];
 	memset(valueBuffer, 'X', size-1);
 	valueBuffer[size-1]=0;
+	valueString = new string(valueBuffer);
 }
 
 ConstantValueDistribution::~ConstantValueDistribution()
 {
 	delete valueBuffer;
+	delete valueString;
 }
 
-string ConstantValueDistribution::getNext()
+string* ConstantValueDistribution::getNext()
 {
-	string str(valueBuffer);
-	return str;
+	return valueString;
 }

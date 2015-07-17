@@ -11,9 +11,10 @@ class ConstantValueDistribution : public ValueDistribution
 		ConstantValueDistribution(map<string,string> configuration);
 		~ConstantValueDistribution();
 
-		string getNext();
+		string* getNext();
 
 	private:
 		int size;
 		char* valueBuffer;
+		string* valueString;
 };

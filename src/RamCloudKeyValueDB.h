@@ -14,7 +14,7 @@ class RamCloudKeyValueDB : public KeyValueDB
 		RamCloudKeyValueDB(map<string,string> configuration);
 		~RamCloudKeyValueDB();
 
-		void putValue(string key, string value);
+		void putValue(string key, string* value);
 		string getValue(string key);
 		void deleteValue(string key);
 

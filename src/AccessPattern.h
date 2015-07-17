@@ -12,7 +12,7 @@ using namespace std;
 struct SingleAccess {
 	bool read;
 	string key;
-	string value;
+	string* value;
 };
 
 class AccessPattern

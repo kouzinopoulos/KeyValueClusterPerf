@@ -40,7 +40,7 @@ map<string,string> ReadOnlyAccessPattern::getInitialisationKeyValuePairs()
 	for(int i=minKey; i <= maxKey; i++)
 	{
 		ss << i;
-		keyValuePairs[ss.str()] = valueDistribution->getNext();
+		keyValuePairs[ss.str()] = *valueDistribution->getNext();
 		ss.str(string());		// clear stringstream
 	}
 	return keyValuePairs;

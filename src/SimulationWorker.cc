@@ -136,7 +136,9 @@ void SimulationWorker::initialiseSimulator()
 	// Create valueDistribution configuration
 	map<string, string> valueDistribution = cm.readFile(valueDistributionCfgPath);
 	// Create the simulator
+	LOG_DEBUG("Create simulator");
 	simulator = new Simulator(databaseConfiguration, accessPatternConfiguration, valueDistribution);
+	LOG_DEBUG("Creation done");
 }
 
 void SimulationWorker::deinitialiseSimulator()

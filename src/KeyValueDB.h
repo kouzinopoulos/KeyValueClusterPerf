@@ -11,7 +11,7 @@ class KeyValueDB
 	public:
 		virtual ~KeyValueDB() {};
 
-		virtual void putValue(string key, string value) = 0;
+		virtual void putValue(string key, string* value) = 0;
 		virtual string getValue(string key) = 0;
 		virtual void deleteValue(string key) = 0;
 

@@ -10,7 +10,7 @@ class ValueDistribution
 	public:
 		virtual ~ValueDistribution() {};
 
-		virtual string getNext() = 0;					// Get next value size in bytes
+		virtual string* getNext() = 0;					// Get next value size in bytes
 };
 
 #endif

@@ -1,3 +1,6 @@
+#ifndef __DUMMYKEYVALUEDB_H__
+#define __DUMMYKEYVALUEDB_H__
+
 #include <map>
 #include <string>
 
@@ -6,13 +9,15 @@
 
 using namespace std;
 
-class RiakKeyValueDB : public KeyValueDB
+class DummyKeyValueDB : public KeyValueDB
 {
 	public:
-		RiakKeyValueDB(map<string,string> configuration);
-		~RiakKeyValueDB();
+		DummyKeyValueDB(map<string,string> configuration);
+		~DummyKeyValueDB();
 
 		void putValue(string key, string* value);
 		string getValue(string key);
 		void deleteValue(string key);
 };
+
+#endif

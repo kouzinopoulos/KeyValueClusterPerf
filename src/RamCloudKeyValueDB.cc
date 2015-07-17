@@ -4,6 +4,8 @@
 #include "KeyValueDB.h"                 // For instantiating a keyvalue database
 #include "RamCloudKeyValueDB.h"         // For instantiating a Ramcloud database
 
+#include <sstream>	//debugging
+
 RamCloudKeyValueDB::RamCloudKeyValueDB(map<string,string> configuration)
 {
 	// Generate coordinatorLocator string
@@ -33,10 +35,10 @@ RamCloudKeyValueDB::~RamCloudKeyValueDB()
 	delete ramcloudContext;
 }
 
-void RamCloudKeyValueDB::putValue(std::string key, std::string value)
+void RamCloudKeyValueDB::putValue(std::string key, std::string* value)
 {
 	// table_id, key, keylength, buffer, bufferlength
-    ramcloudDB->write(tableID, key.c_str(), key.size(), value.c_str(), value.size());
+    ramcloudDB->write(tableID, key.c_str(), key.size(), value->c_str(), value->size());
 }
 
 string RamCloudKeyValueDB::getValue(std::string key)
