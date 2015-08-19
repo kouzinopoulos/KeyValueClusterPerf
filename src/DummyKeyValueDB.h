@@ -1,14 +1,19 @@
 #ifndef __DUMMYKEYVALUEDB_H__
 #define __DUMMYKEYVALUEDB_H__
 
+// C C++ includes
 #include <map>
 #include <string>
-
-#include "KeyValueDB.h"                 // For instantiating a keyvalue database
+// KeyValueClusterPerf includes
+#include "KeyValueDB.h"
 
 
 using namespace std;
 
+/**
+ * Represents a key value database without any implementation in the backend
+ * This key value database is to be used when testing the performance of KeyValueClusterPerf itself
+ */
 class DummyKeyValueDB : public KeyValueDB
 {
 	public:
@@ -21,3 +26,4 @@ class DummyKeyValueDB : public KeyValueDB
 };
 
 #endif
+//__DUMMYKEYVALUEDB_H__

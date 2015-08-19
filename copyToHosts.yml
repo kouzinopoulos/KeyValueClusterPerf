@@ -1,5 +1,11 @@
 ---
-- hosts: rc-half[0-3]
+- hosts: rc-half
   tasks: 
   - name: Copy keyValueClusterPerf executable to machines
     copy: src=keyvalueclusterperf dest=~/keyvalueclusterperf owner=root group=root mode="110"
+  - name: Copy accessPattern cfg to machines
+    copy: src=accessPattern.cfg dest=~/accessPattern.cfg
+  - name: Copy database cfg to machines
+    copy: src=database.cfg dest=~/database.cfg
+  - name: Copy valueDistribution cfg to machines
+    copy: src=valueDistribution.cfg dest=~/valueDistribution.cfg

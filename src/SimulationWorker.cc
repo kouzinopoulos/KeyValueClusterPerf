@@ -1,28 +1,30 @@
-#include "SimulationWorker.h"
-
+// C C++ includes
 #include <map>
 #include <sstream>
 #include <string>
-
+// external library: ZMQ
 #include <zmq.hpp>
-
+// KeyValueClusterPerf includes
 #include "logger.h"
 #include "ConfigurationManager.h"
+#include "SimulationWorker.h"
 #include "Simulator.h"
 
-SimulationWorker::SimulationWorker(string db, string ap, string vd)
+SimulationWorker::SimulationWorker(string db, string ap, string vd, bool skipInit)
 {
 	connectionOpen = false;
-	//databaseCfgPath = databaseCfgPath;
-	//accessPatternCfgPath = accessPatternCfgPath;
+	//databaseCfgPath = db;
+	//accessPatternCfgPath = ap;
 	databaseCfgPath = "database.cfg";
 	accessPatternCfgPath = "accessPattern.cfg";
 	valueDistributionCfgPath = "valueDistribution.cfg";
 	state=START;
+	skipInitialisation=skipInit;
 }
 
 SimulationWorker::~SimulationWorker()
 {
+	// If there are open connections when destroying the worker, safely close them
 	if(connectionOpen)
 	{
 		closeConnection();
@@ -30,11 +32,27 @@ SimulationWorker::~SimulationWorker()
 
 }
 
-void SimulationWorker::openConnection()
+void SimulationWorker::openConnection(int portNum, int dataportNum)
 {
+		// Open a command socket
 		commandContext = new zmq::context_t (1);
 		commandSocket = new zmq::socket_t (*commandContext, ZMQ_PAIR);
-
+		if(portNum==-1)
+		{
+			portNumber=5555;
+		}
+		else
+		{
+			portNumber=portNum;
+		}
+		if(dataportNum==-1)
+		{
+			dataportNumber=5554;
+		}
+		else
+		{
+			dataportNumber=dataportNum;
+		}
 		connectionOpen = true;
 }
 
@@ -48,8 +66,14 @@ void SimulationWorker::closeConnection()
 
 void SimulationWorker::listen()
 {
-	commandSocket->bind("tcp://*:5555");
-
+	// bind the command socket
+	stringstream ss;
+	ss << "tcp://*:" << portNumber;
+	LOG_DEBUG(ss.str());
+	commandSocket->bind(ss.str());
+	LOG_DEBUG("Socket bound");
+	
+	// listen for commands form the controller
 	while((state!=EXIT)&&(state!=ERROR))
 	{
 		zmq::message_t request;
@@ -59,18 +83,24 @@ void SimulationWorker::listen()
 
 		zmq::message_t* reply;
 
-		if(requestStr.compare("GO")==0)
+		if (requestStr.compare("INIT") == 0)
+		{
+			initialiseSimulator();
+			reply = new zmq::message_t(8);
+			memcpy ((void *) reply->data (), "INITDONE", 8);
+		}
+		else if(requestStr.compare("GO")== 0)
 		{
 			// request to start simulation received
 			// Burn in
-			initialiseSimulator();
 			LOG_DEBUG("Burning in");
-			simulator->burnInOut(10000);
+			simulator->burnInOut(75);
 			// Run simulation
+			LOG_DEBUG("Simulating");
 			runSimulation();
 			// Burn out
 			LOG_DEBUG("Burning out");
-			simulator->burnInOut(10000);
+			simulator->burnInOut(75);
 			// Simulation finished change state to result
 			state=RESULTS;
 			reply = new zmq::message_t(12);
@@ -84,7 +114,12 @@ void SimulationWorker::listen()
 			// Open up a data socket
 			void *dataContext = zmq_ctx_new();
 			void *dataSocket = zmq_socket(dataContext, ZMQ_PAIR);
-			int rc = zmq_bind(dataSocket, "tcp://*:5554");
+			// add a 1 to the portnum to get a datasocket (improve this)
+			ss.clear();
+			ss.str(string());
+			ss << "tcp://*:" << dataportNumber;
+			LOG_DEBUG(ss.str());
+			int rc = zmq_bind(dataSocket, ss.str().c_str());
 			// Buffer to store data in
 			char buffer[1024];
 			// Generate the data to send
@@ -136,9 +171,7 @@ void SimulationWorker::initialiseSimulator()
 	// Create valueDistribution configuration
 	map<string, string> valueDistribution = cm.readFile(valueDistributionCfgPath);
 	// Create the simulator
-	LOG_DEBUG("Create simulator");
-	simulator = new Simulator(databaseConfiguration, accessPatternConfiguration, valueDistribution);
-	LOG_DEBUG("Creation done");
+	simulator = new Simulator(databaseConfiguration, accessPatternConfiguration, valueDistribution, skipInitialisation);
 }
 
 void SimulationWorker::deinitialiseSimulator()
@@ -148,9 +181,5 @@ void SimulationWorker::deinitialiseSimulator()
 
 void SimulationWorker::runSimulation()
 {
-	// create a configuration manager
-	LOG_DEBUG("Running simulation");
-	// Perform simulation
-	simulator->simulate(10000);
-	// Perform another simulation
+	simulator->simulate(250);
 }

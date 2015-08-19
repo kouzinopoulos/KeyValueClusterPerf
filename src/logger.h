@@ -4,6 +4,7 @@
 #define LOG_DEBUG_OUT		// Turn debug output on
 #define LOG_RESULTS_OUT		// Turn results log on
 
+// C C++ includes
 #include <iostream>
 
 using namespace std;

@@ -1,27 +1,29 @@
+// C C++ includes
+#include <iostream>
+#include <fstream>
 #include <list>
 #include <map>
 #include <string>
+#include <sstream>
+// Unix OS includes
 #include <time.h>
 #include <unistd.h>	// to get hostname
-#include <iostream>
-#include <fstream>
-
-#include "logger.h"
-#include "Simulator.h"
-#include "RamCloudKeyValueDB.h"
-#include "RiakKeyValueDB.h"
-#include "RandomAccessPattern.h"
-#include "ReadOnlyAccessPattern.h"
-#include "ValueDistribution.h"
+// KeyValueClusterPerf includes
 #include "ConstantValueDistribution.h"
 #include "DummyKeyValueDB.h"
-
-// for debugging
-#include <sstream>
+#include "logger.h"
+#include "RamCloudKeyValueDB.h"
+#include "RandomAccessPattern.h"
+#include "ReadOnlyAccessPattern.h"
+#include "RiakCKeyValueDB.h"
+#include "RiakJavaKeyValueDB.h"
+#include "Simulator.h"
+#include "ValueDistribution.h"
 
 Simulator::Simulator(map<string,string> databaseConfiguration, 
 	map<string,string> accessPatternConfiguration,
-	map<string,string> valueDistributionConfiguration)
+	map<string,string> valueDistributionConfiguration,
+	bool skipInitialisation)
 {
 	// Get the types to initialise from the configuration file
 	string databaseType = databaseConfiguration["databaseType"];
@@ -32,9 +34,13 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 	{
 		keyValueDB = new RamCloudKeyValueDB(databaseConfiguration);
 	}
-	else if(databaseType.compare("Riak") == 0)
+	else if(databaseType.compare("RiakC") == 0)
 	{
-		keyValueDB = new RiakKeyValueDB(databaseConfiguration);
+		keyValueDB = new RiakCKeyValueDB(databaseConfiguration);
+	}
+	else if(databaseType.compare("RiakJava") == 0)
+	{
+		keyValueDB = new RiakJavaKeyValueDB(databaseConfiguration);
 	}
 	else if(databaseType.compare("Dummy") == 0)
 	{
@@ -74,9 +80,12 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 	}
 	accessPattern->setValueDistribution(valueDistribution);
 	// Initialise the keyValueDatabase
-	LOG_DEBUG("Initialise kvdb");
-	keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
-	LOG_DEBUG("Finished init kvdb");
+	if(!skipInitialisation)
+	{
+		LOG_DEBUG("Initialise kvdb");
+		keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
+		LOG_DEBUG("Finished init kvdb");
+	}
 	// Initialise variables
 	reads = 0;
 	writes = 0;

@@ -1,0 +1,56 @@
+\hypertarget{classRiakCKeyValueDB}{
+\section{RiakCKeyValueDB Class Reference}
+\label{classRiakCKeyValueDB}\index{RiakCKeyValueDB@{RiakCKeyValueDB}}
+}
+
+
+{\ttfamily \#include $<$RiakCKeyValueDB.h$>$}Inheritance diagram for RiakCKeyValueDB::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classRiakCKeyValueDB}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classRiakCKeyValueDB_ad035ea0943d0ce5d1ee2fae2a13f6b78}{
+{\bfseries RiakCKeyValueDB} (map$<$ string, string $>$ configuration)}
+\label{classRiakCKeyValueDB_ad035ea0943d0ce5d1ee2fae2a13f6b78}
+
+\item 
+\hypertarget{classRiakCKeyValueDB_a651f7b83c0ae06751515661cc863ca6b}{
+void {\bfseries putValue} (string key, string $\ast$value)}
+\label{classRiakCKeyValueDB_a651f7b83c0ae06751515661cc863ca6b}
+
+\item 
+\hypertarget{classRiakCKeyValueDB_aa94128187a465b6526192e1d06fb084c}{
+string {\bfseries getValue} (string key)}
+\label{classRiakCKeyValueDB_aa94128187a465b6526192e1d06fb084c}
+
+\item 
+\hypertarget{classRiakCKeyValueDB_a513f70656d6b625bb48bf24721a3cac9}{
+void {\bfseries deleteValue} (string key)}
+\label{classRiakCKeyValueDB_a513f70656d6b625bb48bf24721a3cac9}
+
+\item 
+void \hyperlink{classRiakCKeyValueDB_ac57a6fe1e7b1d5759dcb43915d4f65da}{initialise} (map$<$ string, string $>$ keyValuePairs)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class containing all functionality to communicate with a Riak cluster using C 
+
+\subsection{Member Function Documentation}
+\hypertarget{classRiakCKeyValueDB_ac57a6fe1e7b1d5759dcb43915d4f65da}{
+\index{RiakCKeyValueDB@{RiakCKeyValueDB}!initialise@{initialise}}
+\index{initialise@{initialise}!RiakCKeyValueDB@{RiakCKeyValueDB}}
+\subsubsection[{initialise}]{\setlength{\rightskip}{0pt plus 5cm}void RiakCKeyValueDB::initialise (map$<$ string, string $>$ {\em keyValuePairs})}}
+\label{classRiakCKeyValueDB_ac57a6fe1e7b1d5759dcb43915d4f65da}
+Initialise the key value database with the keyvalue-\/pairs represented by the map 
+
+Reimplemented from \hyperlink{classKeyValueDB_aebd32f35aa2c11ac0d071bd8307fc521}{KeyValueDB}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/RiakCKeyValueDB.h\item 
+src/RiakCKeyValueDB.cc\end{DoxyCompactItemize}

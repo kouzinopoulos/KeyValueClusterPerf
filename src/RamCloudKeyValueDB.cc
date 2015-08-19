@@ -1,14 +1,19 @@
-#include "RamCloud.h"
+// FUNCTIONS TEMPORARILY COMMENTED OUT DUE TO LIBRARY CONFLICT WITH NEWER RIAK !!!
 
-#include "logger.h"                     // For logging throughout application
-#include "KeyValueDB.h"                 // For instantiating a keyvalue database
-#include "RamCloudKeyValueDB.h"         // For instantiating a Ramcloud database
+// C C++ includes
+#include <sstream>
+// External library: RamCLoud
+//#include "RamCloud.h"
+// KeyValueClusterPerf includes
+#include "logger.h"
+#include "KeyValueDB.h"
+#include "RamCloudKeyValueDB.h"
 
-#include <sstream>	//debugging
+
 
 RamCloudKeyValueDB::RamCloudKeyValueDB(map<string,string> configuration)
 {
-	// Generate coordinatorLocator string
+/*	// Generate coordinatorLocator string
 	string coordinatorLocator;
 	coordinatorLocator = configuration["communicationProtocol"];	// add protocol
 	coordinatorLocator += ":host=";
@@ -22,36 +27,36 @@ RamCloudKeyValueDB::RamCloudKeyValueDB(map<string,string> configuration)
 
 	// Create a table in the cluster
 	ramcloudDB->createTable("KeyValueClusterPerf");
-	tableID = ramcloudDB->getTableId("KeyValueClusterPerf");
+	tableID = ramcloudDB->getTableId("KeyValueClusterPerf");*/
 }
 
 RamCloudKeyValueDB::~RamCloudKeyValueDB()
 {
 	// Tear down created table
-	ramcloudDB->dropTable("KeyValueClusterPerf");
+	/*ramcloudDB->dropTable("KeyValueClusterPerf");
 
 	// Remove cluster connection
 	delete ramcloudDB;
-	delete ramcloudContext;
+	delete ramcloudContext;*/
 }
 
 void RamCloudKeyValueDB::putValue(std::string key, std::string* value)
 {
 	// table_id, key, keylength, buffer, bufferlength
-    ramcloudDB->write(tableID, key.c_str(), key.size(), value->c_str(), value->size());
+   /* ramcloudDB->write(tableID, key.c_str(), key.size(), value->c_str(), value->size());*/
 }
 
 string RamCloudKeyValueDB::getValue(std::string key)
 {
 	// Prepare buffer and read value
-	RAMCloud::Buffer buffer;
+	/*RAMCloud::Buffer buffer;
     ramcloudDB->read(tableID, key.c_str(), key.size(), &buffer);
     int length = buffer.size();
     string s(static_cast<const char*>(buffer.getRange(0, length)), length );
-    return s;
+    return s;*/
 }
 
 void RamCloudKeyValueDB::deleteValue(std::string key)
 {
-	ramcloudDB->remove(tableID, key.c_str(), key.size(), NULL, NULL);
+	/*ramcloudDB->remove(tableID, key.c_str(), key.size(), NULL, NULL);*/
 }

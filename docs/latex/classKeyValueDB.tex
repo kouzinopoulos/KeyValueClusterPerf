@@ -1,0 +1,51 @@
+\hypertarget{classKeyValueDB}{
+\section{KeyValueDB Class Reference}
+\label{classKeyValueDB}\index{KeyValueDB@{KeyValueDB}}
+}
+
+
+{\ttfamily \#include $<$KeyValueDB.h$>$}Inheritance diagram for KeyValueDB::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.87919cm]{classKeyValueDB}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classKeyValueDB_a2b847092e0f3cac06b4e326661e9cd71}{
+virtual void {\bfseries putValue} (string key, string $\ast$value)=0}
+\label{classKeyValueDB_a2b847092e0f3cac06b4e326661e9cd71}
+
+\item 
+\hypertarget{classKeyValueDB_a651f01bff7dc8be6c68be6b3ec2ea519}{
+virtual string {\bfseries getValue} (string key)=0}
+\label{classKeyValueDB_a651f01bff7dc8be6c68be6b3ec2ea519}
+
+\item 
+\hypertarget{classKeyValueDB_a8431ec48c41b6c0cbfd2c2b8e8d13f4d}{
+virtual void {\bfseries deleteValue} (string key)=0}
+\label{classKeyValueDB_a8431ec48c41b6c0cbfd2c2b8e8d13f4d}
+
+\item 
+void \hyperlink{classKeyValueDB_aebd32f35aa2c11ac0d071bd8307fc521}{initialise} (map$<$ string, string $>$ keyValuePairs)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Abstract class representing all operations that a key value database should be able to perform Each key value database should use this class as a base 
+
+\subsection{Member Function Documentation}
+\hypertarget{classKeyValueDB_aebd32f35aa2c11ac0d071bd8307fc521}{
+\index{KeyValueDB@{KeyValueDB}!initialise@{initialise}}
+\index{initialise@{initialise}!KeyValueDB@{KeyValueDB}}
+\subsubsection[{initialise}]{\setlength{\rightskip}{0pt plus 5cm}void KeyValueDB::initialise (map$<$ string, string $>$ {\em keyValuePairs})}}
+\label{classKeyValueDB_aebd32f35aa2c11ac0d071bd8307fc521}
+Initialise the key value database with the keyvalue-\/pairs represented by the map 
+
+Reimplemented in \hyperlink{classRiakCKeyValueDB_ac57a6fe1e7b1d5759dcb43915d4f65da}{RiakCKeyValueDB}, and \hyperlink{classRiakJavaKeyValueDB_aa7e3df85b19f2c3a936a7282f8ddb98f}{RiakJavaKeyValueDB}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/KeyValueDB.h\item 
+src/KeyValueDB.cc\end{DoxyCompactItemize}

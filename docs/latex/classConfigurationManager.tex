@@ -1,0 +1,56 @@
+\hypertarget{classConfigurationManager}{
+\section{ConfigurationManager Class Reference}
+\label{classConfigurationManager}\index{ConfigurationManager@{ConfigurationManager}}
+}
+
+
+{\ttfamily \#include $<$ConfigurationManager.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+map$<$ string, string $>$ \hyperlink{classConfigurationManager_a1c4ee8379e2ccee2a2ac76b92042daba}{readFile} (string fileName)
+\item 
+void \hyperlink{classConfigurationManager_a078649c42cbc46e6fbdf7b7a74183898}{writeFile} (string fileName, map$<$ string, string $>$ configuration)
+\item 
+map$<$ string, string $>$ \hyperlink{classConfigurationManager_aed48081116dc9181acb904ac18a52eb5}{readString} (string str)
+\item 
+string \hyperlink{classConfigurationManager_a4dfba4665ffb818e21363f446a6cde12}{writeString} (map$<$ string, string $>$ configuration)
+\item 
+list$<$ string $>$ \hyperlink{classConfigurationManager_adba6ce19eaf7b98ba158011f4bb71eea}{readHostFile} (string fileName)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classConfigurationManager}{ConfigurationManager} contains all functionality to read and write configuration files used in \hyperlink{classAccessPattern}{AccessPattern}, \hyperlink{classKeyValueDB}{KeyValueDB} and \hyperlink{classValueDistribution}{ValueDistribution} as well as reading in the hostfile in \hyperlink{classSimulationController}{SimulationController} 
+
+\subsection{Member Function Documentation}
+\hypertarget{classConfigurationManager_a1c4ee8379e2ccee2a2ac76b92042daba}{
+\index{ConfigurationManager@{ConfigurationManager}!readFile@{readFile}}
+\index{readFile@{readFile}!ConfigurationManager@{ConfigurationManager}}
+\subsubsection[{readFile}]{\setlength{\rightskip}{0pt plus 5cm}map$<$ string, string $>$ ConfigurationManager::readFile (string {\em fileName})}}
+\label{classConfigurationManager_a1c4ee8379e2ccee2a2ac76b92042daba}
+Read in a file containing 'key=value' lines and return the data in a map \hypertarget{classConfigurationManager_adba6ce19eaf7b98ba158011f4bb71eea}{
+\index{ConfigurationManager@{ConfigurationManager}!readHostFile@{readHostFile}}
+\index{readHostFile@{readHostFile}!ConfigurationManager@{ConfigurationManager}}
+\subsubsection[{readHostFile}]{\setlength{\rightskip}{0pt plus 5cm}list$<$ string $>$ ConfigurationManager::readHostFile (string {\em fileName})}}
+\label{classConfigurationManager_adba6ce19eaf7b98ba158011f4bb71eea}
+Read in a host file containing the data to connect to worker instances of KeyValueClusterPerf \hypertarget{classConfigurationManager_aed48081116dc9181acb904ac18a52eb5}{
+\index{ConfigurationManager@{ConfigurationManager}!readString@{readString}}
+\index{readString@{readString}!ConfigurationManager@{ConfigurationManager}}
+\subsubsection[{readString}]{\setlength{\rightskip}{0pt plus 5cm}map$<$ string, string $>$ ConfigurationManager::readString (string {\em str})}}
+\label{classConfigurationManager_aed48081116dc9181acb904ac18a52eb5}
+Read in a string containing 'key=value' lines and return the data in a map \hypertarget{classConfigurationManager_a078649c42cbc46e6fbdf7b7a74183898}{
+\index{ConfigurationManager@{ConfigurationManager}!writeFile@{writeFile}}
+\index{writeFile@{writeFile}!ConfigurationManager@{ConfigurationManager}}
+\subsubsection[{writeFile}]{\setlength{\rightskip}{0pt plus 5cm}void ConfigurationManager::writeFile (string {\em fileName}, \/  map$<$ string, string $>$ {\em configuration})}}
+\label{classConfigurationManager_a078649c42cbc46e6fbdf7b7a74183898}
+Write out a map of key=value pairs to a file \hypertarget{classConfigurationManager_a4dfba4665ffb818e21363f446a6cde12}{
+\index{ConfigurationManager@{ConfigurationManager}!writeString@{writeString}}
+\index{writeString@{writeString}!ConfigurationManager@{ConfigurationManager}}
+\subsubsection[{writeString}]{\setlength{\rightskip}{0pt plus 5cm}string ConfigurationManager::writeString (map$<$ string, string $>$ {\em configuration})}}
+\label{classConfigurationManager_a4dfba4665ffb818e21363f446a6cde12}
+Write out a map of key=value pairs to a string 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/ConfigurationManager.h\item 
+src/ConfigurationManager.cc\end{DoxyCompactItemize}

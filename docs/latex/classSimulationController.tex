@@ -1,0 +1,47 @@
+\hypertarget{classSimulationController}{
+\section{SimulationController Class Reference}
+\label{classSimulationController}\index{SimulationController@{SimulationController}}
+}
+
+
+{\ttfamily \#include $<$SimulationController.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimulationController_ad3842750a34161c40e2503601d0d7261}{
+{\bfseries SimulationController} (string hostFilePath, int hostLimit, int simIteration)}
+\label{classSimulationController_ad3842750a34161c40e2503601d0d7261}
+
+\item 
+void \hyperlink{classSimulationController_a37b7e33fd9ea6d3505cc8ae1dbbbf284}{connect} ()
+\item 
+void \hyperlink{classSimulationController_a269e17c70a9661843bbd536d62dc771f}{disconnect} ()
+\item 
+void \hyperlink{classSimulationController_a5b756fb934ac05829b28e46a85a6497d}{execute} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class handling the control of the entire simulation, instructing the worker nodes on the next task and merging the results. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classSimulationController_a37b7e33fd9ea6d3505cc8ae1dbbbf284}{
+\index{SimulationController@{SimulationController}!connect@{connect}}
+\index{connect@{connect}!SimulationController@{SimulationController}}
+\subsubsection[{connect}]{\setlength{\rightskip}{0pt plus 5cm}void SimulationController::connect ()}}
+\label{classSimulationController_a37b7e33fd9ea6d3505cc8ae1dbbbf284}
+Connect to all hosts specified in the host file \hypertarget{classSimulationController_a269e17c70a9661843bbd536d62dc771f}{
+\index{SimulationController@{SimulationController}!disconnect@{disconnect}}
+\index{disconnect@{disconnect}!SimulationController@{SimulationController}}
+\subsubsection[{disconnect}]{\setlength{\rightskip}{0pt plus 5cm}void SimulationController::disconnect ()}}
+\label{classSimulationController_a269e17c70a9661843bbd536d62dc771f}
+Disconnect from the hosts \hypertarget{classSimulationController_a5b756fb934ac05829b28e46a85a6497d}{
+\index{SimulationController@{SimulationController}!execute@{execute}}
+\index{execute@{execute}!SimulationController@{SimulationController}}
+\subsubsection[{execute}]{\setlength{\rightskip}{0pt plus 5cm}void SimulationController::execute ()}}
+\label{classSimulationController_a5b756fb934ac05829b28e46a85a6497d}
+Start the simulation by instructing the worker nodes 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/SimulationController.h\item 
+src/SimulationController.cc\end{DoxyCompactItemize}

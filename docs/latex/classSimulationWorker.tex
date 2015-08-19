@@ -1,0 +1,61 @@
+\hypertarget{classSimulationWorker}{
+\section{SimulationWorker Class Reference}
+\label{classSimulationWorker}\index{SimulationWorker@{SimulationWorker}}
+}
+
+
+{\ttfamily \#include $<$SimulationWorker.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimulationWorker_a44b25296237849bb3b8affad2956e87d}{
+{\bfseries SimulationWorker} (string databaseCfgPath, string accessPatternCfgPath, string valueDistributionCfgPath, bool skipInit)}
+\label{classSimulationWorker_a44b25296237849bb3b8affad2956e87d}
+
+\item 
+void \hyperlink{classSimulationWorker_ac8e581d784c84d98db09c3261395d2ed}{openConnection} (int portNum, int dataportNum)
+\item 
+void \hyperlink{classSimulationWorker_aaccde1ec2e77fb934b67718c104e69e8}{closeConnection} ()
+\item 
+void \hyperlink{classSimulationWorker_a18064a1d65824d3c6a522cf68e52e3f5}{listen} ()
+\item 
+void \hyperlink{classSimulationWorker_aba581c4c9cbdaf10624822e687efd08e}{initialiseSimulator} ()
+\item 
+void \hyperlink{classSimulationWorker_aa415eb89cba4b39457faed0baa65458c}{deinitialiseSimulator} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Worker node performing the tasks according to a fixed pattern determined by the controller node 
+
+\subsection{Member Function Documentation}
+\hypertarget{classSimulationWorker_aaccde1ec2e77fb934b67718c104e69e8}{
+\index{SimulationWorker@{SimulationWorker}!closeConnection@{closeConnection}}
+\index{closeConnection@{closeConnection}!SimulationWorker@{SimulationWorker}}
+\subsubsection[{closeConnection}]{\setlength{\rightskip}{0pt plus 5cm}void SimulationWorker::closeConnection ()}}
+\label{classSimulationWorker_aaccde1ec2e77fb934b67718c104e69e8}
+Close the connection to the controller \hypertarget{classSimulationWorker_aa415eb89cba4b39457faed0baa65458c}{
+\index{SimulationWorker@{SimulationWorker}!deinitialiseSimulator@{deinitialiseSimulator}}
+\index{deinitialiseSimulator@{deinitialiseSimulator}!SimulationWorker@{SimulationWorker}}
+\subsubsection[{deinitialiseSimulator}]{\setlength{\rightskip}{0pt plus 5cm}void SimulationWorker::deinitialiseSimulator ()}}
+\label{classSimulationWorker_aa415eb89cba4b39457faed0baa65458c}
+Delete simulation object, only call when all hosts finished \hypertarget{classSimulationWorker_aba581c4c9cbdaf10624822e687efd08e}{
+\index{SimulationWorker@{SimulationWorker}!initialiseSimulator@{initialiseSimulator}}
+\index{initialiseSimulator@{initialiseSimulator}!SimulationWorker@{SimulationWorker}}
+\subsubsection[{initialiseSimulator}]{\setlength{\rightskip}{0pt plus 5cm}void SimulationWorker::initialiseSimulator ()}}
+\label{classSimulationWorker_aba581c4c9cbdaf10624822e687efd08e}
+Create a simulationobject \hypertarget{classSimulationWorker_a18064a1d65824d3c6a522cf68e52e3f5}{
+\index{SimulationWorker@{SimulationWorker}!listen@{listen}}
+\index{listen@{listen}!SimulationWorker@{SimulationWorker}}
+\subsubsection[{listen}]{\setlength{\rightskip}{0pt plus 5cm}void SimulationWorker::listen ()}}
+\label{classSimulationWorker_a18064a1d65824d3c6a522cf68e52e3f5}
+Listen for commands from the controller \hypertarget{classSimulationWorker_ac8e581d784c84d98db09c3261395d2ed}{
+\index{SimulationWorker@{SimulationWorker}!openConnection@{openConnection}}
+\index{openConnection@{openConnection}!SimulationWorker@{SimulationWorker}}
+\subsubsection[{openConnection}]{\setlength{\rightskip}{0pt plus 5cm}void SimulationWorker::openConnection (int {\em portNum}, \/  int {\em dataportNum})}}
+\label{classSimulationWorker_ac8e581d784c84d98db09c3261395d2ed}
+Opens a port so that the controller can connect to it 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/SimulationWorker.h\item 
+src/SimulationWorker.cc\end{DoxyCompactItemize}

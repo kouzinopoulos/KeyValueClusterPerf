@@ -1,0 +1,66 @@
+\hypertarget{classSimulator}{
+\section{Simulator Class Reference}
+\label{classSimulator}\index{Simulator@{Simulator}}
+}
+
+
+{\ttfamily \#include $<$Simulator.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSimulator_a5c46ca7ea1fd4a67fc43d931fadbb347}{Simulator} (map$<$ string, string $>$ databaseConfiguration, map$<$ string, string $>$ accessPatternConfiguration, map$<$ string, string $>$ valueDistributionConfiguration, bool skipInitialisation)
+\item 
+\hyperlink{classSimulator_a031573bfcfe2e0f5c9539bcc1c7fc5d9}{Simulator} ()
+\item 
+void \hyperlink{classSimulator_a833eb17dd0d0d1b0b1f7c0747032c21c}{simulate} (int runs)
+\item 
+void \hyperlink{classSimulator_a224de0acb821d6b4e333c1821bea57d9}{burnInOut} (int runs)
+\item 
+map$<$ string, string $>$ \hyperlink{classSimulator_a510b4c3d8d032e7b5abf12e2572a8c5b}{getResults} ()
+\item 
+void \hyperlink{classSimulator_a3c9f45bd002ee6b88b6ec4d55d65e0ff}{mergeResults} (list$<$ map$<$ string, string $>$$>$ results, string csvFilePath)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class to perform the actual simulation and merge the results. Workers use this class to simulate, controllers to merge 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classSimulator_a5c46ca7ea1fd4a67fc43d931fadbb347}{
+\index{Simulator@{Simulator}!Simulator@{Simulator}}
+\index{Simulator@{Simulator}!Simulator@{Simulator}}
+\subsubsection[{Simulator}]{\setlength{\rightskip}{0pt plus 5cm}Simulator::Simulator (map$<$ string, string $>$ {\em databaseConfiguration}, \/  map$<$ string, string $>$ {\em accessPatternConfiguration}, \/  map$<$ string, string $>$ {\em valueDistributionConfiguration}, \/  bool {\em skipInitialisation})}}
+\label{classSimulator_a5c46ca7ea1fd4a67fc43d931fadbb347}
+Constructor for worker node to pass the configuration \hypertarget{classSimulator_a031573bfcfe2e0f5c9539bcc1c7fc5d9}{
+\index{Simulator@{Simulator}!Simulator@{Simulator}}
+\index{Simulator@{Simulator}!Simulator@{Simulator}}
+\subsubsection[{Simulator}]{\setlength{\rightskip}{0pt plus 5cm}Simulator::Simulator ()}}
+\label{classSimulator_a031573bfcfe2e0f5c9539bcc1c7fc5d9}
+Separate contructor for controller because it does not use any configuration 
+
+\subsection{Member Function Documentation}
+\hypertarget{classSimulator_a224de0acb821d6b4e333c1821bea57d9}{
+\index{Simulator@{Simulator}!burnInOut@{burnInOut}}
+\index{burnInOut@{burnInOut}!Simulator@{Simulator}}
+\subsubsection[{burnInOut}]{\setlength{\rightskip}{0pt plus 5cm}void Simulator::burnInOut (int {\em runs})}}
+\label{classSimulator_a224de0acb821d6b4e333c1821bea57d9}
+Perform burn in or burn out, dous not count towards statistics \hypertarget{classSimulator_a510b4c3d8d032e7b5abf12e2572a8c5b}{
+\index{Simulator@{Simulator}!getResults@{getResults}}
+\index{getResults@{getResults}!Simulator@{Simulator}}
+\subsubsection[{getResults}]{\setlength{\rightskip}{0pt plus 5cm}map$<$ string, string $>$ Simulator::getResults ()}}
+\label{classSimulator_a510b4c3d8d032e7b5abf12e2572a8c5b}
+Get the statistics results from the last simulation \hypertarget{classSimulator_a3c9f45bd002ee6b88b6ec4d55d65e0ff}{
+\index{Simulator@{Simulator}!mergeResults@{mergeResults}}
+\index{mergeResults@{mergeResults}!Simulator@{Simulator}}
+\subsubsection[{mergeResults}]{\setlength{\rightskip}{0pt plus 5cm}void Simulator::mergeResults (list$<$ map$<$ string, string $>$$>$ {\em results}, \/  string {\em csvFilePath})}}
+\label{classSimulator_a3c9f45bd002ee6b88b6ec4d55d65e0ff}
+Merge the results of multiple simulators \hypertarget{classSimulator_a833eb17dd0d0d1b0b1f7c0747032c21c}{
+\index{Simulator@{Simulator}!simulate@{simulate}}
+\index{simulate@{simulate}!Simulator@{Simulator}}
+\subsubsection[{simulate}]{\setlength{\rightskip}{0pt plus 5cm}void Simulator::simulate (int {\em runs})}}
+\label{classSimulator_a833eb17dd0d0d1b0b1f7c0747032c21c}
+start the simulation 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/Simulator.h\item 
+src/Simulator.cc\end{DoxyCompactItemize}

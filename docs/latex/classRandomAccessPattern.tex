@@ -1,0 +1,50 @@
+\hypertarget{classRandomAccessPattern}{
+\section{RandomAccessPattern Class Reference}
+\label{classRandomAccessPattern}\index{RandomAccessPattern@{RandomAccessPattern}}
+}
+
+
+{\ttfamily \#include $<$RandomAccessPattern.h$>$}Inheritance diagram for RandomAccessPattern::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classRandomAccessPattern}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classRandomAccessPattern_ad0dc7a4ff575c695277f449df68912c0}{
+{\bfseries RandomAccessPattern} (map$<$ string, string $>$ configuration)}
+\label{classRandomAccessPattern_ad0dc7a4ff575c695277f449df68912c0}
+
+\item 
+\hyperlink{structSingleAccess}{SingleAccess} \hyperlink{classRandomAccessPattern_a5b590afc37a8bf5e4a4235834c6ebe12}{getNext} ()
+\item 
+map$<$ string, string $>$ \hyperlink{classRandomAccessPattern_a72da825a9cb74f58fcadf6fc894d5e82}{getInitialisationKeyValuePairs} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Access pattern representing randomness in the keys and the read-\/write cycles 
+
+\subsection{Member Function Documentation}
+\hypertarget{classRandomAccessPattern_a72da825a9cb74f58fcadf6fc894d5e82}{
+\index{RandomAccessPattern@{RandomAccessPattern}!getInitialisationKeyValuePairs@{getInitialisationKeyValuePairs}}
+\index{getInitialisationKeyValuePairs@{getInitialisationKeyValuePairs}!RandomAccessPattern@{RandomAccessPattern}}
+\subsubsection[{getInitialisationKeyValuePairs}]{\setlength{\rightskip}{0pt plus 5cm}map$<$ string, string $>$ RandomAccessPattern::getInitialisationKeyValuePairs ()\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classRandomAccessPattern_a72da825a9cb74f58fcadf6fc894d5e82}
+get key-\/value pairs to initialise database before simulation. This prevents access to non-\/existend items 
+
+Implements \hyperlink{classAccessPattern_afa72bed11401bfd96e8fa88acd72934b}{AccessPattern}.\hypertarget{classRandomAccessPattern_a5b590afc37a8bf5e4a4235834c6ebe12}{
+\index{RandomAccessPattern@{RandomAccessPattern}!getNext@{getNext}}
+\index{getNext@{getNext}!RandomAccessPattern@{RandomAccessPattern}}
+\subsubsection[{getNext}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SingleAccess} RandomAccessPattern::getNext ()\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classRandomAccessPattern_a5b590afc37a8bf5e4a4235834c6ebe12}
+generate the next access information to the database 
+
+Implements \hyperlink{classAccessPattern_a8c46aedb717e862598524f250f23086f}{AccessPattern}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/RandomAccessPattern.h\item 
+src/RandomAccessPattern.cc\end{DoxyCompactItemize}

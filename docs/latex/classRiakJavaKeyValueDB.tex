@@ -1,0 +1,56 @@
+\hypertarget{classRiakJavaKeyValueDB}{
+\section{RiakJavaKeyValueDB Class Reference}
+\label{classRiakJavaKeyValueDB}\index{RiakJavaKeyValueDB@{RiakJavaKeyValueDB}}
+}
+
+
+{\ttfamily \#include $<$RiakJavaKeyValueDB.h$>$}Inheritance diagram for RiakJavaKeyValueDB::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classRiakJavaKeyValueDB}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classRiakJavaKeyValueDB_ac2b73488926b960d8d76eac2575ff886}{
+{\bfseries RiakJavaKeyValueDB} (map$<$ string, string $>$ configuration)}
+\label{classRiakJavaKeyValueDB_ac2b73488926b960d8d76eac2575ff886}
+
+\item 
+\hypertarget{classRiakJavaKeyValueDB_ad9bb63fe88d2d7baf89adb3e13afc8c3}{
+void {\bfseries putValue} (string key, string $\ast$value)}
+\label{classRiakJavaKeyValueDB_ad9bb63fe88d2d7baf89adb3e13afc8c3}
+
+\item 
+\hypertarget{classRiakJavaKeyValueDB_a5ed0606feebc3fa7f4997b3048dbb4f9}{
+string {\bfseries getValue} (string key)}
+\label{classRiakJavaKeyValueDB_a5ed0606feebc3fa7f4997b3048dbb4f9}
+
+\item 
+\hypertarget{classRiakJavaKeyValueDB_af228bd73a99e8c7ea138a8dad2a0e4cd}{
+void {\bfseries deleteValue} (string key)}
+\label{classRiakJavaKeyValueDB_af228bd73a99e8c7ea138a8dad2a0e4cd}
+
+\item 
+void \hyperlink{classRiakJavaKeyValueDB_aa7e3df85b19f2c3a936a7282f8ddb98f}{initialise} (map$<$ string, string $>$ keyValuePairs)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class containing functionality to perform key value operations on a Riak cluster using a Java client 
+
+\subsection{Member Function Documentation}
+\hypertarget{classRiakJavaKeyValueDB_aa7e3df85b19f2c3a936a7282f8ddb98f}{
+\index{RiakJavaKeyValueDB@{RiakJavaKeyValueDB}!initialise@{initialise}}
+\index{initialise@{initialise}!RiakJavaKeyValueDB@{RiakJavaKeyValueDB}}
+\subsubsection[{initialise}]{\setlength{\rightskip}{0pt plus 5cm}void RiakJavaKeyValueDB::initialise (map$<$ string, string $>$ {\em keyValuePairs})}}
+\label{classRiakJavaKeyValueDB_aa7e3df85b19f2c3a936a7282f8ddb98f}
+Initialise the key value database with the keyvalue-\/pairs represented by the map 
+
+Reimplemented from \hyperlink{classKeyValueDB_aebd32f35aa2c11ac0d071bd8307fc521}{KeyValueDB}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/RiakJavaKeyValueDB.h\item 
+src/RiakJavaKeyValueDB.cc\end{DoxyCompactItemize}

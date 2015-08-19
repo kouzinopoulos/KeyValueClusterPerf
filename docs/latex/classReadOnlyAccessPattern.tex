@@ -1,0 +1,50 @@
+\hypertarget{classReadOnlyAccessPattern}{
+\section{ReadOnlyAccessPattern Class Reference}
+\label{classReadOnlyAccessPattern}\index{ReadOnlyAccessPattern@{ReadOnlyAccessPattern}}
+}
+
+
+{\ttfamily \#include $<$ReadOnlyAccessPattern.h$>$}Inheritance diagram for ReadOnlyAccessPattern::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classReadOnlyAccessPattern}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classReadOnlyAccessPattern_ac809863a35ba6cff81d7ae8e1b703bfa}{
+{\bfseries ReadOnlyAccessPattern} (map$<$ string, string $>$ configuration)}
+\label{classReadOnlyAccessPattern_ac809863a35ba6cff81d7ae8e1b703bfa}
+
+\item 
+\hyperlink{structSingleAccess}{SingleAccess} \hyperlink{classReadOnlyAccessPattern_a324b6da6296a17144d51db2841e16ba4}{getNext} ()
+\item 
+map$<$ string, string $>$ \hyperlink{classReadOnlyAccessPattern_a2e6ce8d90050b038ffbf643b344e0eb5}{getInitialisationKeyValuePairs} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Access pattern performing only reads 
+
+\subsection{Member Function Documentation}
+\hypertarget{classReadOnlyAccessPattern_a2e6ce8d90050b038ffbf643b344e0eb5}{
+\index{ReadOnlyAccessPattern@{ReadOnlyAccessPattern}!getInitialisationKeyValuePairs@{getInitialisationKeyValuePairs}}
+\index{getInitialisationKeyValuePairs@{getInitialisationKeyValuePairs}!ReadOnlyAccessPattern@{ReadOnlyAccessPattern}}
+\subsubsection[{getInitialisationKeyValuePairs}]{\setlength{\rightskip}{0pt plus 5cm}map$<$ string, string $>$ ReadOnlyAccessPattern::getInitialisationKeyValuePairs ()\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classReadOnlyAccessPattern_a2e6ce8d90050b038ffbf643b344e0eb5}
+get key-\/value pairs to initialise database before simulation. This prevents access to non-\/existend items 
+
+Implements \hyperlink{classAccessPattern_afa72bed11401bfd96e8fa88acd72934b}{AccessPattern}.\hypertarget{classReadOnlyAccessPattern_a324b6da6296a17144d51db2841e16ba4}{
+\index{ReadOnlyAccessPattern@{ReadOnlyAccessPattern}!getNext@{getNext}}
+\index{getNext@{getNext}!ReadOnlyAccessPattern@{ReadOnlyAccessPattern}}
+\subsubsection[{getNext}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SingleAccess} ReadOnlyAccessPattern::getNext ()\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classReadOnlyAccessPattern_a324b6da6296a17144d51db2841e16ba4}
+generate the next access information to the database 
+
+Implements \hyperlink{classAccessPattern_a8c46aedb717e862598524f250f23086f}{AccessPattern}.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/ReadOnlyAccessPattern.h\item 
+src/ReadOnlyAccessPattern.cc\end{DoxyCompactItemize}

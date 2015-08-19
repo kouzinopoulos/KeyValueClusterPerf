@@ -1,0 +1,60 @@
+\hypertarget{classAccessPattern}{
+\section{AccessPattern Class Reference}
+\label{classAccessPattern}\index{AccessPattern@{AccessPattern}}
+}
+
+
+{\ttfamily \#include $<$AccessPattern.h$>$}Inheritance diagram for AccessPattern::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classAccessPattern}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \hyperlink{structSingleAccess}{SingleAccess} \hyperlink{classAccessPattern_a8c46aedb717e862598524f250f23086f}{getNext} ()=0
+\item 
+virtual map$<$ string, string $>$ \hyperlink{classAccessPattern_afa72bed11401bfd96e8fa88acd72934b}{getInitialisationKeyValuePairs} ()=0
+\item 
+void \hyperlink{classAccessPattern_a80227f44091a53a2798b44e4e54f3484}{setValueDistribution} (\hyperlink{classValueDistribution}{ValueDistribution} $\ast$valueDistribution)
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classAccessPattern_af87b840d2a9edad3c3fbf9a521844588}{
+\hyperlink{classValueDistribution}{ValueDistribution} $\ast$ {\bfseries valueDistribution}}
+\label{classAccessPattern_af87b840d2a9edad3c3fbf9a521844588}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Abstract class \hyperlink{classAccessPattern}{AccessPattern} represents a set of functions to be implemented by each accessPattern This class defines the accesses to the database and generates \hyperlink{structSingleAccess}{SingleAccess} returns 
+
+\subsection{Member Function Documentation}
+\hypertarget{classAccessPattern_afa72bed11401bfd96e8fa88acd72934b}{
+\index{AccessPattern@{AccessPattern}!getInitialisationKeyValuePairs@{getInitialisationKeyValuePairs}}
+\index{getInitialisationKeyValuePairs@{getInitialisationKeyValuePairs}!AccessPattern@{AccessPattern}}
+\subsubsection[{getInitialisationKeyValuePairs}]{\setlength{\rightskip}{0pt plus 5cm}virtual map$<$string,string$>$ AccessPattern::getInitialisationKeyValuePairs ()\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classAccessPattern_afa72bed11401bfd96e8fa88acd72934b}
+get key-\/value pairs to initialise database before simulation. This prevents access to non-\/existend items 
+
+Implemented in \hyperlink{classRandomAccessPattern_a72da825a9cb74f58fcadf6fc894d5e82}{RandomAccessPattern}, and \hyperlink{classReadOnlyAccessPattern_a2e6ce8d90050b038ffbf643b344e0eb5}{ReadOnlyAccessPattern}.\hypertarget{classAccessPattern_a8c46aedb717e862598524f250f23086f}{
+\index{AccessPattern@{AccessPattern}!getNext@{getNext}}
+\index{getNext@{getNext}!AccessPattern@{AccessPattern}}
+\subsubsection[{getNext}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf SingleAccess} AccessPattern::getNext ()\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}
+\label{classAccessPattern_a8c46aedb717e862598524f250f23086f}
+generate the next access information to the database 
+
+Implemented in \hyperlink{classRandomAccessPattern_a5b590afc37a8bf5e4a4235834c6ebe12}{RandomAccessPattern}, and \hyperlink{classReadOnlyAccessPattern_a324b6da6296a17144d51db2841e16ba4}{ReadOnlyAccessPattern}.\hypertarget{classAccessPattern_a80227f44091a53a2798b44e4e54f3484}{
+\index{AccessPattern@{AccessPattern}!setValueDistribution@{setValueDistribution}}
+\index{setValueDistribution@{setValueDistribution}!AccessPattern@{AccessPattern}}
+\subsubsection[{setValueDistribution}]{\setlength{\rightskip}{0pt plus 5cm}void AccessPattern::setValueDistribution ({\bf ValueDistribution} $\ast$ {\em valueDistribution})}}
+\label{classAccessPattern_a80227f44091a53a2798b44e4e54f3484}
+Assign the accessPattern class which valueDistribution to use during generation of the next access 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+src/AccessPattern.h\item 
+src/AccessPattern.cc\end{DoxyCompactItemize}

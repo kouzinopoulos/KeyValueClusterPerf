@@ -1,11 +1,11 @@
+// C C++ includes
 #include <stdlib.h>
 #include <sstream>
+// Unix OS includes
 #include <time.h>
-
+// KeyValueClusterPerf inlcudes
 #include "logger.h"
 #include "ReadOnlyAccessPattern.h"                 
-
-
 
 ReadOnlyAccessPattern::ReadOnlyAccessPattern(map<string,string> configuration)
 {
@@ -35,7 +35,7 @@ SingleAccess ReadOnlyAccessPattern::getNext()
 map<string,string> ReadOnlyAccessPattern::getInitialisationKeyValuePairs()
 {
 	map<string, string> keyValuePairs;
-	// Initialise with empty strings and every possible key (can be improved in future)
+	// Initialise with strings and every possible key (can be improved in future)
 	stringstream ss;
 	for(int i=minKey; i <= maxKey; i++)
 	{

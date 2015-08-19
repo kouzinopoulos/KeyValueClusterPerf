@@ -1,7 +1,9 @@
+// C C++ includes
 #include <stdlib.h>
 #include <sstream>
+// Unix OS includes
 #include <time.h>
-
+// KeyValueClusterPerf includes
 #include "logger.h"
 #include "RandomAccessPattern.h"                 
 
@@ -41,7 +43,7 @@ SingleAccess RandomAccessPattern::getNext()
 map<string,string> RandomAccessPattern::getInitialisationKeyValuePairs()
 {
 	map<string, string> keyValuePairs;
-	// Initialise with empty strings and every possible key (can be improved in future)
+	// Initialise with strings and every possible key (can be improved in future)
 	stringstream ss;
 	for(int i=minKey; i <= maxKey; i++)
 	{
