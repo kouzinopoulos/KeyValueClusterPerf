@@ -1,5 +1,0 @@
----
-- hosts: rc-half[0-3]
-  tasks: 
-  - name: Copy keyValueClusterPerf executable to machines
-    copy: src=keyvalueclusterperf dest=~/keyvalueclusterperf owner=root group=root mode="110"

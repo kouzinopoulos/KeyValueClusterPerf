@@ -27,3 +27,13 @@
 *.out
 *.app
 keyvalueclusterperf
+keyvalueclusterperf_RAMCLOUD
+
+#results files
+*.csv
+
+#files in use
+*~
+
+#afs
+.__afs*
