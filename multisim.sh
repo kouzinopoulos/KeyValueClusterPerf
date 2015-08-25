@@ -16,7 +16,7 @@ ssh-add ~/.ssh/id_rsa
 # third argument contains stepsize
 #stepsize=$3
 #1 10 30 50 70 100 200 400 600 800 1000
-numberofhosts=(1 400 1000)
+numberofhosts=(1 10 100 200)
 # 10000 100000 1000000 10000000
 datasizes=(1000 10000 100000  1000000 10000000 50000000)
 simit=1

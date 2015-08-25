@@ -19,6 +19,7 @@
 #include "RiakJavaKeyValueDB.h"
 #include "Simulator.h"
 #include "ValueDistribution.h"
+#include "WriteOnlyAccessPattern.h"
 
 Simulator::Simulator(map<string,string> databaseConfiguration, 
 	map<string,string> accessPatternConfiguration,
@@ -59,6 +60,10 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 	else if(accessPatternType.compare("ReadOnly") == 0)
 	{
 		accessPattern = new ReadOnlyAccessPattern(accessPatternConfiguration);
+	}
+	else if(accessPatternType.compare("WriteOnly") == 0)
+	{
+		accessPattern = new WriteOnlyAccessPattern(accessPatternConfiguration);
 	}
 	else
 	{
