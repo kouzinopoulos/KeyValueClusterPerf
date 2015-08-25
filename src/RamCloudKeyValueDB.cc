@@ -54,6 +54,7 @@ string RamCloudKeyValueDB::getValue(std::string key)
     int length = buffer.size();
     string s(static_cast<const char*>(buffer.getRange(0, length)), length );
     return s;*/
+    return "";
 }
 
 void RamCloudKeyValueDB::deleteValue(std::string key)

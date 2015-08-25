@@ -171,6 +171,7 @@ map<string, string> Simulator::getResults()
 	char* hostname = new char[256];
 	gethostname(hostname, 256);
 	results["hostname"]=string(hostname);
+	delete[] hostname;
 	// Add number of read operations
 	ss << reads;
 	results["reads"]=ss.str();

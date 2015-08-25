@@ -114,7 +114,6 @@ void SimulationWorker::listen()
 			// Open up a data socket
 			void *dataContext = zmq_ctx_new();
 			void *dataSocket = zmq_socket(dataContext, ZMQ_PAIR);
-			// add a 1 to the portnum to get a datasocket (improve this)
 			ss.clear();
 			ss.str(string());
 			ss << "tcp://*:" << dataportNumber;
@@ -123,25 +122,27 @@ void SimulationWorker::listen()
 			// Buffer to store data in
 			char buffer[1024];
 			// Generate the data to send
-			//sprintf(buffer, "The data is getting through the pipe");
 			ConfigurationManager cm;
 			string resultsData = cm.writeString(results);
 			strcpy(buffer, resultsData.c_str());
 			buffer[sizeof(buffer) - 1] = 0;
 			// Send the data over the socket
 			rc = zmq_send(dataSocket, buffer, 1024,0);
-
 			// Deinitialise the simulator
 			deinitialiseSimulator();
 			// Reply that we are done sending results
 			reply = new zmq::message_t(11);
 			memcpy ((void *) reply->data (), "DONERESULTS", 11);
+			zmq_close(dataSocket);
+			zmq_ctx_destroy(dataContext);
 		}
 		else if(requestStr.compare("RESTART")==0)
 		{
 			// Restarting the simulator state
 			LOG_DEBUG("Restart simulator state");
 			state=START;
+			reply = new zmq::message_t(10);
+			memcpy ((void *) reply->data (), "RESTARTING", 10);
 		}
 		else if(requestStr.compare("EXIT")==0)
 		{

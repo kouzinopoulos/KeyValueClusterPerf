@@ -198,6 +198,7 @@ string RiakCKeyValueDB::getValue(string key)
         exit(1);
     }
     return returnStr;*/
+    return "";
 }
 void RiakCKeyValueDB::deleteValue(string key)
 {

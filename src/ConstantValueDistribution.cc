@@ -20,7 +20,7 @@ ConstantValueDistribution::ConstantValueDistribution(map<string,string> configur
 
 ConstantValueDistribution::~ConstantValueDistribution()
 {
-	delete valueBuffer;
+	delete[] valueBuffer;
 	delete valueString;
 }
 

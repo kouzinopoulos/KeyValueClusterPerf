@@ -16,7 +16,7 @@ ssh-add ~/.ssh/id_rsa
 # third argument contains stepsize
 #stepsize=$3
 #1 10 30 50 70 100 200 400 600 800 1000
-numberofhosts=(1 400 1000)
+numberofhosts=(1 10 100 200) 
 # 10000 100000 1000000 10000000
 datasizes=(1000 10000 100000  1000000 10000000 50000000)
 simit=1
@@ -32,7 +32,7 @@ for datasize in "${datasizes[@]}"; do
 		# start the performance cluster nodes
 		ansible-playbook ~/Desktop/Scripts/cmd-startkeyvalueclusterperf.yml -u root
 		# start the controller for this iteration
-		echo ssh root@cernvmbl031 export LD_LIBRARY_PATH=/usr/local/lib; ./keyvalueclusterperf --controller --hostlimit $i --simiteration $simit
+		echo ssh root@cernvmbl023 export LD_LIBRARY_PATH=/usr/local/lib; ./keyvalueclusterperf --controller --hostlimit $i --simiteration $simit
 		let "simit+=1"
 		# kill all remaining processes on performance cluster
 		ansible-playbook ~/Desktop/Scripts/cmd-stopkeyvalueclusterperf.yml -u root

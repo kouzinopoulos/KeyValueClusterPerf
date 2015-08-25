@@ -157,7 +157,7 @@ void SimulationController::execute()
 		stringstream sshost;
 		string hostlocation = dataHosts.front();
 		LOG_DEBUG(hostlocation);
-		int rc = zmq_connect(dataSocket, hostlocation.c_str());
+		zmq_connect(dataSocket, hostlocation.c_str());
 		dataHosts.pop_front();
 		// Receive the data
 		char buffer[1024];

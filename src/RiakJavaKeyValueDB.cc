@@ -6,29 +6,30 @@
 // External library: RiakJavaClient-Request (protocol buffer)
 #include "request.pb.h"
 #include "MessageSender.h"
+// External library: protobuf
+#include <google/protobuf/stubs/common.h>
 // KeyValueClusterPerf includes
 #include "logger.h"
 #include "RiakJavaKeyValueDB.h"
 
 RiakJavaKeyValueDB::RiakJavaKeyValueDB(map<string, string> configuration)
 {
-	bool enableSecurity = false;
+	string securityValue = "none";
+	// Check if there is a security setting
 	map<string,string>::iterator it = configuration.find("security");
 	if(it != configuration.end())
 	{
-		string value = it->second;
-		if(value.compare("true")==0)
-		{
-			enableSecurity = true;
-			LOG_DEBUG("Enabling security");
-		}
+		securityValue = it->second;
 	}
-	messageSender = new MessageSender(enableSecurity);
+	// Create new message sender
+	LOG_DEBUG(securityValue);
+	messageSender = new MessageSender(securityValue);
 }
 
 RiakJavaKeyValueDB::~RiakJavaKeyValueDB()
 {
 	delete messageSender;
+	google::protobuf::ShutdownProtobufLibrary();
 }
 
 void RiakJavaKeyValueDB::putValue(string key, string* value)
