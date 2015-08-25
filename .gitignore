@@ -37,3 +37,6 @@ keyvalueclusterperf_RAMCLOUD
 
 #afs
 .__afs*
+
+#log files
+.log
