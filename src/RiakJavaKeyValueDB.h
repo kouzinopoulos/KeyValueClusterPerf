@@ -13,21 +13,20 @@ using namespace std;
 /**
  * Class containing functionality to perform key value operations on a Riak cluster using a Java client
  */
-class RiakJavaKeyValueDB : public KeyValueDB
-{
-	public:
-		RiakJavaKeyValueDB(map<string, string> configuration);
-		~RiakJavaKeyValueDB();
+class RiakJavaKeyValueDB : public KeyValueDB {
+public:
+  RiakJavaKeyValueDB(map<string, string> configuration);
+  ~RiakJavaKeyValueDB();
 
-		void putValue(string key, string* value);
-		string getValue(string key);
-		void deleteValue(string key);
+  void putValue(string key, string* value);
+  string getValue(string key);
+  void deleteValue(string key);
 
-		void initialise(map<string, string> keyValuePairs);
+  void initialise(map<string, string> keyValuePairs);
 
-	private:
-		/*! Class responsible for handling the communication aspects */
-		MessageSender* messageSender;
+private:
+  /*! Class responsible for handling the communication aspects */
+  MessageSender* messageSender;
 };
 
 #endif

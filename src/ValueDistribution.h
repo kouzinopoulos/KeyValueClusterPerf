@@ -9,12 +9,11 @@ using namespace std;
 /**
  * Abstract class representing the distribution of values to be written to the database
  */
-class ValueDistribution
-{
-	public:
-		virtual ~ValueDistribution() {};
+class ValueDistribution {
+public:
+  virtual ~ValueDistribution(){};
 
-		virtual string* getNext() = 0;
+  virtual string* getNext() = 0;
 };
 
 #endif

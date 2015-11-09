@@ -12,21 +12,20 @@ using namespace std;
 /**
  * Represents a value distribution with a fixed lenght
  */
-class ConstantValueDistribution : public ValueDistribution
-{
-	public:
-		ConstantValueDistribution(map<string,string> configuration);
-		~ConstantValueDistribution();
+class ConstantValueDistribution : public ValueDistribution {
+public:
+  ConstantValueDistribution(map<string, string> configuration);
+  ~ConstantValueDistribution();
 
-		string* getNext();
+  string* getNext();
 
-	private:
-		/*! size of the generated values */
-		int size;
-		/*! char buffer containing data to be returned when the next value is requested */
-		char* valueBuffer;
-		/*! string representing the value to be returned */
-		string* valueString;
+private:
+  /*! size of the generated values */
+  int size;
+  /*! char buffer containing data to be returned when the next value is requested */
+  char* valueBuffer;
+  /*! string representing the value to be returned */
+  string* valueString;
 };
 
 #endif

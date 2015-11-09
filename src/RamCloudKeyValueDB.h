@@ -15,29 +15,29 @@ using namespace std;
 /**
  * Class handling all key value database operations on a RamCloud cluster
  */
-class RamCloudKeyValueDB : public KeyValueDB
-{
-	public:
-		RamCloudKeyValueDB(map<string,string> configuration);
-		~RamCloudKeyValueDB();
+class RamCloudKeyValueDB : public KeyValueDB {
+public:
+  RamCloudKeyValueDB(map<string, string> configuration);
+  ~RamCloudKeyValueDB();
 
-		void putValue(string key, string* value);
-		string getValue(string key);
-		void deleteValue(string key);
+  void putValue(string key, string* value);
+  string getValue(string key);
+  void deleteValue(string key);
 
-	private:
-		/*! Representation of the communication protocol used to communicate with RamCloud (tcp, udp, fast), see RamCloud documentation */
-		string communicationProtocol;
-		/*! String containing the address of the coordinator, see RamCloud documentation */
-		string coordinatorHost;
-		/*! String containing the port of the coordinator, see RamCloud documentation */
-		string coordinatorPort;
+private:
+  /*! Representation of the communication protocol used to communicate with RamCloud (tcp, udp, fast), see RamCloud
+   * documentation */
+  string communicationProtocol;
+  /*! String containing the address of the coordinator, see RamCloud documentation */
+  string coordinatorHost;
+  /*! String containing the port of the coordinator, see RamCloud documentation */
+  string coordinatorPort;
 
-		//RAMCloud::RamCloud* ramcloudDB;
-		//RAMCloud::Context* ramcloudContext;
+  // RAMCloud::RamCloud* ramcloudDB;
+  // RAMCloud::Context* ramcloudContext;
 
-		/*! table id, see RamCloud documentation */
-		uint64_t tableID;
+  /*! table id, see RamCloud documentation */
+  uint64_t tableID;
 };
 
 #endif
