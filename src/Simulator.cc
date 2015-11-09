@@ -15,13 +15,12 @@
 #include "RamCloudKeyValueDB.h"
 #include "RandomAccessPattern.h"
 #include "ReadOnlyAccessPattern.h"
-#include "RiakCKeyValueDB.h"
 #include "RiakJavaKeyValueDB.h"
 #include "Simulator.h"
 #include "ValueDistribution.h"
 #include "WriteOnlyAccessPattern.h"
 
-Simulator::Simulator(map<string,string> databaseConfiguration, 
+Simulator::Simulator(map<string,string> databaseConfiguration,
 	map<string,string> accessPatternConfiguration,
 	map<string,string> valueDistributionConfiguration,
 	bool skipInitialisation)
@@ -34,10 +33,6 @@ Simulator::Simulator(map<string,string> databaseConfiguration,
 	if(databaseType.compare("RamCloud") == 0)
 	{
 		keyValueDB = new RamCloudKeyValueDB(databaseConfiguration);
-	}
-	else if(databaseType.compare("RiakC") == 0)
-	{
-		keyValueDB = new RiakCKeyValueDB(databaseConfiguration);
 	}
 	else if(databaseType.compare("RiakJava") == 0)
 	{
