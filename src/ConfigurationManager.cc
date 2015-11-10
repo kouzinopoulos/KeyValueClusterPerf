@@ -1,11 +1,12 @@
-// C C++ includes
+// The ConfigurationManager class parses the configuration files
+
 #include <fstream>
 #include <iostream>
 #include <list>
 #include <map>
 #include <string>
 #include <sstream>
-// KeyValueClusterPerf includes
+
 #include "ConfigurationManager.h"
 #include "logger.h"
 

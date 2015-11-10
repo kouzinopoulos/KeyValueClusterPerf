@@ -1,4 +1,4 @@
-// C C++ includes
+
 #include <map>
 #include <list>
 #include <sstream>
@@ -209,6 +209,9 @@ void SimulationController::getAllNodes(string command)
     zmq::message_t reply;
     socket->recv(&reply);
     string replyStr = string(static_cast<char*>(reply.data()), reply.size());
+
+    cout << "Received reply from worker: " << replyStr << endl;
+
     if (replyStr.compare(command) != 0) {
       // Handle error
       LOG_DEBUG("WRONG REPLY");

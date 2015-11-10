@@ -1,13 +1,12 @@
-// C C++ includes
 #include <iostream>
 #include <string>
-// External Library: ZMQ
+
 #include <zmq.hpp>
-// External library: sha1
+
 #include "sha1.h"
-// External library: vmac
+
 #include "vmac.h"
-// KeyValueClusterPerf includes
+
 #include "MessageSender.h"
 #include "logger.h"
 

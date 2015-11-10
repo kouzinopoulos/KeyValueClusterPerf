@@ -1,10 +1,9 @@
-// C C++ includes
 #include <map>
 #include <sstream>
 #include <string>
-// external library: ZMQ
+
 #include <zmq.hpp>
-// KeyValueClusterPerf includes
+
 #include "logger.h"
 #include "ConfigurationManager.h"
 #include "SimulationWorker.h"
@@ -35,16 +34,11 @@ void SimulationWorker::openConnection(int portNum, int dataportNum)
   // Open a command socket
   commandContext = new zmq::context_t(1);
   commandSocket = new zmq::socket_t(*commandContext, ZMQ_PAIR);
-  if (portNum == -1) {
-    portNumber = 5555;
-  } else {
-    portNumber = portNum;
-  }
-  if (dataportNum == -1) {
-    dataportNumber = 5554;
-  } else {
-    dataportNumber = dataportNum;
-  }
+
+  portNumber = (portNum == -1 ? 5555 : portNum);
+
+  dataportNumber = (dataportNum == -1 ? 5554 : dataportNum);
+
   connectionOpen = true;
 }
 
@@ -58,23 +52,26 @@ void SimulationWorker::closeConnection()
 
 void SimulationWorker::listen()
 {
-  // bind the command socket
+  // Open up a command socket
   stringstream ss;
   ss << "tcp://*:" << portNumber;
-  LOG_DEBUG(ss.str());
   commandSocket->bind(ss.str());
-  LOG_DEBUG("Socket bound");
+
+  cout << "Command socket bound on " << ss.str() << endl;
 
   // listen for commands form the controller
   while ((state != EXIT) && (state != ERROR)) {
     zmq::message_t request;
     commandSocket->recv(&request);
-    LOG_DEBUG("Received request");
     string requestStr = string(static_cast<char*>(request.data()), request.size());
+
+    cout << "Received request: " << requestStr << endl;
 
     zmq::message_t* reply;
 
     if (requestStr.compare("INIT") == 0) {
+      LOG_DEBUG("Initializing simulator");
+
       initialiseSimulator();
       reply = new zmq::message_t(8);
       memcpy((void*)reply->data(), "INITDONE", 8);
@@ -94,17 +91,22 @@ void SimulationWorker::listen()
       reply = new zmq::message_t(12);
       memcpy((void*)reply->data(), "RESULTSREADY", 12);
     } else if (requestStr.compare("GETRESULTS") == 0) {
+
       // Report back the results from the simulator
       LOG_DEBUG("Reporting results");
       map<string, string> results = simulator->getResults();
+
       // Open up a data socket
       void* dataContext = zmq_ctx_new();
       void* dataSocket = zmq_socket(dataContext, ZMQ_PAIR);
+
       ss.clear();
       ss.str(string());
       ss << "tcp://*:" << dataportNumber;
-      LOG_DEBUG(ss.str());
       int rc = zmq_bind(dataSocket, ss.str().c_str());
+
+      cout << "Data socket bound on " << ss.str() << endl;
+
       // Buffer to store data in
       char buffer[1024];
       // Generate the data to send
@@ -137,6 +139,8 @@ void SimulationWorker::listen()
     // Send out the reply message
     commandSocket->send(*reply);
     delete reply;
+
+    cout << "Sent reply to controller" << endl;
   }
   if (state == ERROR) {
     LOG_DEBUG("Exited due to error");

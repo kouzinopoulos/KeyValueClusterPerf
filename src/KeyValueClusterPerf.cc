@@ -1,12 +1,11 @@
-// C C++ includes
 #include <map>
 #include <string>
-// Unix OS includes
+
 #include <unistd.h>
 #include <time.h>
-// External library: boost program options
+
 #include "boost/program_options.hpp"
-// KeyValueClusterPerf includes
+
 #include "AccessPattern.h"
 #include "ConfigurationManager.h"
 #include "ConstantValueDistribution.h"
@@ -28,16 +27,19 @@ int main(int argc, char* argv[])
 {
   // boolean variable indicating if this is a controller instance
   bool controller = false;
+
   // standard paths to configuration files
   string databaseCfgPath = "database.cfg";
   string accessPatternCfgPath = "accessPattern.cfg";
   string valueDistributionCfgPath = "valueDistribution.cfg";
   string hostFilePath = "hostFile.cfg";
+
   // initialise values to -1 to detect when no value has been read
   int portNumber = -1;
   int dataportNumber = -1;
   int hostLimit = -1;
   int simulationIteration = -1;
+
   // initialise the variables to be read in
   boost::program_options::variables_map vm;
 
@@ -79,12 +81,15 @@ int main(int argc, char* argv[])
     std::cerr << "Unhandled Exception" << e.what() << std::endl;
     return 1;
   }
+
   // Start a controller or worker instance dependend on the program options
   if (controller) {
+    cout << "Control instance with the following options: " << hostFilePath << " " << hostLimit << " " << simulationIteration << endl;
     SimulationController controller(hostFilePath, hostLimit, simulationIteration);
     controller.connect();
     controller.execute();
   } else {
+    cout << "Simulation instance with the following options: " << databaseCfgPath << " " << accessPatternCfgPath << " " << valueDistributionCfgPath << " " << vm.count("skipinitialisation") << " " << portNumber << " " << dataportNumber << endl;
     SimulationWorker worker(databaseCfgPath, accessPatternCfgPath, valueDistributionCfgPath,
                             vm.count("skipinitialisation"));
     worker.openConnection(portNumber, dataportNumber);

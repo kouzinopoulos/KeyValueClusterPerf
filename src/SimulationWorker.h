@@ -1,12 +1,11 @@
 #ifndef __SIMULATIONWORKER_H__
 #define __SIMULATIONWORKER_H__
 
-// C C++ includes
 #include <string>
-// KeyValueClusterPerf includes
-#include "Simulator.h"
-// External library: ZMQ
+
 #include <zmq.hpp>
+
+#include "Simulator.h"
 
 using namespace std;
 

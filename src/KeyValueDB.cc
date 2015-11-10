@@ -1,7 +1,6 @@
-// C C++ includes
 #include <map>
 #include <string>
-// KeyValueClusterPerf includes
+
 #include "KeyValueDB.h"
 #include "logger.h"
 

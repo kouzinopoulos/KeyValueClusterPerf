@@ -1,14 +1,13 @@
-// C C++ includes
 #include <iostream>
 #include <fstream>
 #include <list>
 #include <map>
 #include <string>
 #include <sstream>
-// Unix OS includes
+
 #include <time.h>
-#include <unistd.h> // to get hostname
-// KeyValueClusterPerf includes
+#include <unistd.h>
+
 #include "ConstantValueDistribution.h"
 #include "DummyKeyValueDB.h"
 #include "logger.h"
@@ -27,6 +26,9 @@ Simulator::Simulator(map<string, string> databaseConfiguration, map<string, stri
   string databaseType = databaseConfiguration["databaseType"];
   string accessPatternType = accessPatternConfiguration["accessPatternType"];
   string valueDistributionType = valueDistributionConfiguration["valueDistributionType"];
+
+  cout << "Requested key/value database of type " << databaseType << endl;
+
   // Create the requested database
   if (databaseType.compare("RamCloud") == 0) {
     keyValueDB = new RamCloudKeyValueDB(databaseConfiguration);
@@ -49,6 +51,7 @@ Simulator::Simulator(map<string, string> databaseConfiguration, map<string, stri
     // The requested accessPattern type does not exist
     // add exception handling
   }
+
   // Create the requested valueDistribution
   if (valueDistributionType.compare("Constant") == 0) {
     LOG_DEBUG("Creating valueDistribution");
@@ -59,7 +62,9 @@ Simulator::Simulator(map<string, string> databaseConfiguration, map<string, stri
     // add exception handling
     LOG_DEBUG("Unknown Value Distribution");
   }
+
   accessPattern->setValueDistribution(valueDistribution);
+
   // Initialise the keyValueDatabase
   if (!skipInitialisation) {
     LOG_DEBUG("Initialise kvdb");
@@ -109,6 +114,7 @@ void Simulator::simulate(int runs)
       keyValueDB->putValue(singleAccess.key, singleAccess.value);
     }
   }
+
   // Get final clock reading and print out difference
   clock_gettime(idMonotonicRaw, &timespecStop);
   double microsecondsTotal = calculateDurationMicroseconds(timespecStart, timespecStop);

@@ -1,14 +1,13 @@
-// C C++ includes
 #include <map>
 #include <string>
 #include <iostream>
 #include <string>
-// External library: RiakJavaClient-Request (protocol buffer)
+
 #include "request.pb.h"
 #include "MessageSender.h"
-// External library: protobuf
+
 #include <google/protobuf/stubs/common.h>
-// KeyValueClusterPerf includes
+
 #include "logger.h"
 #include "RiakJavaKeyValueDB.h"
 
@@ -21,7 +20,8 @@ RiakJavaKeyValueDB::RiakJavaKeyValueDB(map<string, string> configuration)
     securityValue = it->second;
   }
   // Create new message sender
-  LOG_DEBUG(securityValue);
+  cout << "Security value specified: " << securityValue << endl;
+
   messageSender = new MessageSender(securityValue);
 }
 
