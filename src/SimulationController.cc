@@ -1,13 +1,12 @@
-
 #include <map>
 #include <list>
 #include <sstream>
 #include <string>
-// Unix OS includes
+
 #include "errno.h"
-// External library: ZMQ
+
 #include <zmq.hpp>
-// KeyValueClusterPerf includes
+
 #include "ConfigurationManager.h"
 #include "logger.h"
 #include "SimulationController.h"

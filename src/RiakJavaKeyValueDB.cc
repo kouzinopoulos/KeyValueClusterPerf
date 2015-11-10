@@ -33,26 +33,24 @@ RiakJavaKeyValueDB::~RiakJavaKeyValueDB()
 
 void RiakJavaKeyValueDB::putValue(string key, string* value)
 {
-  // create PUT message
+  // Create PUT message
   messaging::RequestMessage* msg = new messaging::RequestMessage;
   msg->set_command("PUT");
   msg->set_key(key);
   msg->set_value(*value);
-  // convert the message to sendable string
+
+  // Serialize the message to a string and send it
   string msgString;
   msg->SerializeToString(&msgString);
-  // send the message
   messageSender->send(msgString);
 
-  // check reply for OK
-  // receive message as string
+  // Receive message as a serialized string and de-serialize it
   string repString = messageSender->receive();
-  // convert to actual message
   messaging::RequestMessage* msgReply = new messaging::RequestMessage;
   msgReply->ParseFromString(repString);
-  // check the replyCommand
+
+  // Check the reply for an "OK" command
   if (msgReply->command().compare("OK") != 0) {
-    // There was an error
     LOG_DEBUG(msgReply->error());
   }
 
@@ -62,13 +60,15 @@ void RiakJavaKeyValueDB::putValue(string key, string* value)
 
 string RiakJavaKeyValueDB::getValue(string key)
 {
-  // create GET message
+  // Create GET message
   messaging::RequestMessage* msg = new messaging::RequestMessage;
   msg->set_command("GET");
   msg->set_key(key);
-  // convert the message to sendable string
+
+  // Serialize the message to a string
   string getmsg;
   msg->SerializeToString(&getmsg);
+
   // send the message
   messageSender->send(getmsg);
 

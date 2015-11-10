@@ -70,12 +70,13 @@ MessageSender::~MessageSender()
 
 void MessageSender::send(string message)
 {
+  // Calculate sha1 of message
   if (sha1Enabled) {
-    // calculate sha1 of message
     sha1Hash = sha1(message);
   }
+
+  // calculate vmac of message
   if (vmacEnabled) {
-    // calculate vmac of message
     // could be even more efficient if string data is alligned in memory
     vmacHash =
       vmac((unsigned char*)message.c_str(), message.length(), (unsigned char*)"\0\0\0\0\0\0\0\0bcdefghi", &tagl, &ctx);

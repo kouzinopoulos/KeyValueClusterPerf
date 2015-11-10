@@ -1,10 +1,9 @@
 #ifndef __SIMULATIONCONTROLLER_H__
 #define __SIMULATIONCONTROLLER_H__
 
-// C C++ includes
 #include <list>
 #include <string>
-// External library: ZMQ
+
 #include <zmq.hpp>
 
 using namespace std;
