@@ -1,11 +1,10 @@
 #ifndef __MESSAGESENDER_H__
 #define __MESSAGESENDER_H__
 
-// C C++ includes
 #include <string>
-// External library: ZMQ
+
 #include <zmq.hpp>
-// External library: vmac
+
 #include "vmac.h"
 
 using namespace std;
@@ -29,8 +28,9 @@ public:
   uint64_t vmacHash;
 
 private:
-  zmq::context_t* context;
-  zmq::socket_t* socket;
+  void* mContext;
+  void* mSocket;
+
   bool sha1Enabled;
   bool vmacEnabled;
   // vmac security
