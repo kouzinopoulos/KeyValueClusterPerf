@@ -46,7 +46,7 @@ MessageSender::MessageSender(string security, std::string brokerIP)
   }
 
   // Connect to the broker node
-  if (zmq_connect(mSocket, brokerIP) != 0) {
+  if (zmq_connect(mSocket, brokerIP.c_str()) != 0) {
     cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
     exit(-1);
   }
