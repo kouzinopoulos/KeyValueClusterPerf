@@ -17,7 +17,7 @@ using namespace std;
  */
 class MessageSender {
 public:
-  MessageSender(string security);
+  MessageSender(string security, std::string brokerIP);
   ~MessageSender();
 
   void send(string message);

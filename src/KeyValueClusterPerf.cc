@@ -84,12 +84,10 @@ int main(int argc, char* argv[])
 
   // Start a controller or worker instance dependend on the program options
   if (controller) {
-    cout << "Control instance with the following options: " << hostFilePath << " " << hostLimit << " " << simulationIteration << endl;
     SimulationController controller(hostFilePath, hostLimit, simulationIteration);
     controller.connect();
     controller.execute();
   } else {
-    cout << "Simulation instance with the following options: " << databaseCfgPath << " " << accessPatternCfgPath << " " << valueDistributionCfgPath << " " << vm.count("skipinitialisation") << " " << portNumber << " " << dataportNumber << endl;
     SimulationWorker worker(databaseCfgPath, accessPatternCfgPath, valueDistributionCfgPath,
                             vm.count("skipinitialisation"));
     worker.openConnection(portNumber, dataportNumber);

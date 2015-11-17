@@ -13,16 +13,24 @@
 
 RiakJavaKeyValueDB::RiakJavaKeyValueDB(map<string, string> configuration)
 {
+  // Check if there is a security setting in the database configuration file
   string securityValue = "none";
-  // Check if there is a security setting
   map<string, string>::iterator it = configuration.find("security");
   if (it != configuration.end()) {
     securityValue = it->second;
   }
-  // Create new message sender
   cout << "Security value specified: " << securityValue << endl;
 
-  messageSender = new MessageSender(securityValue);
+  // Check if there is an IP specified for the broker in the database configuration file
+  std::string brokerIP = "127.0.0.1";
+  it = configuration.find("brokerIP");
+  if (it != configuration.end()) {
+    brokerIP = it->second;
+  }
+  cout << "Broker IP specified: " << brokerIP << endl;
+
+  // Create new message sender
+  messageSender = new MessageSender(securityValue, brokerIP);
 }
 
 RiakJavaKeyValueDB::~RiakJavaKeyValueDB()

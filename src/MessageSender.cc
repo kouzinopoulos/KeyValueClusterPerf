@@ -10,7 +10,7 @@
 #include "MessageSender.h"
 #include "logger.h"
 
-MessageSender::MessageSender(string security)
+MessageSender::MessageSender(string security, std::string brokerIP)
 {
   // store security settings (use two boolean values for rapid evaluation)
   sha1Enabled = false;
@@ -45,8 +45,8 @@ MessageSender::MessageSender(string security)
     exit(-1);
   }
 
-  // Connect to the broker node cernvm22
-  if (zmq_connect(mSocket, "tcp://137.138.234.128:5559") != 0) {
+  // Connect to the broker node
+  if (zmq_connect(mSocket, brokerIP) != 0) {
     cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
     exit(-1);
   }
