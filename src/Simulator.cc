@@ -122,7 +122,8 @@ void Simulator::simulate(int runs)
   duration = microsecondsTotal;
   stringstream ss;
   ss << microsecondsPerOperation;
-  LOG_RESULTS(ss.str());
+
+  cout << "Time elapsed: " << ss.str() << " μs" << endl;
 }
 
 // some code duplication to prevent simulation function from being slowed down

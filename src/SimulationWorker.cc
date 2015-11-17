@@ -70,7 +70,7 @@ void SimulationWorker::listen()
     zmq::message_t* reply;
 
     if (requestStr.compare("INIT") == 0) {
-      LOG_DEBUG("Initializing simulator");
+      cout << "Initializing simulator" << endl;
 
       initialiseSimulator();
       reply = new zmq::message_t(8);
@@ -78,13 +78,13 @@ void SimulationWorker::listen()
     } else if (requestStr.compare("GO") == 0) {
       // request to start simulation received
       // Burn in
-      LOG_DEBUG("Burning in");
+      cout << "Burning in" << endl;
       simulator->burnInOut(75);
       // Run simulation
-      LOG_DEBUG("Simulating");
+      cout << "Simulating" << endl;
       runSimulation();
       // Burn out
-      LOG_DEBUG("Burning out");
+      cout << "Burning out" << endl;
       simulator->burnInOut(75);
       // Simulation finished change state to result
       state = RESULTS;
@@ -93,7 +93,7 @@ void SimulationWorker::listen()
     } else if (requestStr.compare("GETRESULTS") == 0) {
 
       // Report back the results from the simulator
-      LOG_DEBUG("Reporting results");
+      cout << "Reporting results" << endl;
       map<string, string> results = simulator->getResults();
 
       // Open up a data socket
