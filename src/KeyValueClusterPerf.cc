@@ -35,8 +35,8 @@ int main(int argc, char* argv[])
   string hostFilePath = "hostFile.cfg";
 
   // initialise values to -1 to detect when no value has been read
-  int portNumber = -1;
-  int dataportNumber = -1;
+  int commandPortNumber = -1;
+  int dataPortNumber = -1;
   int hostLimit = -1;
   int simulationIteration = -1;
 
@@ -53,8 +53,8 @@ int main(int argc, char* argv[])
       "Path to the database configuration file")("accesspatterncfg",
                                                  boost::program_options::value<string>(&accessPatternCfgPath),
                                                  "Path to the accessPattern configuraiton file")(
-      "port", boost::program_options::value<int>(&portNumber), "Port number if not using default port")(
-      "dport", boost::program_options::value<int>(&dataportNumber), "Data port number if not using default port")(
+      "port", boost::program_options::value<int>(&commandPortNumber), "Port number if not using default port")(
+      "dport", boost::program_options::value<int>(&dataPortNumber), "Data port number if not using default port")(
       "hostlimit", boost::program_options::value<int>(&hostLimit), "Maximum number of hosts to simulate")(
       "simiteration", boost::program_options::value<int>(&simulationIteration), "Current simulation iteration")(
       "skipinitialisation", "Indicate wether to do initialisation procedure")(
@@ -89,8 +89,7 @@ int main(int argc, char* argv[])
     controller.execute();
   } else {
     SimulationWorker worker(databaseCfgPath, accessPatternCfgPath, valueDistributionCfgPath,
-                            vm.count("skipinitialisation"));
-    worker.openConnection(portNumber, dataportNumber);
+                            vm.count("skipinitialisation"), commandPortNumber, dataPortNumber);
     worker.listen();
   }
 }

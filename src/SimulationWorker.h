@@ -19,13 +19,9 @@ enum SimulatorState { START, RESULTS, EXIT, ERROR, DONE };
  */
 class SimulationWorker {
 public:
-  SimulationWorker(string databaseCfgPath, string accessPatternCfgPath, string valueDistributionCfgPath, bool skipInit);
+  SimulationWorker(string databaseCfgPath, string accessPatternCfgPath, string valueDistributionCfgPath, bool skipInit, int commandPortNumber, int dataPortNumber);
   ~SimulationWorker();
 
-  /*! Opens a port so that the controller can connect to it */
-  void openConnection(int portNum, int dataportNum);
-  /*! Close the connection to the controller */
-  void closeConnection();
   /*! Listen for commands from the controller */
   void listen();
 
@@ -42,17 +38,25 @@ private:
   string accessPatternCfgPath;
   /*! Path to the configuration file for the value distribution */
   string valueDistributionCfgPath;
-  /*! Indicate if a connection is open */
-  bool connectionOpen;
+
+  /*! Opens a port so that the controller can connect to it */
+  void openCommandConnection();
+
+  /*! Opens a data port and sends the results buffer to the controlelr node */
+  void sendData(char* buffer);
 
   /*! ZMQ Context to send commands over */
-  zmq::context_t* commandContext;
+  void* mCommandContext;
   /*! ZMQ Socket to send commands over */
-  zmq::socket_t* commandSocket;
+  void* mCommandSocket;
+  /*! ZMQ Context to send data over */
+  void* mDataContext;
+  /*! ZMQ Socket to send data over */
+  void* mDataSocket;
   /*! Port to receive commands through */
-  int portNumber;
+  int mCommandPortNumber;
   /*! Port to send data through */
-  int dataportNumber;
+  int mDataPortNumber;
 
   /*! indicates wether to do the initialisation step (performance increase), at least one worker should do
    * initialisation */
