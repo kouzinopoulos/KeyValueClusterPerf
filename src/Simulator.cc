@@ -8,6 +8,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "boost/date_time/posix_time/posix_time.hpp"
+
 #include "ConstantValueDistribution.h"
 #include "DummyKeyValueDB.h"
 #include "logger.h"
@@ -102,6 +104,7 @@ void Simulator::simulate(int runs)
   struct timespec timespecStart;
   struct timespec timespecStop;
 
+  boost::posix_time::ptime before = boost::posix_time::microsec_clock::local_time();
   clock_gettime(idMonotonicRaw, &timespecStart);
   // Do the actual simulation
   for (int i = 0; i < runs; i++) {
@@ -117,6 +120,8 @@ void Simulator::simulate(int runs)
 
   // Get final clock reading and print out difference
   clock_gettime(idMonotonicRaw, &timespecStop);
+  boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+
   double microsecondsTotal = calculateDurationMicroseconds(timespecStart, timespecStop);
   double microsecondsPerOperation = microsecondsTotal / runs;
   duration = microsecondsTotal;
@@ -124,6 +129,7 @@ void Simulator::simulate(int runs)
   ss << microsecondsPerOperation;
 
   cout << "Time elapsed: " << microsecondsTotal << " μs. Time per run: " << microsecondsTotal / runs << " μs." << endl;
+  cout << "Latency: " << (now - before).total_microseconds() << " µs " << (now - before).total_milliseconds() << " ms" << endl;
 }
 
 // some code duplication to prevent simulation function from being slowed down
