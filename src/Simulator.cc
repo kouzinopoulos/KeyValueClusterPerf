@@ -128,8 +128,11 @@ void Simulator::simulate(int runs)
   stringstream ss;
   ss << microsecondsPerOperation;
 
-  cout << "Time elapsed: " << microsecondsTotal << " μs. Time per run: " << microsecondsTotal / runs << " μs." << endl;
-  cout << "Latency: " << (now - before).total_microseconds() << " µs " << (now - before).total_milliseconds() << " ms" << endl;
+  cout << "Time elapsed: " << microsecondsTotal << "μs. Time per run: " << microsecondsTotal / runs << "μs." << endl;
+  cout << "Latency for " << runs << " runs: " << (now - before).total_microseconds() << "µs "
+       << (now - before).total_milliseconds() << "ms " << (now - before).total_seconds()
+       << "s. Latency per run: " << (now - before).total_microseconds() / runs << "µs "
+       << (now - before).total_milliseconds() / runs << "ms " << (now - before).total_seconds() / runs << "s." << endl;
 }
 
 // some code duplication to prevent simulation function from being slowed down
