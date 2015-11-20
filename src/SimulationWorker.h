@@ -19,7 +19,8 @@ enum SimulatorState { START, RESULTS, EXIT, ERROR, DONE };
  */
 class SimulationWorker {
 public:
-  SimulationWorker(string databaseCfgPath, string accessPatternCfgPath, string valueDistributionCfgPath, bool skipInit, int commandPortNumber, int dataPortNumber);
+  SimulationWorker(string databaseCfgPath, string accessPatternCfgPath, string valueDistributionCfgPath, bool skipInit,
+                   int commandPortNumber, int dataPortNumber);
   ~SimulationWorker();
 
   /*! Listen for commands from the controller */

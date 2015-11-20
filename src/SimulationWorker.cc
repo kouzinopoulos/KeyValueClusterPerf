@@ -9,7 +9,8 @@
 #include "SimulationWorker.h"
 #include "Simulator.h"
 
-SimulationWorker::SimulationWorker(string db, string ap, string vd, bool skipInit, int commandPortNumber, int dataPortNumber)
+SimulationWorker::SimulationWorker(string db, string ap, string vd, bool skipInit, int commandPortNumber,
+                                   int dataPortNumber)
 {
   // databaseCfgPath = db;
   // accessPatternCfgPath = ap;
