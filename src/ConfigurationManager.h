@@ -8,6 +8,11 @@
 
 using namespace std;
 
+typedef struct Configuration {
+  list<string> commandHosts;
+  list<string> dataHosts;
+} Configuration_t;
+
 /**
  * ConfigurationManager contains all functionality to read and write configuration files
  * used in AccessPattern, KeyValueDB and ValueDistribution as well as reading in the hostfile in SimulationController

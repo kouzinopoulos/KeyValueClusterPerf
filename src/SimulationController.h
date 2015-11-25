@@ -14,7 +14,7 @@ using namespace std;
  */
 class SimulationController {
 public:
-  SimulationController(string hostFilePath, int hostLimit, int simIteration);
+  SimulationController(int simulationIteration, string distributionType, string accessPattern, int minKey, int maxKey, float readWriteRatio, int objectSize, Configuration* _config);
   ~SimulationController();
 
   /*! Connect to all hosts specified in the host file */
@@ -37,10 +37,9 @@ private:
   zmq::context_t* commandContext;
   /*! ZMQ socket to send commands over */
   list<zmq::socket_t*> commandSockets;
-  /*! list of all hosts with their command port */
-  list<string> hosts;
-  /*! list of all hosts with their data port */
-  list<string> dataHosts;
+
+  /*! Pointer to the configuration */
+  Configuration* mConfiguration;
 
   /*! Current iteration of the simulation */
   int simulationIteration;

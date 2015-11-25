@@ -12,77 +12,14 @@
 #include "SimulationController.h"
 #include "Simulator.h"
 
-SimulationController::SimulationController(string hostFilePath, int hostLimit, int simIteration)
+SimulationController::SimulationController(int simulationIteration, string distributionType,
+                                           string accessPattern, int minKey, int maxKey, float readWriteRatio,
+                                           int objectSize, Configuration* _config)
 {
   // determine which iteration this is
-  simulationIteration = simIteration;
-  // initialise connected state
-  connected = false;
-  // read in host file data
-  ConfigurationManager cm;
-  list<string> hostNames = cm.readHostFile(hostFilePath);
-  stringstream ss;
+  this->simulationIteration = simulationIteration;
 
-  // parse host file
-  int numberOfHosts = 0;
-  for (list<string>::iterator it = hostNames.begin(); it != hostNames.end(); it++) {
-    // if it starts with '#', it's a comment, ignore it
-    if ((*it).compare(0, 1, "#") != 0) {
-      // split on ':'
-      size_t splitPosition;
-      if ((splitPosition = (*it).find(":")) != string::npos) {
-        string host = (*it).substr(0, splitPosition);
-        string ports = (*it).substr(splitPosition + 1, string::npos);
-        // split on '|'
-        if ((splitPosition = ports.find("|")) != string::npos) {
-          // parse a portMin|portMax|dataMin string = a|b|c
-          string a = ports.substr(0, splitPosition);
-          string bc = ports.substr(splitPosition + 1, string::npos);
-          // split on '|'
-          if ((splitPosition = bc.find("|")) != string::npos) {
-            string b = bc.substr(0, splitPosition);
-            string c = bc.substr(splitPosition + 1, string::npos);
-
-            // parse strings to int
-            int minPort;
-            int maxPort;
-            int dataMinPort;
-
-            ss.str(a);
-            ss >> minPort;
-            ss.clear();
-            ss.str(b);
-            ss >> maxPort;
-            ss.clear();
-            ss.str(c);
-            ss >> dataMinPort;
-            ss.clear();
-
-            ss.str(string());
-            // Generate host address and add it to the list
-            for (int i = 0; i <= (maxPort - minPort); i++) {
-              if ((hostLimit == -1) || (numberOfHosts < hostLimit)) {
-                // generate and store commandhost address
-                ss << "tcp://" << host << ":" << (minPort + i);
-                hosts.push_back(ss.str());
-                LOG_DEBUG(ss.str());
-                ss.clear();
-                ss.str(string());
-                // generate and store datahost address
-                ss << "tcp://" << host << ":" << (dataMinPort + i);
-                dataHosts.push_back(ss.str());
-                ss.clear();
-
-                ss.str(string());
-
-                numberOfHosts++;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  mConfiguration = _config;
 }
 
 SimulationController::~SimulationController()
@@ -97,7 +34,8 @@ void SimulationController::connect()
 {
   // Connect to all commmand sockets
   commandContext = new zmq::context_t(1);
-  for (list<string>::iterator it = hosts.begin(); it != hosts.end(); it++) {
+  for (list<string>::iterator it = mConfiguration->commandHosts.begin(); it != mConfiguration->commandHosts.end(); it++) {
+    cout << "connecting to host..." << endl;
     zmq::socket_t* socket = new zmq::socket_t(*commandContext, ZMQ_PAIR);
     socket->connect(*it);
     commandSockets.push_back(socket);
@@ -142,10 +80,10 @@ void SimulationController::execute()
     void* dataContext = zmq_ctx_new();
     void* dataSocket = zmq_socket(dataContext, ZMQ_PAIR);
     stringstream sshost;
-    string hostlocation = dataHosts.front();
+    string hostlocation = mConfiguration->dataHosts.front();
     LOG_DEBUG(hostlocation);
     zmq_connect(dataSocket, hostlocation.c_str());
-    dataHosts.pop_front();
+    mConfiguration->dataHosts.pop_front();
     // Receive the data
     char buffer[1024];
     int num = zmq_recv(dataSocket, buffer, 1024, 0);
