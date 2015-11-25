@@ -232,7 +232,8 @@ void SimulationWorker::listen()
 void SimulationWorker::initialiseSimulator()
 {
   // Create the simulator
-  simulator = new Simulator(databaseConfiguration, accessPatternConfiguration, valueDistribution, skipInitialisation);
+  // string databaseType, string accessPatternType, string valueDistributionType
+  simulator = new Simulator(skipInitialisation);
 }
 
 void SimulationWorker::deinitialiseSimulator() { delete simulator; }

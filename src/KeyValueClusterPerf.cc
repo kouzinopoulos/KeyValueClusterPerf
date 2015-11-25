@@ -49,7 +49,53 @@ typedef struct DeviceOptions {
 
 } DeviceOptions_t;
 
-void parseXML(const std::string& filename, Configuration* _config, int hostLimit)
+void parseControllerXML(const std::string& filename, Configuration* _config, int hostLimit)
+{
+
+  // Create empty property tree object
+  using boost::property_tree::ptree;
+  ptree pt;
+
+  // Load XML file and put its contents in property tree.
+  read_xml(filename, pt);
+
+  BOOST_FOREACH (ptree::value_type& v, pt.get_child("hosts")) {
+    if (v.first == "host") {
+      int firstCommandPort = v.second.get<int>("firstCommandPort");
+      int firstDataPort = v.second.get<int>("firstDataPort");
+      int numberOfNodes = v.second.get<int>("numberOfNodes");
+      std::string nodeAddress = v.second.get<std::string>("nodeAddress");
+
+      stringstream ss;
+
+      // generate and store command and data address
+      for (int i = 0; i < numberOfNodes; i++) {
+
+        // Use hostLimit if available
+        if (hostLimit > 0 && i >= hostLimit) {
+          break;
+        }
+
+        ss << "tcp://" << nodeAddress << ":" << (firstCommandPort + i);
+        _config->commandHosts.push_back(ss.str());
+
+        ss.clear();
+        ss.str(string());
+
+        ss << "tcp://" << nodeAddress << ":" << (firstDataPort + i);
+
+        _config->dataHosts.push_back(ss.str());
+
+        ss.clear();
+        ss.str(string());
+      }
+    }
+  }
+
+  cout << "Addedd " << _config->dataHosts.size() << " hosts from the XML file" << endl;
+}
+
+void parseWorkerXML(const std::string& filename, Configuration* _config, int hostLimit)
 {
 
   // Create empty property tree object
@@ -199,7 +245,7 @@ int main(int argc, char* argv[])
   // Container for the XML configuration file
   Configuration_t config;
 
-  parseXML("hostFile.xml", &config , options.hostLimit);
+  parseControllerXML("workerConfiguration.xml", &config , options.hostLimit);
 
   // Start a controller or worker instance dependend on the program options
   if (options.controller) {

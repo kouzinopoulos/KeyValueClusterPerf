@@ -21,14 +21,8 @@
 #include "ValueDistribution.h"
 #include "WriteOnlyAccessPattern.h"
 
-Simulator::Simulator(map<string, string> databaseConfiguration, map<string, string> accessPatternConfiguration,
-                     map<string, string> valueDistributionConfiguration, bool skipInitialisation)
+Simulator::Simulator(string databaseType, string accessPatternType, string valueDistributionType, bool skipInitialisation)
 {
-  // Get the types to initialise from the configuration file
-  string databaseType = databaseConfiguration["databaseType"];
-  string accessPatternType = accessPatternConfiguration["accessPatternType"];
-  string valueDistributionType = valueDistributionConfiguration["valueDistributionType"];
-
   cout << "Requested key/value database of type " << databaseType << endl;
 
   // Create the requested database

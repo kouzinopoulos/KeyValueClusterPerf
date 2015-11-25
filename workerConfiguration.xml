@@ -1,0 +1,17 @@
+<worker>
+  <accessPattern>
+    <type>Random</type>
+    <minKey>1</minKey>
+    <maxKey>1000</maxKey>
+    <readWriteRatio>3.33</readWriteRatio>
+  </accessPattern>
+  <database>hgfhfg
+    <type>RiakJava</type>hgfhfg
+    <security>none</security>
+    <broker>tcp://127.0.0.1:5559</broker>
+  </database>
+  <valueDistribution>
+    <type>Constant</type>
+    <size>1000</security>
+  </valueDistribution>
+</worker>
