@@ -9,14 +9,8 @@
 #include "SimulationWorker.h"
 #include "Simulator.h"
 
-SimulationWorker::SimulationWorker(string db, string ap, string vd, bool skipInit, int commandPortNumber,
-                                   int dataPortNumber)
+SimulationWorker::SimulationWorker(bool skipInit, int commandPortNumber, int dataPortNumber)
 {
-  // databaseCfgPath = db;
-  // accessPatternCfgPath = ap;
-  databaseCfgPath = "database.cfg";
-  accessPatternCfgPath = "accessPattern.cfg";
-  valueDistributionCfgPath = "valueDistribution.cfg";
   state = START;
   skipInitialisation = skipInit;
 
@@ -237,13 +231,6 @@ void SimulationWorker::listen()
 
 void SimulationWorker::initialiseSimulator()
 {
-  ConfigurationManager cm;
-  // Create database configuration
-  map<string, string> databaseConfiguration = cm.readFile(databaseCfgPath);
-  // Create accessPattern configuration
-  map<string, string> accessPatternConfiguration = cm.readFile(accessPatternCfgPath);
-  // Create valueDistribution configuration
-  map<string, string> valueDistribution = cm.readFile(valueDistributionCfgPath);
   // Create the simulator
   simulator = new Simulator(databaseConfiguration, accessPatternConfiguration, valueDistribution, skipInitialisation);
 }

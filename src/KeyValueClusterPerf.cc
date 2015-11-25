@@ -201,45 +201,6 @@ int main(int argc, char* argv[])
 
   parseXML("hostFile.xml", &config , options.hostLimit);
 
-  /*
-
-    // read in the variables
-    try {
-      boost::program_options::options_description desc("Options");
-      desc.add_options()("help", "Request help message")("controller", "Indicate this instance is the controller node")(
-        "databasecfg", boost::program_options::value<string>(&databaseCfgPath),
-        "Path to the database configuration file")("accesspatterncfg",
-                                                   boost::program_options::value<string>(&accessPatternCfgPath),
-                                                   "Path to the accessPattern configuraiton file")(
-        "port", boost::program_options::value<int>(&commandPortNumber), "Port number if not using default port")(
-        "dport", boost::program_options::value<int>(&dataPortNumber), "Data port number if not using default port")(
-        "hostlimit", boost::program_options::value<int>(&hostLimit), "Maximum number of hosts to simulate")(
-        "simiteration", boost::program_options::value<int>(&simulationIteration), "Current simulation iteration")(
-        "skipinitialisation", "Indicate wether to do initialisation procedure")(
-        "hostfile", boost::program_options::value<string>(&hostFilePath), "Path to the hostfile");
-      try {
-        boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-        if (vm.count("help")) {
-          std::cout << "Performance measurement of key value stores" << std::endl << desc << std::endl;
-          return 0;
-        }
-        boost::program_options::notify(vm);
-      }
-      catch (boost::program_options::error& e) {
-        std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
-        std::cerr << desc << std::endl;
-        return 1;
-      }
-      // Parse input into settings
-      if (vm.count("controller")) {
-        controller = true;
-      }
-    }
-    catch (std::exception& e) {
-      std::cerr << "Unhandled Exception" << e.what() << std::endl;
-      return 1;
-    }
-*/
   // Start a controller or worker instance dependend on the program options
   if (options.controller) {
     SimulationController controller(options.simulationIteration, options.distributionType,
@@ -247,26 +208,8 @@ int main(int argc, char* argv[])
                                     options.objectSize, &config);
     controller.connect();
     controller.execute();
-  }
-  /*
-    int hostLimit = 0;
-    int simIteration = 0;
-
-    string distributionType;
-    string accessPattern;
-
-    int minKey;
-    int maxKey;
-
-    float readWriteRatio;
-
-    int objectSize;
-  */
-  /* else {
-    SimulationWorker worker(databaseCfgPath, accessPatternCfgPath, valueDistributionCfgPath,
-                            options.initialization, options.commandPort, options.dataPort);
+  } else {
+    SimulationWorker worker(options.initialization, options.commandPort, options.dataPort);
     worker.listen();
   }
-
-  */
 }
