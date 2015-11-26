@@ -14,7 +14,7 @@ using namespace std;
  */
 class SimulationController {
 public:
-  SimulationController(int simulationIteration, string distributionType, string accessPattern, int minKey, int maxKey, float readWriteRatio, int objectSize, Configuration* _config);
+  SimulationController(Configuration* _config);
   ~SimulationController();
 
   /*! Connect to all hosts specified in the host file */

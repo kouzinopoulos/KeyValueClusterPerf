@@ -12,9 +12,7 @@
 #include "SimulationController.h"
 #include "Simulator.h"
 
-SimulationController::SimulationController(int simulationIteration, string distributionType,
-                                           string accessPattern, int minKey, int maxKey, float readWriteRatio,
-                                           int objectSize, Configuration* _config)
+SimulationController::SimulationController(Configuration* _config)
 {
   // determine which iteration this is
   this->simulationIteration = simulationIteration;

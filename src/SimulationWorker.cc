@@ -9,13 +9,12 @@
 #include "SimulationWorker.h"
 #include "Simulator.h"
 
-SimulationWorker::SimulationWorker(bool skipInit, int commandPortNumber, int dataPortNumber)
+SimulationWorker::SimulationWorker(Configuration* _config)
 {
   state = START;
-  skipInitialisation = skipInit;
 
-  mCommandPortNumber = (commandPortNumber == -1 ? 5555 : commandPortNumber);
-  mDataPortNumber = (dataPortNumber == -1 ? 5554 : dataPortNumber);
+  mCommandPortNumber = (_config->commandPort == -1 ? 5555 : _config->commandPort);
+  mDataPortNumber = (_config->dataPort == -1 ? 5554 : _config->dataPort);
 }
 
 SimulationWorker::~SimulationWorker()
@@ -232,8 +231,7 @@ void SimulationWorker::listen()
 void SimulationWorker::initialiseSimulator()
 {
   // Create the simulator
-  // string databaseType, string accessPatternType, string valueDistributionType
-  simulator = new Simulator(skipInitialisation);
+  simulator = new Simulator(&config);
 }
 
 void SimulationWorker::deinitialiseSimulator() { delete simulator; }

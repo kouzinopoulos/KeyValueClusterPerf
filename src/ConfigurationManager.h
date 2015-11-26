@@ -9,8 +9,36 @@
 using namespace std;
 
 typedef struct Configuration {
+
+  // Controller node configuration options
+  bool controller = false;
+
   list<string> commandHosts;
   list<string> dataHosts;
+
+  int hostLimit = -1;
+  int simulationIteration = -1;
+
+
+  // Worker node configuration options
+  bool worker = false;
+
+  bool initialization = false;
+
+  int commandPort = 0;
+  int dataPort = 0;
+
+  std::string accessPatternType;
+  int accessPatternMinKey;
+  int accessPatternMaxKey;
+  float accessPatternReadWriteRatio;
+
+  std::string databaseType;
+  std::string databaseSecurity;
+  std::string databaseBroker;
+
+  std::string valueDistributionType;
+  int valueDistributionSize;
 } Configuration_t;
 
 /**

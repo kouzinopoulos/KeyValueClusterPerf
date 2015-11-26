@@ -5,6 +5,7 @@
 
 #include <zmq.hpp>
 
+#include "ConfigurationManager.h"
 #include "Simulator.h"
 
 using namespace std;
@@ -19,7 +20,7 @@ enum SimulatorState { START, RESULTS, EXIT, ERROR, DONE };
  */
 class SimulationWorker {
 public:
-  SimulationWorker(bool skipInit, int commandPortNumber, int dataPortNumber);
+  SimulationWorker(Configuration* _config);
   ~SimulationWorker();
 
   /*! Listen for commands from the controller */
@@ -52,9 +53,6 @@ private:
   /*! Port to send data through */
   int mDataPortNumber;
 
-  /*! indicates wether to do the initialisation step (performance increase), at least one worker should do
-   * initialisation */
-  bool skipInitialisation;
   /*! Simulator to perform simulation */
   Simulator* simulator;
   /*! Used by the node to start a simulation */

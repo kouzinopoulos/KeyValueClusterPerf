@@ -5,13 +5,13 @@
     <maxKey>1000</maxKey>
     <readWriteRatio>3.33</readWriteRatio>
   </accessPattern>
-  <database>hgfhfg
-    <type>RiakJava</type>hgfhfg
+  <database>
+    <type>RiakJava</type>
     <security>none</security>
     <broker>tcp://127.0.0.1:5559</broker>
   </database>
   <valueDistribution>
     <type>Constant</type>
-    <size>1000</security>
+    <size>1000</size>
   </valueDistribution>
 </worker>

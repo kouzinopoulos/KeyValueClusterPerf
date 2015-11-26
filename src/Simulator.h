@@ -20,7 +20,7 @@ using namespace std;
 class Simulator {
 public:
   /*! Constructor for worker node to pass the configuration */
-  Simulator(string databaseType, string accessPatternType, string valueDistributionType, bool skipInitialisation);
+  Simulator(Configuration* _config);
   /*! Separate contructor for controller because it does not use any configuration */
   Simulator();
   ~Simulator();
