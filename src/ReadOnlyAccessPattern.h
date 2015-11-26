@@ -1,11 +1,11 @@
 #ifndef __READONLYACCESSPATTERN_H__
 #define __READONLYACCESSPATTERN_H__
 
-// C C++ includes
 #include <map>
 #include <string>
-// KeyValueClusterPerf includes
+
 #include "AccessPattern.h"
+#include "ConfigurationManager.h"
 
 using namespace std;
 
@@ -14,7 +14,7 @@ using namespace std;
  */
 class ReadOnlyAccessPattern : public AccessPattern {
 public:
-  ReadOnlyAccessPattern(map<string, string> configuration);
+  ReadOnlyAccessPattern(Configuration* _config);
   ~ReadOnlyAccessPattern();
 
   SingleAccess getNext();

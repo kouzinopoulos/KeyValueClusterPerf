@@ -15,7 +15,7 @@ using namespace std;
  */
 class DummyKeyValueDB : public KeyValueDB {
 public:
-  DummyKeyValueDB(map<string, string> configuration);
+  DummyKeyValueDB();
   ~DummyKeyValueDB();
 
   void putValue(string key, string* value);

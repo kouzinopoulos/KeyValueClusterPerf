@@ -4,7 +4,7 @@
 // KeyValueClusterPerf includes
 #include "DummyKeyValueDB.h"
 
-DummyKeyValueDB::DummyKeyValueDB(map<string, string> configuration)
+DummyKeyValueDB::DummyKeyValueDB()
 {
   // Dummy, do nothing
 }

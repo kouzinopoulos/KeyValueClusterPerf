@@ -5,10 +5,10 @@
 #include "ValueDistribution.h"
 #include "ConstantValueDistribution.h"
 
-ConstantValueDistribution::ConstantValueDistribution(map<string, string> configuration)
+ConstantValueDistribution::ConstantValueDistribution(Configuration* _config)
 {
   // Read in the size of the values
-  size = strtol(configuration["size"].c_str(), NULL, 10) + 1;
+  size = _config->valueDistributionSize;
   // create a buffer to store the values and fill it
   valueBuffer = new char[size];
   memset(valueBuffer, 'X', size - 1);

@@ -9,7 +9,7 @@
 #include "KeyValueDB.h"
 #include "RamCloudKeyValueDB.h"
 
-RamCloudKeyValueDB::RamCloudKeyValueDB(map<string, string> configuration)
+RamCloudKeyValueDB::RamCloudKeyValueDB()
 {
   /*	// Generate coordinatorLocator string
     string coordinatorLocator;

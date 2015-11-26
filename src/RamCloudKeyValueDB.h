@@ -17,7 +17,7 @@ using namespace std;
  */
 class RamCloudKeyValueDB : public KeyValueDB {
 public:
-  RamCloudKeyValueDB(map<string, string> configuration);
+  RamCloudKeyValueDB();
   ~RamCloudKeyValueDB();
 
   void putValue(string key, string* value);

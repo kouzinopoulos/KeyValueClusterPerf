@@ -1,11 +1,11 @@
 #ifndef __RANDOMACCESSPATTERN_H__
 #define __RANDOMACCESSPATTERN_H__
 
-// C C++ includes
 #include <map>
 #include <string>
-// KeyValueClusterPerf includes
+
 #include "AccessPattern.h"
+#include "ConfigurationManager.h"
 
 using namespace std;
 
@@ -14,7 +14,7 @@ using namespace std;
  */
 class RandomAccessPattern : public AccessPattern {
 public:
-  RandomAccessPattern(map<string, string> configuration);
+  RandomAccessPattern(Configuration* _config);
   ~RandomAccessPattern();
 
   SingleAccess getNext();

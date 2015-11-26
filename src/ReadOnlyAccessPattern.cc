@@ -7,11 +7,12 @@
 #include "logger.h"
 #include "ReadOnlyAccessPattern.h"
 
-ReadOnlyAccessPattern::ReadOnlyAccessPattern(map<string, string> configuration)
+ReadOnlyAccessPattern::ReadOnlyAccessPattern(Configuration* _config)
 {
   // Read in range of key values to be used in base 10
-  minKey = strtol(configuration["minKey"].c_str(), NULL, 10);
-  maxKey = strtol(configuration["maxKey"].c_str(), NULL, 10);
+  minKey = _config->accessPatternMinKey;
+  minKey = _config->accessPatternMaxKey;
+
   // initialise random seed, this could also be a configuration to make it deterministic
   srand(time(NULL));
 }

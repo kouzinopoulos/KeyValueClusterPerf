@@ -31,7 +31,7 @@ typedef struct Configuration {
   std::string accessPatternType;
   int accessPatternMinKey;
   int accessPatternMaxKey;
-  float accessPatternReadWriteRatio;
+  double accessPatternReadWriteRatio;
 
   std::string databaseType;
   std::string databaseSecurity;

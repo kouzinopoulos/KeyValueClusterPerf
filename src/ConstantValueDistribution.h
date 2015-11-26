@@ -1,10 +1,10 @@
 #ifndef __CONSTANTVALUEDISTRIBUTION_H__
 #define __CONSTANTVALUEDISTRIBUTION_H__
 
-// C C++ includes
 #include <map>
 #include <string>
-// KeyValueClusterPerf includes
+
+#include "ConfigurationManager.h"
 #include "ValueDistribution.h"
 
 using namespace std;
@@ -14,7 +14,7 @@ using namespace std;
  */
 class ConstantValueDistribution : public ValueDistribution {
 public:
-  ConstantValueDistribution(map<string, string> configuration);
+  ConstantValueDistribution(Configuration* _config);
   ~ConstantValueDistribution();
 
   string* getNext();

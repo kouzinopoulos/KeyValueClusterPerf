@@ -24,10 +24,10 @@ public:
   ~SimulationWorker();
 
   /*! Listen for commands from the controller */
-  void listen();
+  void listen(Configuration* _config);
 
   /*! Create a simulationobject */
-  void initialiseSimulator();
+  void initialiseSimulator(Configuration* _config);
   /*! Delete simulation object, only call when all hosts finished */
   void deinitialiseSimulator();
 

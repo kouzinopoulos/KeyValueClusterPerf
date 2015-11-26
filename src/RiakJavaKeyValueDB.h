@@ -7,6 +7,7 @@
 // KeyValueClusterPerf includes
 #include "KeyValueDB.h"
 #include "MessageSender.h"
+#include "ConfigurationManager.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ using namespace std;
  */
 class RiakJavaKeyValueDB : public KeyValueDB {
 public:
-  RiakJavaKeyValueDB(map<string, string> configuration);
+  RiakJavaKeyValueDB(Configuration* _config);
   ~RiakJavaKeyValueDB();
 
   void putValue(string key, string* value);

@@ -7,13 +7,13 @@
 #include "logger.h"
 #include "RandomAccessPattern.h"
 
-RandomAccessPattern::RandomAccessPattern(map<string, string> configuration)
+RandomAccessPattern::RandomAccessPattern(Configuration* _config)
 {
   // Read in range of key values to be used in base 10
-  minKey = strtol(configuration["minKey"].c_str(), NULL, 10);
-  maxKey = strtol(configuration["maxKey"].c_str(), NULL, 10);
+  minKey = _config->accessPatternMinKey;
+  minKey = _config->accessPatternMaxKey;
   // Read in read to write ratio
-  int readWriteRatio = strtod(configuration["readWriteRatio"].c_str(), NULL);
+  int readWriteRatio = _config->accessPatternReadWriteRatio;
   readWriteBorder = readWriteRatio / (1.0 + readWriteRatio);
   // initialise random seed, this could also be a configuration to make it deterministic
   srand(time(NULL));

@@ -1,11 +1,11 @@
 #ifndef __WRITEONLYACCESSPATTERN_H__
 #define __WRITEONLYACCESSPATTERN_H__
 
-// C C++ includes
 #include <map>
 #include <string>
-// KeyValueClusterPerf includes
+
 #include "AccessPattern.h"
+#include "ConfigurationManager.h"
 
 using namespace std;
 
@@ -14,7 +14,7 @@ using namespace std;
  */
 class WriteOnlyAccessPattern : public AccessPattern {
 public:
-  WriteOnlyAccessPattern(map<string, string> configuration);
+  WriteOnlyAccessPattern(Configuration* _config);
   ~WriteOnlyAccessPattern();
 
   SingleAccess getNext();

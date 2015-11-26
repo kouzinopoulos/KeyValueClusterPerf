@@ -11,22 +11,16 @@
 #include "logger.h"
 #include "RiakJavaKeyValueDB.h"
 
-RiakJavaKeyValueDB::RiakJavaKeyValueDB(map<string, string> configuration)
+RiakJavaKeyValueDB::RiakJavaKeyValueDB(Configuration* _config)
 {
   // Check if there is a security setting in the database configuration file
-  string securityValue = "none";
-  map<string, string>::iterator it = configuration.find("security");
-  if (it != configuration.end()) {
-    securityValue = it->second;
-  }
+  string securityValue = _config->databaseSecurity;
+
   cout << "Security value specified: " << securityValue << endl;
 
   // Check if there is an IP specified for the broker in the database configuration file
-  std::string brokerIP = "127.0.0.1";
-  it = configuration.find("brokerIP");
-  if (it != configuration.end()) {
-    brokerIP = it->second;
-  }
+  std::string brokerIP = _config->databaseBroker;
+
   cout << "Broker IP specified: " << brokerIP << endl;
 
   // Create new message sender

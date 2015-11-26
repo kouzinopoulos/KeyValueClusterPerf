@@ -122,7 +122,7 @@ void SimulationWorker::sendData(char* buffer)
   }
 }
 
-void SimulationWorker::listen()
+void SimulationWorker::listen(Configuration* _config)
 {
   // Open command connection to controller
   openCommandConnection();
@@ -148,7 +148,7 @@ void SimulationWorker::listen()
       // Initialize simulator
       cout << "Initializing simulator" << endl;
 
-      initialiseSimulator();
+      initialiseSimulator(_config);
       replyStr = "INITDONE";
 
     } else if (requestStr.compare("GO") == 0) {
@@ -228,10 +228,10 @@ void SimulationWorker::listen()
   }
 }
 
-void SimulationWorker::initialiseSimulator()
+void SimulationWorker::initialiseSimulator(Configuration* _config)
 {
   // Create the simulator
-  simulator = new Simulator(&config);
+  simulator = new Simulator(_config);
 }
 
 void SimulationWorker::deinitialiseSimulator() { delete simulator; }

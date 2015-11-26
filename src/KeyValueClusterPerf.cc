@@ -82,7 +82,7 @@ void parseWorkerXML(const std::string& filename, Configuration* _config)
   _config->accessPatternType = pt.get<std::string>("worker.accessPattern.type");
   _config->accessPatternMinKey = pt.get<int>("worker.accessPattern.minKey");
   _config->accessPatternMaxKey = pt.get<int>("worker.accessPattern.maxKey");
-  _config->accessPatternReadWriteRatio = pt.get<float>("worker.accessPattern.readWriteRatio");
+  _config->accessPatternReadWriteRatio = pt.get<double>("worker.accessPattern.readWriteRatio");
 
   _config->databaseType = pt.get<std::string>("worker.database.type");
   _config->databaseSecurity = pt.get<std::string>("worker.database.security");
@@ -180,6 +180,6 @@ int main(int argc, char* argv[])
     controller.execute();
   } else {
     SimulationWorker worker(&config);
-    worker.listen();
+    worker.listen(&config);
   }
 }

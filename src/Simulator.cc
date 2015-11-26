@@ -23,35 +23,35 @@
 
 Simulator::Simulator(Configuration* _config)
 {
-  cout << "Requested key/value database of type " << databaseType << endl;
+  cout << "Requested key/value database of type " << _config->databaseType << endl;
 
   // Create the requested database
-  if (databaseType.compare("RamCloud") == 0) {
-    keyValueDB = new RamCloudKeyValueDB(databaseConfiguration);
-  } else if (databaseType.compare("RiakJava") == 0) {
-    keyValueDB = new RiakJavaKeyValueDB(databaseConfiguration);
-  } else if (databaseType.compare("Dummy") == 0) {
-    keyValueDB = new DummyKeyValueDB(databaseConfiguration);
+  if (_config->databaseType.compare("RamCloud") == 0) {
+    keyValueDB = new RamCloudKeyValueDB();
+  } else if (_config->databaseType.compare("RiakJava") == 0) {
+    keyValueDB = new RiakJavaKeyValueDB(_config);
+  } else if (_config->databaseType.compare("Dummy") == 0) {
+    keyValueDB = new DummyKeyValueDB();
   } else {
     // The requested database type does not exist
     // add exception handling
   }
   // Create the requested access pattern
-  if (accessPatternType.compare("Random") == 0) {
-    accessPattern = new RandomAccessPattern(accessPatternConfiguration);
-  } else if (accessPatternType.compare("ReadOnly") == 0) {
-    accessPattern = new ReadOnlyAccessPattern(accessPatternConfiguration);
-  } else if (accessPatternType.compare("WriteOnly") == 0) {
-    accessPattern = new WriteOnlyAccessPattern(accessPatternConfiguration);
+  if (_config->accessPatternType.compare("Random") == 0) {
+    accessPattern = new RandomAccessPattern(_config);
+  } else if (_config->accessPatternType.compare("ReadOnly") == 0) {
+    accessPattern = new ReadOnlyAccessPattern(_config);
+  } else if (_config->accessPatternType.compare("WriteOnly") == 0) {
+    accessPattern = new WriteOnlyAccessPattern(_config);
   } else {
     // The requested accessPattern type does not exist
     // add exception handling
   }
 
   // Create the requested valueDistribution
-  if (valueDistributionType.compare("Constant") == 0) {
+  if (_config->valueDistributionType.compare("Constant") == 0) {
     LOG_DEBUG("Creating valueDistribution");
-    valueDistribution = new ConstantValueDistribution(valueDistributionConfiguration);
+    valueDistribution = new ConstantValueDistribution(_config);
     LOG_DEBUG("Done creating ValueDistribution");
   } else {
     // The requested valueDistributionType type does not exist
@@ -62,12 +62,12 @@ Simulator::Simulator(Configuration* _config)
   accessPattern->setValueDistribution(valueDistribution);
 
   // Initialise the keyValueDatabase
-  if (!skipInitialisation) {
+  if (_config->initialization) {
     LOG_DEBUG("Initialise kvdb");
     keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
     LOG_DEBUG("Finished init kvdb");
   }
-  // Initialise variables
+  // Initialize variables
   reads = 0;
   writes = 0;
 }

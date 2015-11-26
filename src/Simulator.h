@@ -9,6 +9,7 @@
 // KeyValueClusterPerf includes
 #include "KeyValueDB.h"
 #include "AccessPattern.h"
+#include "ConfigurationManager.h"
 #include "ValueDistribution.h"
 
 using namespace std;
