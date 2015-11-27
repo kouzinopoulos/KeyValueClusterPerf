@@ -23,14 +23,14 @@
 
 using namespace std;
 
-void parseControllerXML(const std::string& filename, Configuration* _config)
+inline bool parseControllerXML(const std::string& filename, Configuration* _config)
 {
 
   // Create empty property tree object
   using boost::property_tree::ptree;
   ptree pt;
 
-  // Load XML file and put its contents in property tree.
+  // Load XML file and put the contents in property tree.
   read_xml(filename, pt);
 
   BOOST_FOREACH (ptree::value_type& v, pt.get_child("hosts")) {
@@ -65,18 +65,17 @@ void parseControllerXML(const std::string& filename, Configuration* _config)
       }
     }
   }
-
-  cout << "Addedd " << _config->dataHosts.size() << " hosts from the XML file" << endl;
+  return true;
 }
 
-void parseWorkerXML(const std::string& filename, Configuration* _config)
+inline bool parseWorkerXML(const std::string& filename, Configuration* _config)
 {
 
   // Create empty property tree object
   using boost::property_tree::ptree;
   ptree pt;
 
-  // Load XML file and put its contents in property tree.
+  // Load XML file and put the contents in property tree.
   read_xml(filename, pt);
 
   _config->accessPatternType = pt.get<std::string>("worker.accessPattern.type");
@@ -91,8 +90,7 @@ void parseWorkerXML(const std::string& filename, Configuration* _config)
   _config->valueDistributionType = pt.get<std::string>("worker.valueDistribution.type");
   _config->valueDistributionSize = pt.get<int>("worker.valueDistribution.size");
 
-
-  cout << _config->accessPatternType << endl;
+  return true;
 }
 
 inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
@@ -102,11 +100,11 @@ inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
 
   namespace bpo = boost::program_options;
   bpo::options_description desc("Options");
-  desc.add_options()("controller", "This instance is a controller node")("hostLimit", bpo::value<int>(),
+  desc.add_options()("controller", "This instance is a controller node")("worker", "This instance is a worker node")("hostLimit", bpo::value<int>(),
                                                                          "Maximum number of worker nodes to connect")(
     "simulationIteration", boost::program_options::value<int>()->default_value(0), "Current simulation iteration")(
-    "commandPort", bpo::value<int>()->default_value(0), "Command port number to connect")(
-    "dataPort", bpo::value<int>()->default_value(0), "Data port number to connect")("help", "Print help messages");
+    "commandPort", bpo::value<int>(), "Command port number to connect")(
+    "dataPort", bpo::value<int>(), "Data port number to connect")("help", "Print help messages");
 
   bpo::variables_map vm;
   bpo::store(bpo::parse_command_line(_argc, _argv, desc), vm);
@@ -118,20 +116,21 @@ inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
 
   if (vm.count("controller") && vm.count("worker")) {
     cerr << "The node cannot be both a worker and a controller" << endl;
+    return false;
   }
 
   if (!vm.count("controller") && !vm.count("worker")) {
     cerr << "Please specify if this node is a worker or a controller" << endl;
-  }
-
-  if (vm.count("worker")) {
-    cout << "worker" << endl;
+    return false;
   }
 
   bpo::notify(vm);
 
   if (vm.count("controller")) {
     _config->controller = true;
+  }
+  if (vm.count("worker")) {
+    _config->worker = true;
   }
   if (vm.count("hostLimit")) {
     _config->hostLimit = vm["hostLimit"].as<int>();
@@ -170,8 +169,25 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  parseControllerXML("controllerConfiguration.xml", &config);
-  parseWorkerXML("workerConfiguration.xml", &config);
+  try {
+    if (!parseControllerXML("controllerConfiguration.xml", &config)) {
+      return 0;
+    }
+  }
+  catch (exception& e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
+
+  try {
+    if (!parseWorkerXML("workerConfiguration.xml", &config)) {
+      return 0;
+    }
+  }
+  catch (exception& e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
 
   // Start a controller or worker instance based on the program options
   if (config.controller) {

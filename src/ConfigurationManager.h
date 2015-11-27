@@ -25,8 +25,8 @@ typedef struct Configuration {
 
   bool initialization = false;
 
-  int commandPort = 0;
-  int dataPort = 0;
+  int commandPort = 3000;
+  int dataPort = 4000;
 
   std::string accessPatternType;
   int accessPatternMinKey;

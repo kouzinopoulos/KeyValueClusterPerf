@@ -33,7 +33,7 @@ void SimulationController::connect()
   // Connect to all commmand sockets
   commandContext = new zmq::context_t(1);
   for (list<string>::iterator it = mConfiguration->commandHosts.begin(); it != mConfiguration->commandHosts.end(); it++) {
-    cout << "connecting to host..." << endl;
+    cout << "Connecting to host " << *it << endl;
     zmq::socket_t* socket = new zmq::socket_t(*commandContext, ZMQ_PAIR);
     socket->connect(*it);
     commandSockets.push_back(socket);

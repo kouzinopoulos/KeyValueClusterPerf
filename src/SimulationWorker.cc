@@ -13,8 +13,8 @@ SimulationWorker::SimulationWorker(Configuration* _config)
 {
   state = START;
 
-  mCommandPortNumber = (_config->commandPort == -1 ? 5555 : _config->commandPort);
-  mDataPortNumber = (_config->dataPort == -1 ? 5554 : _config->dataPort);
+  mCommandPortNumber = _config->commandPort;
+  mDataPortNumber = _config->dataPort;
 }
 
 SimulationWorker::~SimulationWorker()
