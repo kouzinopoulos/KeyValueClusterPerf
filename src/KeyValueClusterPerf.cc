@@ -103,8 +103,9 @@ inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
   desc.add_options()("controller", "This instance is a controller node")("worker", "This instance is a worker node")(
     "hostLimit", bpo::value<int>(), "Maximum number of worker nodes to connect")(
     "simulationIteration", boost::program_options::value<int>()->default_value(0), "Current simulation iteration")(
-    "commandPort", bpo::value<int>(), "Command port number to connect")(
-    "dataPort", bpo::value<int>(), "Data port number to connect")("help", "Print help messages");
+    "commandPort", bpo::value<int>(), "Command port number to connect")("dataPort", bpo::value<int>(),
+                                                                        "Data port number to connect")(
+    "initialization", bpo::value<bool>(), "Initialize the database")("help", "Print help messages");
 
   bpo::variables_map vm;
   bpo::store(bpo::parse_command_line(_argc, _argv, desc), vm);

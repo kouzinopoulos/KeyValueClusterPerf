@@ -154,7 +154,7 @@ void SimulationController::execute()
     }
 
     // Connect to the datasocket (this is because of the setup of zeromq)
-    char *buffer = NULL;
+    char* buffer = NULL;
     buffer = new char[1024];
 
     receiveDataFromWorker(&buffer);
@@ -163,7 +163,7 @@ void SimulationController::execute()
     map<string, string> results = cm.readString(string(buffer));
     allResults.push_back(results);
 
-    delete [] buffer;
+    delete[] buffer;
   }
 
   // All nodes should reply with RESULTSDONE
@@ -209,7 +209,7 @@ void SimulationController::sendAllNodes(string command)
     int nbytes = zmq_msg_send(&request, commandSocket, 0);
 
     if (nbytes < 0) {
-     cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
+      cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
     }
   }
 }
