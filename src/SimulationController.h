@@ -19,8 +19,6 @@ public:
 
   /*! Connect to all hosts specified in the host file */
   void connect();
-  /*! Disconnect from the hosts */
-  void disconnect();
   /*! Start the simulation by instructing the worker nodes */
   void execute();
 
@@ -28,15 +26,22 @@ private:
   /*! value indicating if there are active connections */
   bool connected;
 
+  /*! Opens a data port and receives the results buffer from a worker node */
+  void receiveDataFromWorker(char** buffer);
+
   /*! send a command to all connected host nodes */
   void sendAllNodes(string command);
   /*! receive an expected reply from all host nodes */
   void getAllNodes(string command);
 
   /*! ZMQ context to send commands over */
-  zmq::context_t* commandContext;
-  /*! ZMQ socket to send commands over */
-  list<zmq::socket_t*> commandSockets;
+  void* mCommandContext;
+  /*! ZMQ sockets to send commands over */
+  list<void*> mCommandSockets;
+    /*! ZMQ Context to receive data over */
+  void* mDataContext;
+  /*! ZMQ Socket to receive data over */
+  void* mDataSocket;
 
   /*! Pointer to the configuration */
   Configuration* mConfiguration;

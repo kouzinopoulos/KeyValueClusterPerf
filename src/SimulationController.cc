@@ -14,7 +14,7 @@
 
 SimulationController::SimulationController(Configuration* _config)
 {
-  // determine which iteration this is
+  // Determine the iteration
   this->simulationIteration = simulationIteration;
 
   mConfiguration = _config;
@@ -22,33 +22,100 @@ SimulationController::SimulationController(Configuration* _config)
 
 SimulationController::~SimulationController()
 {
-  // if connected when destroying the controller, call the disconnect function to safely disconnect everything
-  if (connected) {
-    disconnect();
+  // Close the open command connections
+  for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
+    void* commandSocket = *it;
+
+    if (zmq_close(commandSocket) != 0) {
+      cout << "Failed closing socket, reason: " << zmq_strerror(errno);
+    }
+
+    commandSocket = NULL;
+  }
+
+  if (zmq_ctx_destroy(mCommandContext) != 0) {
+    cout << "Failed terminating context, reason: " << zmq_strerror(errno);
   }
 }
 
 void SimulationController::connect()
 {
   // Connect to all commmand sockets
-  commandContext = new zmq::context_t(1);
-  for (list<string>::iterator it = mConfiguration->commandHosts.begin(); it != mConfiguration->commandHosts.end(); it++) {
+  mCommandContext = zmq_ctx_new();
+
+  if (mCommandContext == NULL) {
+    cout << "failed creating context, reason: " << zmq_strerror(errno);
+    exit(-1);
+  }
+
+  for (list<string>::iterator it = mConfiguration->commandHosts.begin(); it != mConfiguration->commandHosts.end();
+       it++) {
     cout << "Connecting to host " << *it << endl;
-    zmq::socket_t* socket = new zmq::socket_t(*commandContext, ZMQ_PAIR);
-    socket->connect(*it);
-    commandSockets.push_back(socket);
+
+    void* commandSocket = zmq_socket(mCommandContext, ZMQ_PAIR);
+
+    if (commandSocket == NULL) {
+      cout << "Failed creating socket, reason: " << zmq_strerror(errno);
+      exit(-1);
+    }
+
+    if (zmq_connect(commandSocket, (*it).c_str()) != 0) {
+      cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
+      exit(-1);
+    }
+
+    mCommandSockets.push_back(commandSocket);
   }
 }
 
-void SimulationController::disconnect()
+void SimulationController::receiveDataFromWorker(char** buffer)
 {
-  // Disconnect from all command sockets
-  delete commandContext;
-  for (list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++) {
-    zmq::socket_t* socket = *it;
-    delete socket;
+  mDataContext = zmq_ctx_new();
+
+  if (mDataContext == NULL) {
+    cout << "failed creating context, reason: " << zmq_strerror(errno);
+    exit(-1);
   }
-  connected = false;
+
+  mDataSocket = zmq_socket(mDataContext, ZMQ_PAIR);
+
+  if (mDataSocket == NULL) {
+    cout << "Failed creating socket, reason: " << zmq_strerror(errno);
+    exit(-1);
+  }
+
+  stringstream sshost;
+  string hostlocation = mConfiguration->dataHosts.front();
+
+  cout << "Connected to host " << hostlocation << endl;
+
+  if (zmq_connect(mDataSocket, hostlocation.c_str()) != 0) {
+    cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
+    exit(-1);
+  }
+
+  mConfiguration->dataHosts.pop_front();
+
+  // Receive the data
+  int nbytes = zmq_recv(mDataSocket, *buffer, 1024, 0);
+
+  if (nbytes < 0) {
+    cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
+  }
+
+  buffer[nbytes] = '\0';
+
+  // Close the socket and destroy the context
+
+  if (zmq_close(mDataSocket) != 0) {
+    cout << "Failed closing socket, reason: " << zmq_strerror(errno);
+  }
+
+  mDataSocket = NULL;
+
+  if (zmq_ctx_destroy(mDataContext) != 0) {
+    cout << "Failed terminating context, reason: " << zmq_strerror(errno);
+  }
 }
 
 void SimulationController::execute()
@@ -57,62 +124,65 @@ void SimulationController::execute()
   // Let all Nodes initialise the simulator
   LOG_DEBUG("INIT");
   sendAllNodes("INIT");
+
   // All nodes should reply with INITDONE
   getAllNodes("INITDONE");
+
   // Send GO command to all nodes
   LOG_DEBUG("GO");
   sendAllNodes("GO");
+
   // All nodes should reply with RESULTSREADY
   LOG_DEBUG("RESULTSREADY");
   getAllNodes("RESULTSREADY");
+
   // Get the results back
   list<map<string, string>> allResults;
-  int socketnum = 1;
-  for (list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++) {
-    zmq::socket_t* socket = *it;
-    zmq::message_t request(10);
-    memcpy((void*)request.data(), "GETRESULTS", 10);
-    socket->send(request);
+
+  for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
+    void* commandSocket = *it;
+
+    zmq_msg_t request;
+    zmq_msg_init_size(&request, 10);
+
+    memcpy((char*)zmq_msg_data(&request), "GETRESULTS", 10);
+
+    int nbytes = zmq_msg_send(&request, commandSocket, 0);
+
+    if (nbytes < 0) {
+      cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
+    }
 
     // Connect to the datasocket (this is because of the setup of zeromq)
-    void* dataContext = zmq_ctx_new();
-    void* dataSocket = zmq_socket(dataContext, ZMQ_PAIR);
-    stringstream sshost;
-    string hostlocation = mConfiguration->dataHosts.front();
-    LOG_DEBUG(hostlocation);
-    zmq_connect(dataSocket, hostlocation.c_str());
-    mConfiguration->dataHosts.pop_front();
-    // Receive the data
-    char buffer[1024];
-    int num = zmq_recv(dataSocket, buffer, 1024, 0);
-    // Check if we have received the data
-    if (num > 0) {
-      buffer[num] = '\0';
-    } else {
-      LOG_DEBUG("call failed");
-      int err = errno;
-      printf("ERRNO: %d\n", err);
-    }
-    // close the socket
-    zmq_close(dataSocket);
-    zmq_ctx_destroy(dataContext);
+    char *buffer = NULL;
+    buffer = new char[1024];
+
+    receiveDataFromWorker(&buffer);
+
     ConfigurationManager cm;
     map<string, string> results = cm.readString(string(buffer));
     allResults.push_back(results);
-    socketnum++;
+
+    delete [] buffer;
   }
+
   // All nodes should reply with RESULTSDONE
   LOG_DEBUG("DONERESULTS");
   getAllNodes("DONERESULTS");
+
   // Shut down the nodes
   LOG_DEBUG("EXIT");
   sendAllNodes("EXIT");
+
   // All nodes should reply with EXIT
   LOG_DEBUG("EXITING");
   getAllNodes("EXITING");
+
   // Merge the results and write out to file
   LOG_DEBUG("MERGING");
+
   Simulator sim;
+
   if (simulationIteration == -1) {
     sim.mergeResults(allResults, "results.csv");
   } else {
@@ -121,31 +191,47 @@ void SimulationController::execute()
     LOG_DEBUG(ss.str());
     sim.mergeResults(allResults, ss.str());
   }
+
   LOG_DEBUG("COMPLETE");
 }
 
 void SimulationController::sendAllNodes(string command)
 {
   // send a command string to all command nodes
-  for (list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++) {
-    zmq::socket_t* socket = *it;
+  for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
+    void* commandSocket = *it;
 
-    zmq::message_t request(command.length());
-    memcpy((void*)request.data(), command.c_str(), command.length());
-    socket->send(request);
+    zmq_msg_t request;
+    zmq_msg_init_size(&request, command.length());
+
+    memcpy((char*)zmq_msg_data(&request), command.c_str(), command.length());
+
+    int nbytes = zmq_msg_send(&request, commandSocket, 0);
+
+    if (nbytes < 0) {
+     cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
+    }
   }
 }
 
 void SimulationController::getAllNodes(string command)
 {
   // retrieve a reply string form all nodes
-  for (list<zmq::socket_t*>::iterator it = commandSockets.begin(); it != commandSockets.end(); it++) {
-    zmq::socket_t* socket = *it;
-    zmq::message_t reply;
-    socket->recv(&reply);
-    string replyStr = string(static_cast<char*>(reply.data()), reply.size());
+  for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
+    void* commandSocket = *it;
 
-    cout << "Received reply from worker: " << replyStr << endl;
+    zmq_msg_t reply;
+    zmq_msg_init(&reply);
+
+    int nbytes = zmq_msg_recv(&reply, commandSocket, 0);
+
+    if (nbytes < 0) {
+      cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
+    }
+
+    std::string replyStr((char*)zmq_msg_data(&reply), zmq_msg_size(&reply));
+
+    cout << "Received reply: " << replyStr << endl;
 
     if (replyStr.compare(command) != 0) {
       // Handle error

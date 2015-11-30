@@ -64,9 +64,9 @@ void SimulationWorker::openCommandConnection()
   cout << "Command socket bound on " << ss.str() << endl;
 }
 
-// This method can be called again and again from the SimulationWorker::listen method, when the GETRESULTS command is
+// This method can be called multiple times from the SimulationWorker::listen method, when the GETRESULTS command is
 // received
-void SimulationWorker::sendData(char* buffer)
+void SimulationWorker::sendDataToController(char* buffer)
 {
   // Open a command socket
   mDataContext = zmq_ctx_new();
@@ -187,7 +187,7 @@ void SimulationWorker::listen(Configuration* _config)
       buffer[sizeof(buffer) - 1] = 0;
 
       // Send the data over the socket
-      sendData(buffer);
+      sendDataToController(buffer);
 
       // Deinitialise the simulator
       deinitialiseSimulator();
