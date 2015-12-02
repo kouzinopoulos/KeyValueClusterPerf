@@ -124,6 +124,11 @@ inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
     return false;
   }
 
+  if (!vm.count("initialization")) {
+    cerr << "Please specify if an initialization phase should be executed" << endl;
+    return false;
+  }
+
   bpo::notify(vm);
 
   if (vm.count("controller")) {
