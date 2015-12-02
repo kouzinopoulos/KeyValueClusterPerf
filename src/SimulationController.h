@@ -27,7 +27,7 @@ private:
   bool connected;
 
   /*! Opens a data port and receives the results buffer from a worker node */
-  void receiveDataFromWorker(char** buffer);
+  void receiveDataFromWorker(char*& buffer);
 
   /*! send a command to all connected host nodes */
   void sendAllNodes(string command);

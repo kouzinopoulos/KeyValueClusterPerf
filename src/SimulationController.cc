@@ -68,7 +68,7 @@ void SimulationController::connect()
   }
 }
 
-void SimulationController::receiveDataFromWorker(char** buffer)
+void SimulationController::receiveDataFromWorker(char*& buffer)
 {
   mDataContext = zmq_ctx_new();
 
@@ -97,7 +97,7 @@ void SimulationController::receiveDataFromWorker(char** buffer)
   mConfiguration->dataHosts.pop_front();
 
   // Receive the data
-  int nbytes = zmq_recv(mDataSocket, *buffer, 1024, 0);
+  int nbytes = zmq_recv(mDataSocket, buffer, 1024, 0);
 
   if (nbytes < 0) {
     cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
@@ -157,7 +157,7 @@ void SimulationController::execute()
     char* buffer = NULL;
     buffer = new char[1024];
 
-    receiveDataFromWorker(&buffer);
+    receiveDataFromWorker(buffer);
 
     ConfigurationManager cm;
     map<string, string> results = cm.readString(string(buffer));
