@@ -18,8 +18,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 LINK_DIRECTORIES(${SIMPATH}/lib)
 
-add_executable(keyvalueclusterperf
-src/AccessPattern.cc
+set(SRC_LIST src/AccessPattern.cc
 src/MessageSender.cc
 src/sha1.cc
 src/ConfigurationManager.cc
@@ -39,4 +38,12 @@ src/RiakJavaKeyValueDB.cc
 src/rijndael-alg-fst.c
 src/vmac.c)
 
+set(CONFIG_LIST controllerConfiguration.xml
+workerConfiguration.xml)
+
+add_executable(keyvalueclusterperf ${SRC_LIST} ${CONFIG_LIST})
+
 TARGET_LINK_LIBRARIES(keyvalueclusterperf zmq boost_system boost_program_options protobuf)
+
+install(TARGETS keyvalueclusterperf DESTINATION ${CMAKE_SOURCE_DIR}/bin COMPONENT binaries)
+install(FILES controllerConfiguration.xml workerConfiguration.xml DESTINATION ${CMAKE_SOURCE_DIR}/bin COMPONENT config)

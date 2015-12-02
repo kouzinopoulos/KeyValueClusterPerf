@@ -70,7 +70,6 @@ inline bool parseControllerXML(const std::string& filename, Configuration* _conf
 
 inline bool parseWorkerXML(const std::string& filename, Configuration* _config)
 {
-
   // Create empty property tree object
   using boost::property_tree::ptree;
   ptree pt;
