@@ -11,7 +11,7 @@ RandomAccessPattern::RandomAccessPattern(Configuration* _config)
 {
   // Read in range of key values to be used in base 10
   minKey = _config->accessPatternMinKey;
-  minKey = _config->accessPatternMaxKey;
+  maxKey = _config->accessPatternMaxKey;
   // Read in read to write ratio
   int readWriteRatio = _config->accessPatternReadWriteRatio;
   readWriteBorder = readWriteRatio / (1.0 + readWriteRatio);

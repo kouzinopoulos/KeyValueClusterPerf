@@ -11,7 +11,7 @@ ReadOnlyAccessPattern::ReadOnlyAccessPattern(Configuration* _config)
 {
   // Read in range of key values to be used in base 10
   minKey = _config->accessPatternMinKey;
-  minKey = _config->accessPatternMaxKey;
+  maxKey = _config->accessPatternMaxKey;
 
   // initialise random seed, this could also be a configuration to make it deterministic
   srand(time(NULL));

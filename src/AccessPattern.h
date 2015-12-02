@@ -1,10 +1,9 @@
 #ifndef __ACCESSPATTERN_H__
 #define __ACCESSPATTERN_H__
 
-// C C++ includes
 #include <map>
 #include <string>
-// KeyValueClusterPerf includes
+
 #include "ValueDistribution.h"
 
 using namespace std;
