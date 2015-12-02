@@ -124,7 +124,7 @@ inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
     return false;
   }
 
-  if (!vm.count("initialization")) {
+  if (vm.count("worker") && !vm.count("initialization")) {
     cerr << "Please specify if an initialization phase should be executed" << endl;
     return false;
   }
