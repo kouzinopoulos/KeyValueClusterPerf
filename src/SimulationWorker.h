@@ -26,11 +26,6 @@ public:
   /*! Listen for commands from the controller */
   void listen(Configuration* _config);
 
-  /*! Create a simulationobject */
-  void initialiseSimulator(Configuration* _config);
-  /*! Delete simulation object, only call when all hosts finished */
-  void deinitialiseSimulator();
-
 private:
   SimulatorState state;
 
@@ -44,10 +39,6 @@ private:
   void* mCommandContext;
   /*! ZMQ Socket to receive commands over */
   void* mCommandSocket;
-  /*! ZMQ Context to send data over */
-  void* mDataContext;
-  /*! ZMQ Socket to send data over */
-  void* mDataSocket;
   /*! Port to receive commands through */
   int mCommandPortNumber;
   /*! Port to send data through */
@@ -55,8 +46,6 @@ private:
 
   /*! Simulator to perform simulation */
   Simulator* simulator;
-  /*! Used by the node to start a simulation */
-  void runSimulation();
 };
 
 #endif

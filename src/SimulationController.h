@@ -17,14 +17,12 @@ public:
   SimulationController(Configuration* _config);
   ~SimulationController();
 
-  /*! Connect to all hosts specified in the host file */
-  void connect();
   /*! Start the simulation by instructing the worker nodes */
   void execute();
 
 private:
-  /*! value indicating if there are active connections */
-  bool connected;
+  /*! Connect to all hosts specified in the host file */
+  void connect();
 
   /*! Opens a data port and receives the results buffer from a worker node */
   void receiveDataFromWorker(char*& buffer);
@@ -38,10 +36,6 @@ private:
   void* mCommandContext;
   /*! ZMQ sockets to send commands over */
   list<void*> mCommandSockets;
-    /*! ZMQ Context to receive data over */
-  void* mDataContext;
-  /*! ZMQ Socket to receive data over */
-  void* mDataSocket;
 
   /*! Pointer to the configuration */
   Configuration* mConfiguration;

@@ -70,16 +70,16 @@ void SimulationController::connect()
 
 void SimulationController::receiveDataFromWorker(char*& buffer)
 {
-  mDataContext = zmq_ctx_new();
+  void* mContext = zmq_ctx_new();
 
-  if (mDataContext == NULL) {
+  if (mContext == NULL) {
     cout << "failed creating context, reason: " << zmq_strerror(errno);
     exit(-1);
   }
 
-  mDataSocket = zmq_socket(mDataContext, ZMQ_PAIR);
+  void* mSocket = zmq_socket(mContext, ZMQ_PAIR);
 
-  if (mDataSocket == NULL) {
+  if (mSocket == NULL) {
     cout << "Failed creating socket, reason: " << zmq_strerror(errno);
     exit(-1);
   }
@@ -89,7 +89,7 @@ void SimulationController::receiveDataFromWorker(char*& buffer)
 
   cout << "Connected to host " << hostlocation << endl;
 
-  if (zmq_connect(mDataSocket, hostlocation.c_str()) != 0) {
+  if (zmq_connect(mSocket, hostlocation.c_str()) != 0) {
     cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
     exit(-1);
   }
@@ -97,7 +97,7 @@ void SimulationController::receiveDataFromWorker(char*& buffer)
   mConfiguration->dataHosts.pop_front();
 
   // Receive the data
-  int nbytes = zmq_recv(mDataSocket, buffer, 1024, 0);
+  int nbytes = zmq_recv(mSocket, buffer, 1024, 0);
 
   if (nbytes < 0) {
     cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
@@ -106,20 +106,22 @@ void SimulationController::receiveDataFromWorker(char*& buffer)
   buffer[nbytes] = '\0';
 
   // Close the socket and destroy the context
-
-  if (zmq_close(mDataSocket) != 0) {
+  if (zmq_close(mSocket) != 0) {
     cout << "Failed closing socket, reason: " << zmq_strerror(errno);
   }
 
-  mDataSocket = NULL;
+  mSocket = NULL;
 
-  if (zmq_ctx_destroy(mDataContext) != 0) {
+  if (zmq_ctx_destroy(mContext) != 0) {
     cout << "Failed terminating context, reason: " << zmq_strerror(errno);
   }
 }
 
 void SimulationController::execute()
 {
+  // Connect to worker nodes
+  connect();
+
   // All nodes start in the start state;
   // Let all Nodes initialise the simulator
   LOG_DEBUG("INIT");

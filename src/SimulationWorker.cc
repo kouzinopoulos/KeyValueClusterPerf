@@ -69,16 +69,16 @@ void SimulationWorker::openCommandConnection()
 void SimulationWorker::sendDataToController(char* buffer)
 {
   // Open a command socket
-  mDataContext = zmq_ctx_new();
+  void* mContext = zmq_ctx_new();
 
-  if (mDataContext == NULL) {
+  if (mContext == NULL) {
     cout << "failed creating context, reason: " << zmq_strerror(errno);
     exit(-1);
   }
 
-  mDataSocket = zmq_socket(mDataContext, ZMQ_PAIR);
+  void* mSocket = zmq_socket(mContext, ZMQ_PAIR);
 
-  if (mDataSocket == NULL) {
+  if (mSocket == NULL) {
     cout << "Failed creating socket, reason: " << zmq_strerror(errno);
     exit(-1);
   }
@@ -87,7 +87,7 @@ void SimulationWorker::sendDataToController(char* buffer)
   stringstream ss;
   ss << "tcp://*:" << mDataPortNumber;
 
-  if (zmq_bind(mDataSocket, ss.str().c_str()) != 0) {
+  if (zmq_bind(mSocket, ss.str().c_str()) != 0) {
     cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
     exit(-1);
   }
@@ -99,7 +99,7 @@ void SimulationWorker::sendDataToController(char* buffer)
   zmq_msg_init_size(&reply, 1024);
   memcpy((char*)zmq_msg_data(&reply), buffer, 1024);
 
-  int nbytes = zmq_msg_send(&reply, mDataSocket, 0);
+  int nbytes = zmq_msg_send(&reply, mSocket, 0);
 
   if (nbytes < 0) {
     cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
@@ -108,16 +108,16 @@ void SimulationWorker::sendDataToController(char* buffer)
   cout << "Sent data reply to controller" << endl;
 
   // Close the open data connection
-  if (mDataSocket != NULL) {
+  if (mSocket != NULL) {
 
-    if (zmq_close(mDataSocket) != 0) {
+    if (zmq_close(mSocket) != 0) {
       cout << "Failed closing socket, reason: " << zmq_strerror(errno);
     }
 
-    mDataSocket = NULL;
+    mSocket = NULL;
   }
 
-  if (zmq_ctx_destroy(mDataContext) != 0) {
+  if (zmq_ctx_destroy(mContext) != 0) {
     cout << "Failed terminating context, reason: " << zmq_strerror(errno);
   }
 }
@@ -148,7 +148,7 @@ void SimulationWorker::listen(Configuration* _config)
       // Initialize simulator
       cout << "Initializing simulator" << endl;
 
-      initialiseSimulator(_config);
+      simulator = new Simulator(_config);
       replyStr = "INITDONE";
 
     } else if (requestStr.compare("GO") == 0) {
@@ -160,7 +160,7 @@ void SimulationWorker::listen(Configuration* _config)
 
       // Run simulation
       cout << "Simulating" << endl;
-      runSimulation();
+      simulator->simulate(250);
 
       // Burn out
       cout << "Burning out" << endl;
@@ -190,7 +190,7 @@ void SimulationWorker::listen(Configuration* _config)
       sendDataToController(buffer);
 
       // Deinitialise the simulator
-      deinitialiseSimulator();
+      delete simulator;
 
       // Reply that we are done sending results
       replyStr = "DONERESULTS";
@@ -227,13 +227,3 @@ void SimulationWorker::listen(Configuration* _config)
     LOG_DEBUG("Exited due to error");
   }
 }
-
-void SimulationWorker::initialiseSimulator(Configuration* _config)
-{
-  // Create the simulator
-  simulator = new Simulator(_config);
-}
-
-void SimulationWorker::deinitialiseSimulator() { delete simulator; }
-
-void SimulationWorker::runSimulation() { simulator->simulate(250); }
