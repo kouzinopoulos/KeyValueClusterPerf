@@ -30,7 +30,7 @@ inline bool parseControllerXML(const std::string& filename, Configuration* _conf
   using boost::property_tree::ptree;
   ptree pt;
 
-  // Load XML file and put the contents in property tree.
+  // Load the XML file and put its contents in the property tree
   read_xml(filename, pt);
 
   BOOST_FOREACH (ptree::value_type& v, pt.get_child("hosts")) {
@@ -74,7 +74,7 @@ inline bool parseWorkerXML(const std::string& filename, Configuration* _config)
   using boost::property_tree::ptree;
   ptree pt;
 
-  // Load XML file and put the contents in property tree.
+  // Load the XML file and put its contents in the property tree
   read_xml(filename, pt);
 
   _config->accessPatternType = pt.get<std::string>("worker.accessPattern.type");
@@ -94,8 +94,9 @@ inline bool parseWorkerXML(const std::string& filename, Configuration* _config)
 
 inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
 {
-  if (_config == NULL)
-    throw runtime_error("Internal error: options' container is empty.");
+  if (_config == NULL) {
+    throw runtime_error("Internal error: options' container is empty");
+  }
 
   namespace bpo = boost::program_options;
   bpo::options_description desc("Options");

@@ -138,20 +138,20 @@ void SimulationWorker::listen(Configuration* _config)
       cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
     }
 
-    std::string requestStr((char*)zmq_msg_data(&request), zmq_msg_size(&request));
+    std::string requestString((char*)zmq_msg_data(&request), zmq_msg_size(&request));
 
-    cout << "Received request: " << requestStr << endl;
+    cout << "Received request: " << requestString << endl;
 
-    std::string replyStr;
+    std::string replyString;
 
-    if (requestStr.compare("INIT") == 0) {
+    if (requestString.compare("INIT") == 0) {
       // Initialize simulator
       cout << "Initializing simulator" << endl;
 
       simulator = new Simulator(_config);
-      replyStr = "INITDONE";
+      replyString = "INITDONE";
 
-    } else if (requestStr.compare("GO") == 0) {
+    } else if (requestString.compare("GO") == 0) {
       // Request to start simulation received
 
       // Burn in
@@ -169,9 +169,9 @@ void SimulationWorker::listen(Configuration* _config)
       // Simulation finished, change state to result
       state = RESULTS;
 
-      replyStr = "RESULTSREADY";
+      replyString = "RESULTSREADY";
 
-    } else if (requestStr.compare("GETRESULTS") == 0) {
+    } else if (requestString.compare("GETRESULTS") == 0) {
       // Report back the results from the simulator
       cout << "Reporting results" << endl;
 
@@ -193,26 +193,26 @@ void SimulationWorker::listen(Configuration* _config)
       delete simulator;
 
       // Reply that we are done sending results
-      replyStr = "DONERESULTS";
+      replyString = "DONERESULTS";
 
-    } else if (requestStr.compare("RESTART") == 0) {
+    } else if (requestString.compare("RESTART") == 0) {
       // Restarting the simulator state
       cout << "Restart simulator state" << endl;
       state = START;
 
-      replyStr = "RESTARTING";
+      replyString = "RESTARTING";
 
-    } else if (requestStr.compare("EXIT") == 0) {
+    } else if (requestString.compare("EXIT") == 0) {
       cout << "Exiting" << endl;
       state = EXIT;
 
-      replyStr = "EXITING";
+      replyString = "EXITING";
     }
 
     // Send out the reply message
     zmq_msg_t reply;
-    zmq_msg_init_size(&reply, replyStr.length());
-    memcpy((char*)zmq_msg_data(&reply), replyStr.c_str(), replyStr.length());
+    zmq_msg_init_size(&reply, replyString.length());
+    memcpy((char*)zmq_msg_data(&reply), replyString.c_str(), replyString.length());
 
     nbytes = zmq_msg_send(&reply, mCommandSocket, 0);
 
