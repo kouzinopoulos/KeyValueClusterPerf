@@ -52,7 +52,8 @@ map<string, string> ConfigurationManager::readString(string str)
 string ConfigurationManager::writeString(map<string, string> configuration)
 {
   stringstream ss;
-  // iterate over entries in configuration map, add the first one seperately to prevent an extra newline
+  // iterate over entries in configuration map, add the first one seperately to
+  // prevent an extra newline
   map<string, string>::iterator it = configuration.begin();
   ss << it->first << "=" << configuration[it->first];
   it++;

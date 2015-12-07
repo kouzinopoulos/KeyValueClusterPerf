@@ -18,7 +18,8 @@ RiakJavaKeyValueDB::RiakJavaKeyValueDB(Configuration* _config)
 
   cout << "Security value specified: " << securityValue << endl;
 
-  // Check if there is an IP specified for the broker in the database configuration file
+  // Check if there is an IP specified for the broker in the database
+  // configuration file
   std::string brokerIP = _config->databaseBroker;
 
   cout << "Broker IP specified: " << brokerIP << endl;

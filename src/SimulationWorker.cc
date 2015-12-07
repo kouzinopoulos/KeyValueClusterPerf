@@ -2,10 +2,9 @@
 #include <sstream>
 #include <string>
 
-#include <zmq.hpp>
-
 #include "logger.h"
 #include "ConfigurationManager.h"
+#include "MQ.h"
 #include "SimulationWorker.h"
 #include "Simulator.h"
 
@@ -34,7 +33,8 @@ SimulationWorker::~SimulationWorker()
   }
 }
 
-// This method is persistent and called only once, during the initialization of the class
+// This method is persistent and called only once, during the initialization of
+// the class
 void SimulationWorker::openCommandConnection()
 {
   // Open a command socket
@@ -64,7 +64,8 @@ void SimulationWorker::openCommandConnection()
   cout << "Command socket bound on " << ss.str() << endl;
 }
 
-// This method can be called multiple times from the SimulationWorker::listen method, when the GETRESULTS command is
+// This method can be called multiple times from the SimulationWorker::listen
+// method, when the GETRESULTS command is
 // received
 void SimulationWorker::sendDataToController(char* buffer)
 {
@@ -95,15 +96,8 @@ void SimulationWorker::sendDataToController(char* buffer)
   cout << "Data socket bound on " << ss.str() << endl;
 
   // Send out the data message
-  zmq_msg_t reply;
-  zmq_msg_init_size(&reply, 1024);
-  memcpy((char*)zmq_msg_data(&reply), buffer, 1024);
-
-  int nbytes = zmq_msg_send(&reply, mSocket, 0);
-
-  if (nbytes < 0) {
-    cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
-  }
+  MQ mq;
+  mq.send(mSocket, buffer, 1024);
 
   cout << "Sent data reply to controller" << endl;
 
@@ -127,18 +121,12 @@ void SimulationWorker::listen(Configuration* _config)
   // Open command connection to controller
   openCommandConnection();
 
+  // Initialize the communication layer
+  MQ mq;
+
   // Listen for commands form the controller
   while ((state != EXIT) && (state != ERROR)) {
-    zmq_msg_t request;
-    zmq_msg_init(&request);
-
-    int nbytes = zmq_msg_recv(&request, mCommandSocket, 0);
-
-    if (nbytes < 0) {
-      cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
-    }
-
-    std::string requestString((char*)zmq_msg_data(&request), zmq_msg_size(&request));
+    std::string requestString = mq.receive(mCommandSocket);
 
     cout << "Received request: " << requestString << endl;
 
@@ -209,16 +197,7 @@ void SimulationWorker::listen(Configuration* _config)
       replyString = "EXITING";
     }
 
-    // Send out the reply message
-    zmq_msg_t reply;
-    zmq_msg_init_size(&reply, replyString.length());
-    memcpy((char*)zmq_msg_data(&reply), replyString.c_str(), replyString.length());
-
-    nbytes = zmq_msg_send(&reply, mCommandSocket, 0);
-
-    if (nbytes < 0) {
-      cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
-    }
+    mq.send(mCommandSocket, (char*)replyString.c_str(), replyString.length());
 
     cout << "Sent command reply to controller" << endl;
   }

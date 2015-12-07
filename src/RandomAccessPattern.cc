@@ -15,7 +15,8 @@ RandomAccessPattern::RandomAccessPattern(Configuration* _config)
   // Read in read to write ratio
   int readWriteRatio = _config->accessPatternReadWriteRatio;
   readWriteBorder = readWriteRatio / (1.0 + readWriteRatio);
-  // initialise random seed, this could also be a configuration to make it deterministic
+  // initialise random seed, this could also be a configuration to make it
+  // deterministic
   srand(time(NULL));
 }
 

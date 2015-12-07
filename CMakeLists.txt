@@ -31,6 +31,7 @@ src/DummyKeyValueDB.cc
 src/ReadOnlyAccessPattern.cc
 src/Simulator.cc
 src/KeyValueClusterPerf.cc
+src/MQ.cc
 src/request.pb.cc
 src/WriteOnlyAccessPattern.cc
 src/KeyValueDB.cc

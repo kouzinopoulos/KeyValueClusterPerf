@@ -13,7 +13,8 @@ ReadOnlyAccessPattern::ReadOnlyAccessPattern(Configuration* _config)
   minKey = _config->accessPatternMinKey;
   maxKey = _config->accessPatternMaxKey;
 
-  // initialise random seed, this could also be a configuration to make it deterministic
+  // initialise random seed, this could also be a configuration to make it
+  // deterministic
   srand(time(NULL));
 }
 

@@ -1,4 +1,5 @@
-// FUNCTIONS TEMPORARILY COMMENTED OUT DUE TO LIBRARY CONFLICT WITH NEWER RIAK !!!
+// FUNCTIONS TEMPORARILY COMMENTED OUT DUE TO LIBRARY CONFLICT WITH NEWER RIAK
+// !!!
 
 // C C++ includes
 #include <sstream>
@@ -13,15 +14,19 @@ RamCloudKeyValueDB::RamCloudKeyValueDB()
 {
   /*	// Generate coordinatorLocator string
     string coordinatorLocator;
-    coordinatorLocator = configuration["communicationProtocol"];	// add protocol
+    coordinatorLocator = configuration["communicationProtocol"];	// add
+    protocol
     coordinatorLocator += ":host=";
-    coordinatorLocator += configuration["coordinatorHost"];			// add hostname
+    coordinatorLocator += configuration["coordinatorHost"];			// add
+    hostname
     coordinatorLocator += ",port=";
-    coordinatorLocator += configuration["coordinatorPort"];			// add port
+    coordinatorLocator += configuration["coordinatorPort"];			// add
+    port
 
     // Setup the cluster connector
     ramcloudContext = new RAMCloud::Context(false);
-    ramcloudDB = new RAMCloud::RamCloud(ramcloudContext, coordinatorLocator.c_str(), "");
+    ramcloudDB = new RAMCloud::RamCloud(ramcloudContext,
+    coordinatorLocator.c_str(), "");
 
     // Create a table in the cluster
     ramcloudDB->createTable("KeyValueClusterPerf");
@@ -41,7 +46,8 @@ RamCloudKeyValueDB::~RamCloudKeyValueDB()
 void RamCloudKeyValueDB::putValue(std::string key, std::string* value)
 {
   // table_id, key, keylength, buffer, bufferlength
-  /* ramcloudDB->write(tableID, key.c_str(), key.size(), value->c_str(), value->size());*/
+  /* ramcloudDB->write(tableID, key.c_str(), key.size(), value->c_str(),
+   * value->size());*/
 }
 
 string RamCloudKeyValueDB::getValue(std::string key)

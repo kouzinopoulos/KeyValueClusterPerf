@@ -5,10 +5,9 @@
 
 #include "errno.h"
 
-#include <zmq.hpp>
-
 #include "ConfigurationManager.h"
 #include "logger.h"
+#include "MQ.h"
 #include "SimulationController.h"
 #include "Simulator.h"
 
@@ -122,6 +121,9 @@ void SimulationController::execute()
   // Connect to worker nodes
   connect();
 
+  // Initialize the communication layer
+  MQ mq;
+
   // All nodes start in the start state;
   // Let all Nodes initialise the simulator
   LOG_DEBUG("INIT");
@@ -142,18 +144,9 @@ void SimulationController::execute()
   list<map<string, string>> allResults;
 
   for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
-    void* commandSocket = *it;
+    void* mCommandSocket = *it;
 
-    zmq_msg_t request;
-    zmq_msg_init_size(&request, 10);
-
-    memcpy((char*)zmq_msg_data(&request), "GETRESULTS", 10);
-
-    int nbytes = zmq_msg_send(&request, commandSocket, 0);
-
-    if (nbytes < 0) {
-      cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
-    }
+    mq.send(mCommandSocket, (char*)"GETRESULTS", 10);
 
     // Connect to the datasocket (this is because of the setup of zeromq)
     char* buffer = NULL;
@@ -199,44 +192,27 @@ void SimulationController::execute()
 
 void SimulationController::sendAllNodes(string command)
 {
+  MQ mq;
   // send a command string to all command nodes
   for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
-    void* commandSocket = *it;
+    void* mCommandSocket = *it;
 
-    zmq_msg_t request;
-    zmq_msg_init_size(&request, command.length());
-
-    memcpy((char*)zmq_msg_data(&request), command.c_str(), command.length());
-
-    int nbytes = zmq_msg_send(&request, commandSocket, 0);
-
-    if (nbytes < 0) {
-      cout << "Failed sending on socket, reason: " << zmq_strerror(errno);
-    }
+    mq.send(mCommandSocket, (char*)command.c_str(), command.length());
   }
 }
 
 void SimulationController::getAllNodes(string command)
 {
+  MQ mq;
   // retrieve a reply string form all nodes
   for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
-    void* commandSocket = *it;
+    void* mCommandSocket = *it;
 
-    zmq_msg_t reply;
-    zmq_msg_init(&reply);
-
-    int nbytes = zmq_msg_recv(&reply, commandSocket, 0);
-
-    if (nbytes < 0) {
-      cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
-    }
-
-    std::string replyStr((char*)zmq_msg_data(&reply), zmq_msg_size(&reply));
+    std::string replyStr = mq.receive(mCommandSocket);
 
     cout << "Received reply: " << replyStr << endl;
 
     if (replyStr.compare(command) != 0) {
-      // Handle error
       LOG_DEBUG("WRONG REPLY");
     }
   }

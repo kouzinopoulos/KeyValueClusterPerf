@@ -1,7 +1,6 @@
-// C C++ includes
 #include <map>
 #include <string.h>
-// KeyValueClusterPerf includes
+
 #include "ValueDistribution.h"
 #include "ConstantValueDistribution.h"
 
