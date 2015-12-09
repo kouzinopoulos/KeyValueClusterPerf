@@ -20,57 +20,12 @@ SimulationController::SimulationController(Configuration* _config)
 
 SimulationController::~SimulationController()
 {
-  // Close the open command connections
-  for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
-    void* commandSocket = *it;
-
-    if (zmq_close(commandSocket) != 0) {
-      cout << "Failed closing socket, reason: " << zmq_strerror(errno);
-    }
-
-    commandSocket = NULL;
-  }
-
-  if (zmq_ctx_destroy(mCommandContext) != 0) {
-    cout << "Failed terminating context, reason: " << zmq_strerror(errno);
-  }
-}
-
-void SimulationController::connect()
-{
-  // Connect to all commmand sockets
-  mCommandContext = zmq_ctx_new();
-
-  if (mCommandContext == NULL) {
-    cout << "failed creating context, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
-
-  for (list<string>::iterator it = mConfiguration->commandHosts.begin(); it != mConfiguration->commandHosts.end();
-       it++) {
-    cout << "Connecting to host " << *it << endl;
-
-    void* commandSocket = zmq_socket(mCommandContext, ZMQ_PAIR);
-
-    if (commandSocket == NULL) {
-      cout << "Failed creating socket, reason: " << zmq_strerror(errno);
-      exit(-1);
-    }
-
-    if (zmq_connect(commandSocket, (*it).c_str()) != 0) {
-      cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
-      exit(-1);
-    }
-
-    mCommandSockets.push_back(commandSocket);
-  }
 }
 
 void SimulationController::receiveDataFromWorker(char*& buffer)
 {
   MQ mq;
 
-  mq.createContext();
   mq.openSocket(ZMQ_PAIR);
 
   stringstream sshost;
@@ -89,7 +44,6 @@ void SimulationController::receiveDataFromWorker(char*& buffer)
 
   // Close the open data connection
   mq.closeSocket();
-  mq.destroyContext();
 }
 
 void SimulationController::execute()
@@ -100,7 +54,6 @@ void SimulationController::execute()
 
     MQ mq;
 
-    mq.createContext();
     mq.openSocket(ZMQ_PAIR);
     mq.connect((*it).c_str());
 

@@ -18,29 +18,14 @@ SimulationWorker::SimulationWorker(Configuration* _config)
 
 SimulationWorker::~SimulationWorker()
 {
-  // Close the open command connection
-  if (mCommandSocket != NULL) {
-
-    if (zmq_close(mCommandSocket) != 0) {
-      cout << "Failed closing socket, reason: " << zmq_strerror(errno);
-    }
-
-    mCommandSocket = NULL;
-  }
-
-  if (zmq_ctx_destroy(mCommandContext) != 0) {
-    cout << "Failed terminating context, reason: " << zmq_strerror(errno);
-  }
 }
 
 // This method can be called multiple times from the SimulationWorker::listen
-// method, when the GETRESULTS command is
-// received
+// method, when the GETRESULTS command is received
 void SimulationWorker::sendDataToController(char* buffer)
 {
   MQ mq;
 
-  mq.createContext();
   mq.openSocket(ZMQ_PAIR);
 
   // Open up a socket for the controller to connect to
@@ -57,7 +42,6 @@ void SimulationWorker::sendDataToController(char* buffer)
 
   // Close the open data connection
   mq.closeSocket();
-  mq.destroyContext();
 }
 
 void SimulationWorker::listen(Configuration* _config)
@@ -65,7 +49,6 @@ void SimulationWorker::listen(Configuration* _config)
   // Open command connection to controller
   MQ mq;
 
-  mq.createContext();
   mq.openSocket(ZMQ_PAIR);
 
   stringstream ss;
@@ -159,5 +142,4 @@ void SimulationWorker::listen(Configuration* _config)
 
   // Close the open command connection
   mq.closeSocket();
-  mq.destroyContext();
 }

@@ -32,10 +32,6 @@ private:
   /*! Opens a data port and sends the results buffer to the controller node */
   void sendDataToController(char* buffer);
 
-  /*! ZMQ Context to receive commands over */
-  void* mCommandContext;
-  /*! ZMQ Socket to receive commands over */
-  void* mCommandSocket;
   /*! Port to receive commands through */
   int mCommandPortNumber;
   /*! Port to send data through */

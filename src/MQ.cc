@@ -1,10 +1,6 @@
 #include "MQ.h"
 
-MQ::MQ() {}
-
-MQ::~MQ() {}
-
-void MQ::createContext()
+MQ::MQ()
 {
   mContext = zmq_ctx_new();
   if (mContext == NULL) {
@@ -13,7 +9,7 @@ void MQ::createContext()
   }
 }
 
-void MQ::destroyContext()
+MQ::~MQ()
 {
   if (mContext == NULL) {
     return;

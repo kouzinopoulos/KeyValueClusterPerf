@@ -25,12 +25,6 @@ public:
   /*! Receives an std::string over socket */
   std::string receive();
 
-  /*! Creates a new ZMQ context */
-  void createContext();
-
-  /*! Destroys the ZMQ context */
-  void destroyContext();
-
   /*! Returns a pointer to the ZMQ context */
   void* getContext();
 

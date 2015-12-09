@@ -34,11 +34,6 @@ private:
   /*! receive an expected reply from all host nodes */
   void getAllNodes(string command);
 
-  /*! ZMQ context to send commands over */
-  void* mCommandContext;
-  /*! ZMQ sockets to send commands over */
-  list<void*> mCommandSockets;
-
   /*! List of command MQs */
   list<MQ> mCommandMQs;
 
