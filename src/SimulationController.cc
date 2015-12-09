@@ -7,7 +7,6 @@
 
 #include "ConfigurationManager.h"
 #include "logger.h"
-#include "MQ.h"
 #include "SimulationController.h"
 #include "Simulator.h"
 
@@ -69,60 +68,44 @@ void SimulationController::connect()
 
 void SimulationController::receiveDataFromWorker(char*& buffer)
 {
-  void* mContext = zmq_ctx_new();
+  MQ mq;
 
-  if (mContext == NULL) {
-    cout << "failed creating context, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
-
-  void* mSocket = zmq_socket(mContext, ZMQ_PAIR);
-
-  if (mSocket == NULL) {
-    cout << "Failed creating socket, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
+  mq.createContext();
+  mq.openSocket(ZMQ_PAIR);
 
   stringstream sshost;
   string hostlocation = mConfiguration->dataHosts.front();
 
   cout << "Connected to host " << hostlocation << endl;
 
-  if (zmq_connect(mSocket, hostlocation.c_str()) != 0) {
-    cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
+  mq.connect(hostlocation.c_str());
 
   mConfiguration->dataHosts.pop_front();
 
   // Receive the data
-  int nbytes = zmq_recv(mSocket, buffer, 1024, 0);
+  mq.receive(buffer, 1024);
 
-  if (nbytes < 0) {
-    cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
-  }
+  buffer[1024] = '\0';
 
-  buffer[nbytes] = '\0';
-
-  // Close the socket and destroy the context
-  if (zmq_close(mSocket) != 0) {
-    cout << "Failed closing socket, reason: " << zmq_strerror(errno);
-  }
-
-  mSocket = NULL;
-
-  if (zmq_ctx_destroy(mContext) != 0) {
-    cout << "Failed terminating context, reason: " << zmq_strerror(errno);
-  }
+  // Close the open data connection
+  mq.closeSocket();
+  mq.destroyContext();
 }
 
 void SimulationController::execute()
 {
-  // Connect to worker nodes
-  connect();
+  // Connect to all worker nodes
+  for (list<string>::iterator it = mConfiguration->commandHosts.begin(); it != mConfiguration->commandHosts.end();
+       it++) {
 
-  // Initialize the communication layer
-  MQ mq;
+    MQ mq;
+
+    mq.createContext();
+    mq.openSocket(ZMQ_PAIR);
+    mq.connect((*it).c_str());
+
+    mCommandMQs.push_back(mq);
+  }
 
   // All nodes start in the start state;
   // Let all Nodes initialise the simulator
@@ -143,10 +126,10 @@ void SimulationController::execute()
   // Get the results back
   list<map<string, string>> allResults;
 
-  for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
-    void* mCommandSocket = *it;
+  for (list<MQ>::iterator it = mCommandMQs.begin(); it != mCommandMQs.end(); it++) {
+    MQ mq = *it;
 
-    mq.send(mCommandSocket, (char*)"GETRESULTS", 10);
+    mq.send((char*)"GETRESULTS", 10);
 
     // Connect to the datasocket (this is because of the setup of zeromq)
     char* buffer = NULL;
@@ -192,23 +175,20 @@ void SimulationController::execute()
 
 void SimulationController::sendAllNodes(string command)
 {
-  MQ mq;
   // send a command string to all command nodes
-  for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
-    void* mCommandSocket = *it;
+  for (list<MQ>::iterator it = mCommandMQs.begin(); it != mCommandMQs.end(); it++) {
+    MQ mq = *it;
 
-    mq.send(mCommandSocket, (char*)command.c_str(), command.length());
+    mq.send((char*)command.c_str(), command.length());
   }
 }
 
 void SimulationController::getAllNodes(string command)
 {
-  MQ mq;
-  // retrieve a reply string form all nodes
-  for (list<void*>::iterator it = mCommandSockets.begin(); it != mCommandSockets.end(); it++) {
-    void* mCommandSocket = *it;
+  for (list<MQ>::iterator it = mCommandMQs.begin(); it != mCommandMQs.end(); it++) {
+    MQ mq = *it;
 
-    std::string replyStr = mq.receive(mCommandSocket);
+    std::string replyStr = mq.receive();
 
     cout << "Received reply: " << replyStr << endl;
 

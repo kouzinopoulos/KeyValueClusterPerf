@@ -1,6 +1,8 @@
 #ifndef __SIMULATIONCONTROLLER_H__
 #define __SIMULATIONCONTROLLER_H__
 
+#include "MQ.h"
+
 #include <list>
 #include <string>
 
@@ -36,6 +38,9 @@ private:
   void* mCommandContext;
   /*! ZMQ sockets to send commands over */
   list<void*> mCommandSockets;
+
+  /*! List of command MQs */
+  list<MQ> mCommandMQs;
 
   /*! Pointer to the configuration */
   Configuration* mConfiguration;

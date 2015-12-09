@@ -29,9 +29,6 @@ public:
 private:
   SimulatorState state;
 
-  /*! Opens a port so that the controller can connect to it */
-  void openCommandConnection();
-
   /*! Opens a data port and sends the results buffer to the controller node */
   void sendDataToController(char* buffer);
 

@@ -33,100 +33,51 @@ SimulationWorker::~SimulationWorker()
   }
 }
 
-// This method is persistent and called only once, during the initialization of
-// the class
-void SimulationWorker::openCommandConnection()
-{
-  // Open a command socket
-  mCommandContext = zmq_ctx_new();
-
-  if (mCommandContext == NULL) {
-    cout << "failed creating context, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
-
-  mCommandSocket = zmq_socket(mCommandContext, ZMQ_PAIR);
-
-  if (mCommandSocket == NULL) {
-    cout << "Failed creating socket, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
-
-  // Open up a socket for the controller to connect to
-  stringstream ss;
-  ss << "tcp://*:" << mCommandPortNumber;
-
-  if (zmq_bind(mCommandSocket, ss.str().c_str()) != 0) {
-    cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
-
-  cout << "Command socket bound on " << ss.str() << endl;
-}
-
 // This method can be called multiple times from the SimulationWorker::listen
 // method, when the GETRESULTS command is
 // received
 void SimulationWorker::sendDataToController(char* buffer)
 {
-  // Open a command socket
-  void* mContext = zmq_ctx_new();
+  MQ mq;
 
-  if (mContext == NULL) {
-    cout << "failed creating context, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
-
-  void* mSocket = zmq_socket(mContext, ZMQ_PAIR);
-
-  if (mSocket == NULL) {
-    cout << "Failed creating socket, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
+  mq.createContext();
+  mq.openSocket(ZMQ_PAIR);
 
   // Open up a socket for the controller to connect to
   stringstream ss;
   ss << "tcp://*:" << mDataPortNumber;
 
-  if (zmq_bind(mSocket, ss.str().c_str()) != 0) {
-    cout << "Failed connecting socket, reason: " << zmq_strerror(errno);
-    exit(-1);
-  }
+  mq.bind(ss.str());
 
   cout << "Data socket bound on " << ss.str() << endl;
 
-  // Send out the data message
-  MQ mq;
-  mq.send(mSocket, buffer, 1024);
+  mq.send(buffer, 1024);
 
   cout << "Sent data reply to controller" << endl;
 
   // Close the open data connection
-  if (mSocket != NULL) {
-
-    if (zmq_close(mSocket) != 0) {
-      cout << "Failed closing socket, reason: " << zmq_strerror(errno);
-    }
-
-    mSocket = NULL;
-  }
-
-  if (zmq_ctx_destroy(mContext) != 0) {
-    cout << "Failed terminating context, reason: " << zmq_strerror(errno);
-  }
+  mq.closeSocket();
+  mq.destroyContext();
 }
 
 void SimulationWorker::listen(Configuration* _config)
 {
   // Open command connection to controller
-  openCommandConnection();
-
-  // Initialize the communication layer
   MQ mq;
+
+  mq.createContext();
+  mq.openSocket(ZMQ_PAIR);
+
+  stringstream ss;
+  ss << "tcp://*:" << mCommandPortNumber;
+
+  mq.bind(ss.str());
+
+  cout << "Command socket bound on " << ss.str() << endl;
 
   // Listen for commands form the controller
   while ((state != EXIT) && (state != ERROR)) {
-    std::string requestString = mq.receive(mCommandSocket);
+    std::string requestString = mq.receive();
 
     cout << "Received request: " << requestString << endl;
 
@@ -197,7 +148,7 @@ void SimulationWorker::listen(Configuration* _config)
       replyString = "EXITING";
     }
 
-    mq.send(mCommandSocket, (char*)replyString.c_str(), replyString.length());
+    mq.send((char*)replyString.c_str(), replyString.length());
 
     cout << "Sent command reply to controller" << endl;
   }
@@ -205,4 +156,8 @@ void SimulationWorker::listen(Configuration* _config)
   if (state == ERROR) {
     LOG_DEBUG("Exited due to error");
   }
+
+  // Close the open command connection
+  mq.closeSocket();
+  mq.destroyContext();
 }
