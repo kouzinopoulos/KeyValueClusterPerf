@@ -74,7 +74,7 @@ inline bool parseWorkerXML(const std::string& filename, Configuration* _config)
   using boost::property_tree::ptree;
   ptree pt;
 
-  // Load the XML file and put its contents in the property tree
+  // Load the XML configuration file and enter its contents in the property tree
   read_xml(filename, pt);
 
   _config->accessPatternType = pt.get<std::string>("worker.accessPattern.type");

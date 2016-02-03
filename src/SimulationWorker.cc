@@ -58,7 +58,7 @@ void SimulationWorker::listen(Configuration* _config)
 
   cout << "Command socket bound on " << ss.str() << endl;
 
-  // Listen for commands form the controller
+  // Listen for commands from the controller
   while ((state != EXIT) && (state != ERROR)) {
     std::string requestString = mq.receive();
 

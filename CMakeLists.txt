@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8.11)
 project (KeyValueClusterPerf)
 
 IF(NOT DEFINED ENV{SIMPATH})
-   MESSAGE(FATAL_ERROR "You did not define the environment variable SIMPATH which is nedded to find the external packages. Please set this variable and execute cmake again.")
+   MESSAGE(FATAL_ERROR "You did not define the environment variable SIMPATH which is needed to find the external packages. Please set this variable and execute cmake again.")
 ENDIF(NOT DEFINED ENV{SIMPATH})
 
 SET(SIMPATH $ENV{SIMPATH})
