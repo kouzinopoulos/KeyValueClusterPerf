@@ -20,7 +20,7 @@ public:
   ~SimulationController();
 
   /*! Start the simulation by instructing the worker nodes */
-  void execute();
+  void run();
 
 private:
   /*! Connect to all hosts specified in the host file */

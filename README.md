@@ -40,13 +40,18 @@ When the worker instances are running, the controller instance can be started:
     ./keyvalueclusterperf --controller --hostlimit $i --simiteration $simit
 
 The hostlimit and simiteration arguments are optional. The hostlimit restricts the number of workers keyvalueclusterperf will use. This is useful when you don't want to rewrite the hostFile.cfg file every
-time. The simiteration is just a number keyvalueclusterperf will use to identify the output. It will write a resultsX.csv file with the results of the benchmark. If the optional arguments are omitted, the follwoing command can be executed instead:
+time. The simiteration is just a number keyvalueclusterperf will use to identify the output. It will write a resultsX.csv file with the results of the benchmark. If the optional arguments are omitted, the following command can be executed instead:
 
     ./keyvalueclusterperf --controller
 
-Note that the controller needs a hostFile.cfg in its directory which indicates which hosts are available with running worker instances. In the example above this file would contain:
+Note that the controller uses a controllerConfiguration.xml file to specify which hosts are available with running worker instances. In the example above this file would contain:
 
-#hostname:firstCommandPort|lastCommandPort|firstDataPort
-localhost:3000|3000|4000
+    <hosts>
+        <host>
+          <nodeAddress>127.0.0.1</nodeAddress>
+          <firstCommandPort>3000</firstCommandPort>
+          <firstDataPort>4000</firstDataPort>
+          <numberOfNodes>1</numberOfNodes>
+        </host>
+    </hosts>
 
-The hostFile allows you to easily configure if there are multiple instances on the same node. For example you could write 'localhost:3000|3099|4000' and it would think there are 100 worker instances on localhost, with ports 3000-3099 and data ports 4000-4099.

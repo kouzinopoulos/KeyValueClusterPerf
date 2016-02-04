@@ -24,7 +24,7 @@ public:
   ~SimulationWorker();
 
   /*! Listen for commands from the controller */
-  void listen(Configuration* _config);
+  void run(Configuration* _config);
 
 private:
   SimulatorState state;

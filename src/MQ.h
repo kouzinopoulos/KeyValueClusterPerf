@@ -40,6 +40,9 @@ public:
   /*! Connect a ZMQ socket to a given address */
   void connect(const std::string& address);
 
+  /*! Destroy the ZMQ context associated with the MQ object */
+  void destroy();
+
 private:
   /*! The ZMQ context */
   void* mContext;

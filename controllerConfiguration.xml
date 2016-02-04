@@ -1,8 +1,8 @@
 <hosts>
     <host>
-      <nodeAddress>127.0.0.1</nodeAddress>
+      <nodeAddress>137.138.234.68</nodeAddress>
       <firstCommandPort>3000</firstCommandPort>
       <firstDataPort>4000</firstDataPort>
-      <numberOfNodes>5</numberOfNodes>
+      <numberOfNodes>1</numberOfNodes>
     </host>
 </hosts>

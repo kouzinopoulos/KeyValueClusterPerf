@@ -42,9 +42,10 @@ void SimulationWorker::sendDataToController(char* buffer)
 
   // Close the open data connection
   mq.closeSocket();
+  mq.destroy();
 }
 
-void SimulationWorker::listen(Configuration* _config)
+void SimulationWorker::run(Configuration* _config)
 {
   // Open command connection to controller
   MQ mq;
@@ -142,4 +143,5 @@ void SimulationWorker::listen(Configuration* _config)
 
   // Close the open command connection
   mq.closeSocket();
+  mq.destroy();
 }

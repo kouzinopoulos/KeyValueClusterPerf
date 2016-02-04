@@ -198,9 +198,9 @@ int main(int argc, char* argv[])
   // Start a controller or worker instance based on the program options
   if (config.controller) {
     SimulationController controller(&config);
-    controller.execute();
+    controller.run();
   } else {
     SimulationWorker worker(&config);
-    worker.listen(&config);
+    worker.run(&config);
   }
 }

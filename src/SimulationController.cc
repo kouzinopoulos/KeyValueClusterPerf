@@ -20,6 +20,12 @@ SimulationController::SimulationController(Configuration* _config)
 
 SimulationController::~SimulationController()
 {
+  // Close the open command connections
+  for (list<MQ>::iterator it = mCommandMQs.begin(); it != mCommandMQs.end(); it++) {
+    MQ mq = *it;
+    mq.closeSocket();
+    mq.destroy();
+  }
 }
 
 void SimulationController::receiveDataFromWorker(char*& buffer)
@@ -44,9 +50,10 @@ void SimulationController::receiveDataFromWorker(char*& buffer)
 
   // Close the open data connection
   mq.closeSocket();
+  mq.destroy();
 }
 
-void SimulationController::execute()
+void SimulationController::run()
 {
   // Connect to all worker nodes
   for (list<string>::iterator it = mConfiguration->commandHosts.begin(); it != mConfiguration->commandHosts.end();

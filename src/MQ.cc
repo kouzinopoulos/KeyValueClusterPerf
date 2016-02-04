@@ -11,6 +11,10 @@ MQ::MQ()
 
 MQ::~MQ()
 {
+}
+
+void MQ::destroy()
+{
   if (mContext == NULL) {
     return;
   }
