@@ -8,15 +8,20 @@ ENDIF(NOT DEFINED ENV{SIMPATH})
 SET(SIMPATH $ENV{SIMPATH})
 
 set(INCLUDE_DIRECTORIES
-${CMAKE_SOURCE_DIR}
 ${SIMPATH}/include
+${SIMPATH}/include/root
+${SIMPATH}/AliRoot/include/
+${CMAKE_SOURCE_DIR}
 )
 
 include_directories( ${INCLUDE_DIRECTORIES})
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
-LINK_DIRECTORIES(${SIMPATH}/lib)
+LINK_DIRECTORIES(
+${SIMPATH}/lib
+${SIMPATH}/lib/root
+${SIMPATH}/AliRoot/lib/)
 
 set(SRC_LIST src/AccessPattern.cc
 src/MessageSender.cc
@@ -25,11 +30,13 @@ src/ConfigurationManager.cc
 src/RamCloudKeyValueDB.cc
 src/SimulationController.cc
 src/ConstantValueDistribution.cc
+src/OCDBAccessPattern.cc
 src/RandomAccessPattern.cc
 src/SimulationWorker.cc
 src/DummyKeyValueDB.cc
 src/ReadOnlyAccessPattern.cc
 src/Simulator.cc
+src/DBConnector.cc
 src/KeyValueClusterPerf.cc
 src/MQ.cc
 src/request.pb.cc
@@ -44,7 +51,7 @@ workerConfiguration.xml)
 
 add_executable(keyvalueclusterperf ${SRC_LIST} ${CONFIG_LIST})
 
-TARGET_LINK_LIBRARIES(keyvalueclusterperf zmq boost_system boost_program_options protobuf)
+TARGET_LINK_LIBRARIES(keyvalueclusterperf zmq boost_system boost_program_options boost_filesystem protobuf dl Core RIO Gpad Hist CDB TPCbase)
 
 install(TARGETS keyvalueclusterperf DESTINATION ${CMAKE_SOURCE_DIR}/bin COMPONENT binaries)
 install(FILES controllerConfiguration.xml workerConfiguration.xml DESTINATION ${CMAKE_SOURCE_DIR}/bin COMPONENT config)

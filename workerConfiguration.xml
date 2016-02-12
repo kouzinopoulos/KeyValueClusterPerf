@@ -1,6 +1,6 @@
 <worker>
   <accessPattern>
-    <type>Random</type>
+    <type>OCDB</type>
     <minKey>1</minKey>
     <maxKey>1000</maxKey>
     <readWriteRatio>3.33</readWriteRatio>
@@ -8,7 +8,7 @@
   <database>
     <type>RiakJava</type>
     <security>none</security>
-    <broker>tcp://127.0.0.1:5559</broker>
+    <broker>tcp://137.138.234.68:5559</broker>
   </database>
   <valueDistribution>
     <type>Constant</type>

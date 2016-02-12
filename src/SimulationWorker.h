@@ -6,6 +6,7 @@
 #include <zmq.hpp>
 
 #include "ConfigurationManager.h"
+#include "DBConnector.h"
 #include "Simulator.h"
 
 using namespace std;
@@ -38,7 +39,10 @@ private:
   int mDataPortNumber;
 
   /*! Simulator to perform simulation */
-  Simulator* simulator;
+  //Simulator* simulator;
+
+  /*! Connector to connect to DB */
+  DBConnector* connector;
 };
 
 #endif

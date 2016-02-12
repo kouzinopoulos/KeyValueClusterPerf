@@ -3,10 +3,12 @@
 
 #include <time.h>
 
-#include "logger.h"
-#include "RandomAccessPattern.h"
+#include "TFile.h"
 
-RandomAccessPattern::RandomAccessPattern(Configuration* _config)
+#include "logger.h"
+#include "OCDBAccessPattern.h"
+
+OCDBAccessPattern::OCDBAccessPattern(Configuration* _config)
 {
   // Read in range of key values to be used in base 10
   minKey = _config->accessPatternMinKey;
@@ -19,12 +21,12 @@ RandomAccessPattern::RandomAccessPattern(Configuration* _config)
   srand(time(NULL));
 }
 
-RandomAccessPattern::~RandomAccessPattern()
+OCDBAccessPattern::~OCDBAccessPattern()
 {
   // Nothing to delete
 }
 
-SingleAccess RandomAccessPattern::getNext()
+SingleAccess OCDBAccessPattern::getNext()
 {
   // First determine if it's a read or a write
   double readOrWrite = (double)rand() / RAND_MAX;
@@ -38,7 +40,7 @@ SingleAccess RandomAccessPattern::getNext()
   return nextSingleAccess;
 }
 
-map<string, string> RandomAccessPattern::getInitialisationKeyValuePairs()
+map<string, string> OCDBAccessPattern::getInitialisationKeyValuePairs()
 {
   map<string, string> keyValuePairs;
   // Initialise with strings and every possible key (can be improved in future)
