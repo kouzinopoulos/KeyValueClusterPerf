@@ -153,35 +153,51 @@ void DBConnector::run()
          ++directoryIterator) {
       if (boost::filesystem::is_regular_file(directoryIterator->status())) {
 
-        // Trim directory structure
+        // Trim the directory structure from the file name
         std::size_t pos = directoryIterator->path().string().rfind("/");
         std::string str = directoryIterator->path().string().substr (pos + 1);
 
-        // Trim file extension and obtain key
+        // Trim the file extension from the file name. The resulting string is the DB key
         std::size_t pos2 = str.rfind(".");
         std::string key = str.substr(0, pos2);
         cout << key << endl;
 
         // Load the data as value using the ROOT libraries
         TFile *f = new TFile(directoryIterator->path().c_str());
+        //TFile *f = new TFile("/root/charis/OCDB/Run144998_144998_v2_s0.root");
         cout << "Loaded root file " << key << " with a size of " << f->GetEND() << " bytes" << endl;
 
         // Get the AliCDBEntry from the root file
         AliCDBEntry *en = (AliCDBEntry*)f->Get("AliCDBEntry");
 
-        // Retrieve a pointer to the TObject data object
-        TObject *obj = en->GetObject();
-
-        // Create a new buffer
+        // Create an outcoming buffer
         TBufferFile *buf = new TBufferFile(TBuffer::kWrite);
 
-        // Stream and serialize the object to the newly created buffer
-        obj->Streamer(*buf);
+        // Stream and serialize the AliCDBEntry object to the buffer
+        buf->WriteObject(en);
 
         // Obtain a pointer to the buffer
         char *my = buf->Buffer();
 
         std::cout << "Created a buffer of size " << buf->Length() << " bytes" << std::endl;
+
+        // Create an incoming buffer
+        TBufferFile *buf2 = new TBufferFile(TBuffer::kWrite);
+
+        // Write the contents of the char pointer to the incoming buffer
+        buf2-> WriteBuf((void*)my, buf->Length());
+
+        // Change the buffer mode to read
+        buf2->SetReadMode();
+
+        // Rewind the buffer pointer to the beginning (This works like a file pointer. In case of a TMessage the pointer should be rewinded to position 8 instead of 0)
+        buf2->SetBufferOffset(0);
+
+        // Cast the object contained in the incoming buffer to an AliCDBEntry
+        AliCDBEntry *en2 = (AliCDBEntry*)buf2->ReadObject(AliCDBEntry::Class());
+
+        // Debug
+        en2->Print();
       }
     }
   } else {
