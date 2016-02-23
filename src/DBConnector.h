@@ -53,6 +53,9 @@ private:
 
   double calculateDurationMicroseconds(struct timespec start, struct timespec stop);
 
+  void putValue(std::string key, std::string value);
+  std::string getValue(std::string key);
+
   /*! Specify which system clock to use for counting */
   const static clockid_t idMonotonicRaw = CLOCK_MONOTONIC_RAW;
 };

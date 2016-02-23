@@ -17,15 +17,19 @@
 #include "TClass.h"
 #include "TFile.h"
 
+#include "request.pb.h"
+#include <google/protobuf/stubs/common.h>
+
 #include "ConstantValueDistribution.h"
+#include "DBConnector.h"
 #include "DummyKeyValueDB.h"
 #include "logger.h"
+#include "MQ.h"
+#include "OCDBAccessPattern.h"
 #include "RamCloudKeyValueDB.h"
 #include "RandomAccessPattern.h"
-#include "OCDBAccessPattern.h"
 #include "ReadOnlyAccessPattern.h"
 #include "RiakJavaKeyValueDB.h"
-#include "DBConnector.h"
 #include "ValueDistribution.h"
 #include "WriteOnlyAccessPattern.h"
 
@@ -198,44 +202,21 @@ void DBConnector::run()
 
         // Debug
         en2->Print();
+
+        // Debug: send information to the broker and from there to Riak
+        // Before sending, serialize using protocol buffers
+        putValue("123", "456");
+        std::string value = getValue("123");
+
+        cout << "Received value: " << value << endl;
+
       }
     }
   } else {
     std::cerr << "Path " << dataPath.string() << "/ could not be found or does not contain any valid data files"
               << endl;
   }
-/*
-  // Creating a TApplication is essential to load all of the necessary root libraries (without it we get incorrect pointer setting in char *my = buf->Buffer(); below)
-  TApplication theApp("MdiTest", &argc, argv);
 
-  // Open the root file from OCDB
-  TFile *f = new TFile("/root/charis/OCDB/Run144998_144998_v2_s0.root");
-
-  // Get the AliCDBEntry from the root file
-  AliCDBEntry *en = (AliCDBEntry*)f->Get("AliCDBEntry");
-
-  // Retrieve a pointer to the TObject data object
-  TObject *obj = en->GetObject();
-
-  // Create a new buffer
-  TBufferFile *buf = new TBufferFile(TBuffer::kWrite);
-
-  // Stream and serialize the object to the newly created buffer
-  obj->Streamer(*buf);
-
-  // Obtain a pointer to the buffer
-  char *my = buf->Buffer();
-
-  std::cout << "Created a buffer of size " << buf->Length() << " bytes" << std::endl;
-
-  for (int i = 0; i < buf->Length(); i++) {
-    cout << my[i];
-  }
-  cout << endl;
-
-
-  std::cout << endl << "Created a buffer of size " << buf->Length() << " bytes" << std::endl;
-*/
   boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
 
   cout << "Communication latency: "<< (now - before).total_microseconds() << "µs "
@@ -309,4 +290,88 @@ double DBConnector::calculateDurationMicroseconds(struct timespec start, struct 
   uint64_t nanosecondsDifference = stop.tv_nsec - start.tv_nsec;
   nanosecondsDifference += secondsDifference * 1000000000;
   return nanosecondsDifference / 1000.0;
+}
+
+void DBConnector::putValue(std::string key, std::string value)
+{
+  // Create PUT message as a google protocol buffer message
+  messaging::RequestMessage* msg = new messaging::RequestMessage;
+  msg->set_command("PUT");
+  msg->set_key(key);
+  msg->set_value(value);
+
+  // Serialize the message to a string and send it
+  string msgString;
+  msg->SerializeToString(&msgString);
+
+  MQ mq;
+  mq.openSocket(ZMQ_REQ);
+
+  stringstream ss;
+  ss << "tcp://cernvm14:5559";
+
+  mq.connect(ss.str());
+  mq.send((char *)msgString.c_str(), msgString.length());
+
+  // Receive message as a serialized string and de-serialize it
+  std::string repString = mq.receive();
+
+  messaging::RequestMessage* msgReply = new messaging::RequestMessage;
+  msgReply->ParseFromString(repString);
+
+  if (msgReply->command().compare("OK") != 0) {
+    LOG_DEBUG(msgReply->error());
+  }
+
+  mq.closeSocket();
+  mq.destroy();
+
+  google::protobuf::ShutdownProtobufLibrary();
+
+  delete msg;
+  delete msgReply;
+}
+
+std::string DBConnector::getValue(std::string key)
+{
+  // Create GET message
+  messaging::RequestMessage* msg = new messaging::RequestMessage;
+  msg->set_command("GET");
+  msg->set_key(key);
+
+  // Serialize the message to a string
+  string getmsg;
+  msg->SerializeToString(&getmsg);
+
+  stringstream ss;
+  ss << "tcp://cernvm14:5559";
+
+  // Connect and send the message
+  MQ mq;
+  mq.openSocket(ZMQ_REQ);
+
+  mq.connect(ss.str());
+  mq.send((char *)getmsg.c_str(), getmsg.length());
+
+  // check reply for OK
+  std::string repString = mq.receive();
+
+  // convert to actual message
+  messaging::RequestMessage* msgReply = new messaging::RequestMessage;
+  msgReply->ParseFromString(repString);
+  string replyValue = "";
+
+  // check the replyCommand
+  if (msgReply->command().compare("OK") != 0) {
+    // There was an error
+    cerr << msgReply->error() << endl;
+  } else {
+    // read out the returned value
+    replyValue = msgReply->value();
+  }
+
+  delete msg;
+  delete msgReply;
+
+  return replyValue;
 }
