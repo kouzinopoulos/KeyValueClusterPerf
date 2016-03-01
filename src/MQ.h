@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <vector>
 #include <zmq.hpp>
 
 using namespace std;
@@ -17,13 +18,19 @@ public:
   ~MQ();
 
   /*! Sends size bytes of buffer over socket */
-  int send(char *buffer, int size);
+  int send(char* buffer, int size);
 
   /*! Receives size bytes of buffer over socket */
   void receive(char*& buffer, int size);
 
+  /*! Receives a char* buffer over socket */
+  void receive(char*& buffer);
+
   /*! Receives an std::string over socket */
   std::string receive();
+
+  /*! Receives an std::vector<char> over socket */
+  void receive(std::vector<char>* vector);
 
   /*! Returns a pointer to the ZMQ context */
   void* getContext();

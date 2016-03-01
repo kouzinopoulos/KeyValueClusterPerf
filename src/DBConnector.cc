@@ -107,6 +107,8 @@ DBConnector::~DBConnector()
   if (valueDistribution != NULL) {
     delete valueDistribution;
   }
+
+  google::protobuf::ShutdownProtobufLibrary();
 }
 
 void DBConnector::run()
@@ -168,8 +170,10 @@ void DBConnector::run()
 
         // Load the data as value using the ROOT libraries
         TFile *f = new TFile(directoryIterator->path().c_str());
-        //TFile *f = new TFile("/root/charis/OCDB/Run144998_144998_v2_s0.root");
+
         cout << "Loaded root file " << key << " with a size of " << f->GetEND() << " bytes" << endl;
+
+        //TFile *f = new TFile("/root/charis/OCDB/Run144998_144998_v2_s0.root");
 
         // Get the AliCDBEntry from the root file
         AliCDBEntry *en = (AliCDBEntry*)f->Get("AliCDBEntry");
@@ -183,7 +187,118 @@ void DBConnector::run()
         // Obtain a pointer to the buffer
         char *my = buf->Buffer();
 
-        std::cout << "Created a buffer of size " << buf->Length() << " bytes" << std::endl;
+        // Create a *copy* of the data in an std::vector
+        std::vector<char> dataVectorOut(my, my + buf->Length());
+
+        for (int i = 0; i < 1024; i++) {
+          cout << dataVectorOut[i];
+        }
+        cout << endl;
+
+        std::cout << "Created a buffer of size " << buf->Length() << " bytes || " << dataVectorOut.size() << std::endl;
+
+        //SERIALIZE TEST
+        //Serialize buffer
+        messaging::RequestMessage* msg = new messaging::RequestMessage;
+        msg->set_command("PUT");
+        msg->set_key(key);
+        msg->set_value(&dataVectorOut[0], dataVectorOut.size());
+
+        // Serialize the message to a binary buffer and send it
+        int mysize = msg->ByteSize();
+
+        cout << "Protocol buffers reported size: " << mysize << endl;
+
+        void *serialBuffer = malloc(mysize);
+        msg->SerializeToArray(serialBuffer, mysize);
+
+        //!TEST
+
+        //SEND TEST
+        MQ mq;
+        mq.openSocket(ZMQ_REQ);
+
+        stringstream ss;
+        ss << "tcp://cernvm14:5559";
+
+        mq.connect(ss.str());
+        mq.send((char *)serialBuffer, mysize);
+
+        // Receive message as a serialized string and de-serialize it
+        std::string repString = mq.receive();
+
+        messaging::RequestMessage* msgReply = new messaging::RequestMessage;
+        msgReply->ParseFromString(repString);
+
+        if (msgReply->command().compare("OK") != 0) {
+          LOG_DEBUG(msgReply->error());
+        }
+
+        mq.closeSocket();
+        mq.destroy();
+
+        delete msg;
+        delete msgReply;
+
+        //!TEST
+
+        //RECEIVE TEST
+
+        messaging::RequestMessage* msg2 = new messaging::RequestMessage;
+        msg2->set_command("GET");
+        msg2->set_key(key);
+
+        // Serialize the message to a string
+        std::string getString;
+        msg2->SerializeToString(&getString);
+
+        stringstream ss2;
+        ss2 << "tcp://cernvm14:5559";
+
+        // Connect and send the command/key message
+        MQ mq2;
+        mq2.openSocket(ZMQ_REQ);
+
+        mq2.connect(ss.str());
+        mq2.send((char *)getString.c_str(), getString.length());
+
+        // Receive the data payload
+        std::vector<char> dataVectorIn;
+        mq2.receive(&dataVectorIn);
+
+        cout << "New:" << endl;
+        for (int i = 0; i < 1024; i++) {
+          cout << dataVectorIn[i];
+        }
+        cout << endl;
+
+        //!TEST
+
+        //DE-SERIALIZE TEST
+
+        // convert to actual message
+        messaging::RequestMessage* msgReply2 = new messaging::RequestMessage;
+        //msgReply2->ParseFromArray(dataVectorIn, 1024);
+
+        // check the replyCommand
+        if (msgReply2->command().compare("OK") != 0) {
+          // There was an error
+          cerr << msgReply2->error() << endl;
+        } else {
+          // read out the returned value
+          //replyValue = msgReply->value();
+          cout << "OK was received" << endl;
+        }
+
+        delete msg2;
+        delete msgReply2;
+
+        mq2.closeSocket();
+        mq2.destroy();
+
+        //!TEST
+
+        std::string value = getValue(key);
 
         // Create an incoming buffer
         TBufferFile *buf2 = new TBufferFile(TBuffer::kWrite);
@@ -201,15 +316,13 @@ void DBConnector::run()
         AliCDBEntry *en2 = (AliCDBEntry*)buf2->ReadObject(AliCDBEntry::Class());
 
         // Debug
-        en2->Print();
+        //en2->Print();
 
         // Debug: send information to the broker and from there to Riak
         // Before sending, serialize using protocol buffers
-        putValue("123", "456");
-        std::string value = getValue("123");
+        //putValue(key, dataVectorOut, dataVectorOut.size());
 
-        cout << "Received value: " << value << endl;
-
+        break;
       }
     }
   } else {
@@ -292,17 +405,21 @@ double DBConnector::calculateDurationMicroseconds(struct timespec start, struct 
   return nanosecondsDifference / 1000.0;
 }
 
-void DBConnector::putValue(std::string key, std::string value)
+void DBConnector::putValue(std::string key, std::vector<char> dataVectorOut, size_t size)
 {
   // Create PUT message as a google protocol buffer message
   messaging::RequestMessage* msg = new messaging::RequestMessage;
   msg->set_command("PUT");
   msg->set_key(key);
-  msg->set_value(value);
+  msg->set_value(&dataVectorOut[0], size);
 
-  // Serialize the message to a string and send it
-  string msgString;
-  msg->SerializeToString(&msgString);
+  // Serialize the message to a binary buffer and send it
+  int mysize = msg->ByteSize();
+
+  cout << "Protocol buffers reported size: " << mysize << endl;
+
+  void *serialBuffer = malloc(mysize);
+  msg->SerializeToArray(serialBuffer, mysize);
 
   MQ mq;
   mq.openSocket(ZMQ_REQ);
@@ -311,7 +428,7 @@ void DBConnector::putValue(std::string key, std::string value)
   ss << "tcp://cernvm14:5559";
 
   mq.connect(ss.str());
-  mq.send((char *)msgString.c_str(), msgString.length());
+  mq.send((char *)serialBuffer, size);
 
   // Receive message as a serialized string and de-serialize it
   std::string repString = mq.receive();
@@ -326,22 +443,20 @@ void DBConnector::putValue(std::string key, std::string value)
   mq.closeSocket();
   mq.destroy();
 
-  google::protobuf::ShutdownProtobufLibrary();
-
   delete msg;
   delete msgReply;
 }
 
-std::string DBConnector::getValue(std::string key)
+char* DBConnector::getValue(std::string key)
 {
-  // Create GET message
+/*  // Create GET message
   messaging::RequestMessage* msg = new messaging::RequestMessage;
   msg->set_command("GET");
   msg->set_key(key);
 
   // Serialize the message to a string
-  string getmsg;
-  msg->SerializeToString(&getmsg);
+  string getString;
+  msg->SerializeToString(&getString);
 
   stringstream ss;
   ss << "tcp://cernvm14:5559";
@@ -351,15 +466,16 @@ std::string DBConnector::getValue(std::string key)
   mq.openSocket(ZMQ_REQ);
 
   mq.connect(ss.str());
-  mq.send((char *)getmsg.c_str(), getmsg.length());
+  mq.send((char *)getString.c_str(), getString.length());
 
   // check reply for OK
-  std::string repString = mq.receive();
+  char *msg;
+  mq.receive(msg, 1024);
 
   // convert to actual message
   messaging::RequestMessage* msgReply = new messaging::RequestMessage;
-  msgReply->ParseFromString(repString);
-  string replyValue = "";
+  msgReply->ParseFromArray(buffer);
+  void *buffer;
 
   // check the replyCommand
   if (msgReply->command().compare("OK") != 0) {
@@ -370,8 +486,10 @@ std::string DBConnector::getValue(std::string key)
     replyValue = msgReply->value();
   }
 
+  cout << "Strlen: " << strlen(msgReply->value().c_str()) << endl;
+
   delete msg;
   delete msgReply;
 
-  return replyValue;
+  return replyValue;*/
 }
