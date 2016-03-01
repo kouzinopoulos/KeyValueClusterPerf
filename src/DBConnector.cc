@@ -272,13 +272,15 @@ void DBConnector::run()
         }
         cout << endl;
 
+        cout << "Received vector size: " << dataVectorIn.size() << endl;
+
         //!TEST
 
         //DE-SERIALIZE TEST
 
         // convert to actual message
         messaging::RequestMessage* msgReply2 = new messaging::RequestMessage;
-        //msgReply2->ParseFromArray(dataVectorIn, 1024);
+        msgReply2->ParseFromArray(reinterpret_cast<char*>(dataVectorIn.data()), dataVectorIn.size());
 
         // check the replyCommand
         if (msgReply2->command().compare("OK") != 0) {
@@ -290,21 +292,18 @@ void DBConnector::run()
           cout << "OK was received" << endl;
         }
 
-        delete msg2;
-        delete msgReply2;
+        cout << "Value payload size: " << msgReply2->value().size() << endl;
 
         mq2.closeSocket();
         mq2.destroy();
 
         //!TEST
 
-        std::string value = getValue(key);
-
         // Create an incoming buffer
         TBufferFile *buf2 = new TBufferFile(TBuffer::kWrite);
 
         // Write the contents of the char pointer to the incoming buffer
-        buf2-> WriteBuf((void*)my, buf->Length());
+        buf2->WriteBuf((void*)msgReply2->value().c_str(), msgReply2->value().size());
 
         // Change the buffer mode to read
         buf2->SetReadMode();
@@ -316,11 +315,10 @@ void DBConnector::run()
         AliCDBEntry *en2 = (AliCDBEntry*)buf2->ReadObject(AliCDBEntry::Class());
 
         // Debug
-        //en2->Print();
+        en2->Print();
 
-        // Debug: send information to the broker and from there to Riak
-        // Before sending, serialize using protocol buffers
-        //putValue(key, dataVectorOut, dataVectorOut.size());
+        delete msg2;
+        delete msgReply2;
 
         break;
       }
