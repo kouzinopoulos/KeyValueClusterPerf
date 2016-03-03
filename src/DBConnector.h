@@ -53,10 +53,10 @@ private:
   std::vector<char> load(const char* path);
 
   /*! Creates a ROOT object from a value binary array of size size */
-  void create(const char* value, int size);
+  void create(std::vector<char> value);
 
   void putValue(std::string key, std::vector<char> value);
-  void getValue(std::string key, const char*& value, int& size);
+  std::vector<char> getValue(std::string key);
 
 };
 

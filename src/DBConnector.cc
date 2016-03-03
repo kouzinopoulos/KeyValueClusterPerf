@@ -134,16 +134,13 @@ std::vector<char> DBConnector::load(const char* path)
   return vector;
 }
 
-void DBConnector::create(const char* value, int size)
+void DBConnector::create(std::vector<char> value)
 {
-  // Debug:
-  cout << "Creating Root object of size " << size << endl;
-
   // Create an incoming buffer
   TBufferFile *buf = new TBufferFile(TBuffer::kWrite);
 
   // Write the contents of the char pointer to the incoming buffer
-  buf->WriteBuf((void*)value, size);
+  buf->WriteBuf(reinterpret_cast<char*> (&value[0]), value.size());
 
   // Change the buffer mode to read
   buf->SetReadMode();
@@ -155,7 +152,7 @@ void DBConnector::create(const char* value, int size)
   AliCDBEntry *en = (AliCDBEntry*)buf->ReadObject(AliCDBEntry::Class());
 
   // Debug
-  en->Print();
+  //en->Print();
 }
 
 void DBConnector::putValue(std::string key, std::vector<char> value)
@@ -200,15 +197,15 @@ void DBConnector::putValue(std::string key, std::vector<char> value)
   delete msgReply;
 }
 
-void DBConnector::getValue(std::string key, const char*& value, int& size)
+std::vector<char> DBConnector::getValue(std::string key)
 {
   messaging::RequestMessage* message = new messaging::RequestMessage;
   message->set_command("GET");
   message->set_key(key);
 
- // Serialize the message to a string
- std::string serialString;
- message->SerializeToString(&serialString);
+  // Serialize the message to a string
+  std::string serialString;
+  message->SerializeToString(&serialString);
 
   stringstream ss;
   ss << "tcp://cernvm14:5559";
@@ -230,22 +227,19 @@ void DBConnector::getValue(std::string key, const char*& value, int& size)
 
   // check the replyCommand
   if (msgReply->command().compare("OK") != 0) {
-    // There was an error
     cerr << msgReply->error() << endl;
-  } else {
-    // read out the returned value
-    //replyValue = msgReply->value();
-    cout << "OK was received" << endl;
   }
 
-  value = msgReply->value().c_str();
-  size = msgReply->value().size();
+  // Create and return a *copy* of the data in an std::vector
+  std::vector<char> vector (msgReply->value().c_str(), msgReply->value().c_str() + msgReply->value().size());
 
   mq.closeSocket();
   mq.destroy();
 
   delete message;
   delete msgReply;
+
+  return vector;
 }
 
 void DBConnector::run()
@@ -275,12 +269,9 @@ void DBConnector::run()
 
         putValue(key, dataVectorOut);
 
-        int valueSize = 0;
-        const char* value = NULL;
+        std::vector<char> value = getValue(key);
 
-        getValue(key, value, valueSize);
-
-        create(value, valueSize);
+        create(value);
       }
     }
   } else {

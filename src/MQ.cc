@@ -119,14 +119,9 @@ void MQ::receive(std::vector<char>* vector)
     cout << "Failed receiving on socket, reason: " << zmq_strerror(errno);
   }
 
-  cout << "MQ message received data size: " << zmq_msg_size(&message) << endl;
-
   vector->resize(zmq_msg_size(&message));
 
-  cout << "vector resized" << endl;
   std::memcpy(vector->data(), zmq_msg_data(&message), zmq_msg_size(&message));
-
-  cout << "data copied" << endl;
 }
 
 void MQ::receive(char*& buffer)
