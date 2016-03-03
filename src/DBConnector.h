@@ -4,8 +4,6 @@
 #include <list>
 #include <map>
 
-#include <time.h>
-
 #include "KeyValueDB.h"
 #include "AccessPattern.h"
 #include "ConfigurationManager.h"
@@ -51,13 +49,15 @@ private:
   /*! Contains results of last simulation */
   map<string, string> results;
 
-  double calculateDurationMicroseconds(struct timespec start, struct timespec stop);
+  /*! Returns a char vector containing the binary payload of a ROOT file located at path path*/
+  std::vector<char> load(const char* path);
 
-  void putValue(std::string key, std::vector<char> myVector, size_t size);
-  char* getValue(std::string key);
+  /*! Creates a ROOT object from a value binary array of size size */
+  void create(const char* value, int size);
 
-  /*! Specify which system clock to use for counting */
-  const static clockid_t idMonotonicRaw = CLOCK_MONOTONIC_RAW;
+  void putValue(std::string key, std::vector<char> value);
+  void getValue(std::string key, const char*& value, int& size);
+
 };
 
 #endif
