@@ -4,9 +4,10 @@
 #include <list>
 #include <map>
 
-#include "KeyValueDB.h"
 #include "AccessPattern.h"
 #include "ConfigurationManager.h"
+#include "KeyValueDB.h"
+#include "MQ.h"
 #include "ValueDistribution.h"
 
 using namespace std;
@@ -58,6 +59,8 @@ private:
   void putValue(std::string key, std::vector<char> value);
   std::vector<char> getValue(std::string key);
 
+  /*! An MQ communicator object */
+  MQ mq;
 };
 
 #endif

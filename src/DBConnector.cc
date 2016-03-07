@@ -24,7 +24,6 @@
 #include "DBConnector.h"
 #include "DummyKeyValueDB.h"
 #include "logger.h"
-#include "MQ.h"
 #include "OCDBAccessPattern.h"
 #include "RamCloudKeyValueDB.h"
 #include "RandomAccessPattern.h"
@@ -33,16 +32,22 @@
 #include "ValueDistribution.h"
 #include "WriteOnlyAccessPattern.h"
 
-
 DBConnector::DBConnector(Configuration* _config)
 {
   keyValueDB = new RiakJavaKeyValueDB(_config);
-
   accessPattern = new OCDBAccessPattern(_config);
-
   valueDistribution = new ConstantValueDistribution(_config);
 
   accessPattern->setValueDistribution(valueDistribution);
+
+  // Connect to broker
+  // Fixme: Get broker IP from configuration file
+  mq.openSocket(ZMQ_REQ);
+
+  stringstream ss;
+  ss << "tcp://cernvm14:5559";
+
+  mq.connect(ss.str());
 
 /*
   // Initialise the keyValueDatabase
@@ -108,6 +113,9 @@ DBConnector::~DBConnector()
     delete valueDistribution;
   }
 
+  mq.closeSocket();
+  mq.destroy();
+
   google::protobuf::ShutdownProtobufLibrary();
 }
 
@@ -169,13 +177,6 @@ void DBConnector::putValue(std::string key, std::vector<char> value)
   void *serialBuffer = malloc(messageSize);
   message->SerializeToArray(serialBuffer, messageSize);
 
-  MQ mq;
-  mq.openSocket(ZMQ_REQ);
-
-  stringstream ss;
-  ss << "tcp://cernvm14:5559";
-
-  mq.connect(ss.str());
   mq.send((char *)serialBuffer, messageSize);
 
   // Receive message as a serialized string and de-serialize it
@@ -187,9 +188,6 @@ void DBConnector::putValue(std::string key, std::vector<char> value)
   if (msgReply->command().compare("OK") != 0) {
     LOG_DEBUG(msgReply->error());
   }
-
-  mq.closeSocket();
-  mq.destroy();
 
   free(serialBuffer);
 
@@ -207,14 +205,7 @@ std::vector<char> DBConnector::getValue(std::string key)
   std::string serialString;
   message->SerializeToString(&serialString);
 
-  stringstream ss;
-  ss << "tcp://cernvm14:5559";
-
-  // Connect and send the command/key message
-  MQ mq;
-  mq.openSocket(ZMQ_REQ);
-
-  mq.connect(ss.str());
+  // Send the command/key message
   mq.send((char *)serialString.c_str(), serialString.length());
 
   // Receive the data payload
@@ -232,9 +223,6 @@ std::vector<char> DBConnector::getValue(std::string key)
 
   // Create and return a *copy* of the data in an std::vector
   std::vector<char> vector (msgReply->value().c_str(), msgReply->value().c_str() + msgReply->value().size());
-
-  mq.closeSocket();
-  mq.destroy();
 
   delete message;
   delete msgReply;
