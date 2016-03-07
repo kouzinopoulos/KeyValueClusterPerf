@@ -139,6 +139,9 @@ std::vector<char> DBConnector::load(const char* path)
   // Create and return a *copy* of the data in an std::vector
   std::vector<char> vector(my, my + buf->Length());
 
+  // Release the open file
+  delete f;
+
   return vector;
 }
 
@@ -250,7 +253,7 @@ void DBConnector::run()
         // Trim the file extension from the file name. The resulting string is the DB key
         std::size_t pos2 = str.rfind(".");
         std::string key = str.substr(0, pos2);
-        cout << key << endl;
+        //cout << key << endl;
 
         // Load the data as value using the ROOT libraries
         std::vector<char> dataVectorOut = load(directoryIterator->path().c_str());
