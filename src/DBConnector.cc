@@ -8,7 +8,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/filesystem.hpp"
 
 #include "AliCDBEntry.h"
@@ -49,49 +48,9 @@ DBConnector::DBConnector(Configuration* _config)
 
   mq.connect(ss.str());
 
-/*
-  // Initialise the keyValueDatabase
-  if (_config->initialization) {
-    LOG_DEBUG("Initialise kvdb");
-    keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
-    LOG_DEBUG("Finished init kvdb");
-  }
-  */
-
-  // Read the OCDB directory
-/*  boost::filesystem::path dataPath("/root/charis/OCDB/");
-  boost::filesystem::directory_iterator endIterator;
-
-  // Traverse the filesystem and load each root file found
-  if (boost::filesystem::exists(dataPath) && boost::filesystem::is_directory(dataPath)) {
-    for (boost::filesystem::directory_iterator directoryIterator(dataPath); directoryIterator != endIterator;
-         ++directoryIterator) {
-      if (boost::filesystem::is_regular_file(directoryIterator->status())) {
-
-        // Trim directory structure
-        std::size_t pos = directoryIterator->path().string().rfind("/");
-        std::string str = directoryIterator->path().string().substr (pos + 1);
-
-        // Trim file extension and obtain key
-        std::size_t pos2 = str.rfind(".");
-        std::string key = str.substr(0, pos2);
-        cout << key << endl;
-
-        // Load the data as value using the ROOT libraries
-        TFile *f = new TFile(directoryIterator->path().c_str());
-
-        cout << "Loaded root file " << key << " with a size of " << f->GetEND() << " bytes" << endl;
-      }
-    }
-  } else {
-    std::cerr << "Path " << dataPath.string() << "/ could not be found or does not contain any valid data files"
-              << endl;
-  }
-*/
-
-  // Initialize variables
-  reads = 0;
-  writes = 0;
+  // Metrics initialization
+  mLoadedObjects = 0;
+  mTotalDataSize = 0;
 }
 
 DBConnector::DBConnector()
@@ -122,7 +81,6 @@ DBConnector::~DBConnector()
 std::vector<char> DBConnector::load(const char* path)
 {
   TFile *f = new TFile(path);
-  //TFile *f = new TFile("/root/charis/OCDB/Run145289_145289_v3_s0.root");
 
   // Get the AliCDBEntry from the root file
   AliCDBEntry *en = (AliCDBEntry*)f->Get("AliCDBEntry");
@@ -138,6 +96,9 @@ std::vector<char> DBConnector::load(const char* path)
 
   // Create and return a *copy* of the data in an std::vector
   std::vector<char> vector(my, my + buf->Length());
+
+  mLoadedObjects++;
+  mTotalDataSize += buf->Length();
 
   // Release the open file
   delete f;
@@ -235,8 +196,6 @@ std::vector<char> DBConnector::getValue(std::string key)
 
 void DBConnector::run()
 {
-  boost::posix_time::ptime before = boost::posix_time::microsec_clock::local_time();
-
   boost::filesystem::path dataPath("/root/charis/OCDB/");
   boost::filesystem::directory_iterator endIterator;
 
@@ -258,9 +217,16 @@ void DBConnector::run()
         // Load the data as value using the ROOT libraries
         std::vector<char> dataVectorOut = load(directoryIterator->path().c_str());
 
+        // Measure the time of the put/get cycle
+        boost::posix_time::ptime before = boost::posix_time::microsec_clock::local_time();
+
         putValue(key, dataVectorOut);
 
         std::vector<char> value = getValue(key);
+
+        boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+
+        mDuration += (now - before);
 
         create(value);
       }
@@ -270,10 +236,10 @@ void DBConnector::run()
               << endl;
   }
 
-  boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+  cout << "Objects loaded: " << mLoadedObjects << " Total size: " << mTotalDataSize << " B " << mTotalDataSize/(1024) << " KB " << mTotalDataSize/(1024*1024) << " MB " << endl;
 
-  cout << "Communication latency: "<< (now - before).total_microseconds() << "µs "
-     << (now - before).total_milliseconds() << "ms " << (now - before).total_seconds()
+  cout << "Communication latency: "<< mDuration.total_microseconds() << "µs "
+      << mDuration.total_milliseconds() << "ms " << mDuration.total_seconds()
      << "s." << endl;
 }
 
@@ -290,8 +256,13 @@ void DBConnector::burnInOut(int runs)
   }
 }
 
+//FIXME: overhaul this
 map<string, string> DBConnector::getResults()
 {
+  int reads = 0;
+  int writes = 0;
+  double duration = 0;
+
   stringstream ss;
   map<string, string> results;
   // Add hostname so that origin can be identified

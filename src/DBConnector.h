@@ -4,6 +4,8 @@
 #include <list>
 #include <map>
 
+#include "boost/date_time/posix_time/posix_time.hpp"
+
 #include "AccessPattern.h"
 #include "ConfigurationManager.h"
 #include "KeyValueDB.h"
@@ -34,12 +36,12 @@ public:
   void mergeResults(list<map<string, string>> results, string csvFilePath);
 
 private:
-  /*! Count the amount of reads during simulation */
-  int reads;
-  /*! Count the amount of writes during simulation */
-  int writes;
+  /*! Count the number of loaded objects */
+  unsigned int mLoadedObjects;
+  /*! Count the total data size loaded in memory*/
+  double mTotalDataSize;
   /*! Duration of the simulation */
-  double duration;
+  boost::posix_time::time_duration mDuration;
 
   /*! Pointer to the key value database to use in simulation */
   KeyValueDB* keyValueDB;
