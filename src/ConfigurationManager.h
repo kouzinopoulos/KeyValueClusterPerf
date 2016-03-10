@@ -19,11 +19,10 @@ typedef struct Configuration {
   int hostLimit = -1;
   int simulationIteration = -1;
 
+  double bytesLimit = -1;
 
   // Worker node configuration options
   bool worker = false;
-
-  bool initialization = false;
 
   int commandPort = 3000;
   int dataPort = 4000;

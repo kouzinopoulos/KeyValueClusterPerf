@@ -43,6 +43,8 @@ private:
   /*! Duration of the simulation */
   boost::posix_time::time_duration mDuration;
 
+  double mBytesLimit = -1;
+
   /*! Pointer to the key value database to use in simulation */
   KeyValueDB* keyValueDB;
   /*! Pointer to access pattern to simulate */

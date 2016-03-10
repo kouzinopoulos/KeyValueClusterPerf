@@ -39,6 +39,8 @@ DBConnector::DBConnector(Configuration* _config)
 
   accessPattern->setValueDistribution(valueDistribution);
 
+  mBytesLimit = _config->bytesLimit;
+
   // Connect to broker
   // Fixme: Get broker IP from configuration file
   mq.openSocket(ZMQ_REQ);
@@ -229,6 +231,11 @@ void DBConnector::run()
         mDuration += (now - before);
 
         create(value);
+
+        // Stop execution if we transmitted more bytes than the user specified limit
+        if (mBytesLimit != -1 && mTotalDataSize > mBytesLimit) {
+          break;
+        }
       }
     }
   } else {

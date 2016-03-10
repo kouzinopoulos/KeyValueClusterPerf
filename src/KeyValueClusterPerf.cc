@@ -100,12 +100,14 @@ inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
 
   namespace bpo = boost::program_options;
   bpo::options_description desc("Options");
-  desc.add_options()("controller", "This instance is a controller node")("worker", "This instance is a worker node")(
-    "hostLimit", bpo::value<int>(), "Maximum number of worker nodes to connect")(
-    "simulationIteration", boost::program_options::value<int>(), "Current simulation iteration")(
-    "commandPort", bpo::value<int>(), "Command port number to connect")("dataPort", bpo::value<int>(),
-                                                                        "Data port number to connect")(
-    "initialization", bpo::value<bool>(), "Initialize the database")("help", "Print help messages");
+  desc.add_options()("controller", "This instance is a controller node")
+  ("worker", "This instance is a worker node")
+  ("hostLimit", bpo::value<int>(), "Maximum number of worker nodes to connect")
+  ("bytesLimit", bpo::value<double>(), "Maximum number of bytes to transmit")
+  ("simulationIteration", boost::program_options::value<int>(), "Current simulation iteration")
+  ("commandPort", bpo::value<int>(), "Command port number to connect")
+  ("dataPort", bpo::value<int>(), "Data port number to connect")
+  ("help", "Print help messages");
 
   bpo::variables_map vm;
   bpo::store(bpo::parse_command_line(_argc, _argv, desc), vm);
@@ -125,11 +127,6 @@ inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
     return false;
   }
 
-  if (vm.count("worker") && !vm.count("initialization")) {
-    cerr << "Please specify if an initialization phase should be executed" << endl;
-    return false;
-  }
-
   bpo::notify(vm);
 
   if (vm.count("controller")) {
@@ -141,14 +138,14 @@ inline bool parse_cmd_line(int _argc, char* _argv[], Configuration* _config)
   if (vm.count("hostLimit")) {
     _config->hostLimit = vm["hostLimit"].as<int>();
   }
+  if (vm.count("bytesLimit")) {
+    _config->bytesLimit = vm["bytesLimit"].as<double>();
+  }
   if (vm.count("simulationIteration")) {
     _config->simulationIteration = vm["simulationIteration"].as<int>();
   }
   if (vm.count("worker")) {
     _config->worker = true;
-  }
-  if (vm.count("initialization")) {
-    _config->initialization = vm["initialization"].as<bool>();
   }
   if (vm.count("commandPort")) {
     _config->commandPort = vm["commandPort"].as<int>();

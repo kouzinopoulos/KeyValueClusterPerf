@@ -84,7 +84,7 @@ void SimulationWorker::run(Configuration* _config)
       replyString = "RESULTSREADY";
 
     } else if (requestString.compare("GETRESULTS") == 0) {
-      // Report back the results from the simulator
+      // Report back the results from the database
       cout << "Reporting results" << endl;
 
       map<string, string> results = connector->getResults();

@@ -62,11 +62,11 @@ Simulator::Simulator(Configuration* _config)
   accessPattern->setValueDistribution(valueDistribution);
 
   // Initialise the keyValueDatabase
-  if (_config->initialization) {
+  /*if (_config->initialization) {
     LOG_DEBUG("Initialise kvdb");
     keyValueDB->initialise(accessPattern->getInitialisationKeyValuePairs());
     LOG_DEBUG("Finished init kvdb");
-  }
+  }*/
   // Initialize variables
   reads = 0;
   writes = 0;
