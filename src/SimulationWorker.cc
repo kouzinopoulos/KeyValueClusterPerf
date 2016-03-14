@@ -25,7 +25,6 @@ SimulationWorker::~SimulationWorker()
 void SimulationWorker::sendDataToController(char* buffer)
 {
   MQ mq;
-
   mq.openSocket(ZMQ_PAIR);
 
   // Open up a socket for the controller to connect to
@@ -95,6 +94,7 @@ void SimulationWorker::run(Configuration* _config)
       // Generate the data to send
       ConfigurationManager cm;
       string resultsData = cm.writeString(results);
+
       strcpy(buffer, resultsData.c_str());
       buffer[sizeof(buffer) - 1] = 0;
 
@@ -124,81 +124,6 @@ void SimulationWorker::run(Configuration* _config)
     mq.send((char*)replyString.c_str(), replyString.length());
 
     cout << "Sent command reply to controller" << endl;
-
-
-  /*
-    std::string replyString;
-
-    if (requestString.compare("SIMINIT") == 0) {
-      // Initialize simulator
-      cout << "Initializing simulator" << endl;
-
-      simulator = new Simulator(_config);
-      replyString = "SIMINITDONE";
-
-    } else if (requestString.compare("SIMGO") == 0) {
-      // Request to start simulation received
-
-      // Burn in
-      cout << "Burning in" << endl;
-      simulator->burnInOut(75);
-
-      // Run simulation
-      cout << "Simulating" << endl;
-      simulator->simulate(250);
-
-      // Burn out
-      cout << "Burning out" << endl;
-      simulator->burnInOut(75);
-
-      // Simulation finished, change state to result
-      state = RESULTS;
-
-      replyString = "RESULTSREADY";
-
-    } else if (requestString.compare("GETRESULTS") == 0) {
-      // Report back the results from the simulator
-      cout << "Reporting results" << endl;
-
-      map<string, string> results = simulator->getResults();
-
-      // Buffer to store data in
-      char buffer[1024];
-
-      // Generate the data to send
-      ConfigurationManager cm;
-      string resultsData = cm.writeString(results);
-      strcpy(buffer, resultsData.c_str());
-      buffer[sizeof(buffer) - 1] = 0;
-
-      // Send the data over the socket
-      sendDataToController(buffer);
-
-      // Deinitialise the simulator
-      delete simulator;
-
-      // Reply that we are done sending results
-      replyString = "DONERESULTS";
-
-    } else if (requestString.compare("RESTART") == 0) {
-      // Restarting the simulator state
-      cout << "Restart simulator state" << endl;
-      state = START;
-
-      replyString = "RESTARTING";
-
-    } else if (requestString.compare("EXIT") == 0) {
-      cout << "Exiting" << endl;
-      state = EXIT;
-
-      replyString = "EXITING";
-    }
-
-    mq.send((char*)replyString.c_str(), replyString.length());
-
-    cout << "Sent command reply to controller" << endl;
-
-    */
   }
 
   if (state == ERROR) {

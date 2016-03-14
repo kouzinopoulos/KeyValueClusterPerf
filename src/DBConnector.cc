@@ -42,24 +42,16 @@ DBConnector::DBConnector(Configuration* _config)
   mBytesLimit = _config->bytesLimit;
 
   // Connect to broker
-  // Fixme: Get broker IP from configuration file
   mq.openSocket(ZMQ_REQ);
 
   stringstream ss;
-  ss << "tcp://cernvm14:5559";
+  ss << _config->databaseBroker;
 
   mq.connect(ss.str());
 
   // Metrics initialization
   mLoadedObjects = 0;
   mTotalDataSize = 0;
-}
-
-DBConnector::DBConnector()
-{
-  accessPattern = NULL;
-  keyValueDB = NULL;
-  valueDistribution = NULL;
 }
 
 DBConnector::~DBConnector()
@@ -263,54 +255,31 @@ void DBConnector::burnInOut(int runs)
   }
 }
 
-//FIXME: overhaul this
 map<string, string> DBConnector::getResults()
 {
-  int reads = 0;
-  int writes = 0;
-  double duration = 0;
-
   stringstream ss;
   map<string, string> results;
+
   // Add hostname so that origin can be identified
   char* hostname = new char[256];
   gethostname(hostname, 256);
   results["hostname"] = string(hostname);
   delete[] hostname;
-  // Add number of read operations
-  ss << reads;
-  results["reads"] = ss.str();
+
+  // Add number of loaded objects
+  ss << mLoadedObjects;
+  results["objects"] = ss.str();
   ss.str(string());
-  // Add number of write operations
-  ss << writes;
-  results["writes"] = ss.str();
+
+  // Add total size of loaded objects
+  ss << mTotalDataSize;
+  results["size"] = ss.str();
   ss.str(string());
+
   // Add total runtime of actual simulation
-  ss << duration;
+  ss << mDuration;
   results["duration"] = ss.str();
   ss.str(string());
-  // Maybe also add timestamps later on
-  return results;
-}
 
-void DBConnector::mergeResults(list<map<string, string>> results, string csvFilePath)
-{
-  ofstream csvFile(csvFilePath);
-  if (csvFile.is_open()) {
-    // Add header
-    csvFile << "HostName"
-            << ","
-            << "#reads"
-            << ","
-            << "#writes"
-            << ","
-            << "total_duration" << endl;
-    // Add results
-    for (list<map<string, string>>::iterator it = results.begin(); it != results.end(); it++) {
-      map<string, string> hostResults = *it;
-      csvFile << hostResults["hostname"] << "," << hostResults["reads"] << "," << hostResults["writes"] << ","
-              << hostResults["duration"] << endl;
-    }
-    csvFile.close();
-  }
+  return results;
 }

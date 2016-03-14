@@ -24,26 +24,25 @@ ${SIMPATH}/lib/root
 ${SIMPATH}/AliRoot/lib/)
 
 set(SRC_LIST src/AccessPattern.cc
-src/MessageSender.cc
-src/sha1.cc
 src/ConfigurationManager.cc
-src/RamCloudKeyValueDB.cc
-src/SimulationController.cc
 src/ConstantValueDistribution.cc
-src/OCDBAccessPattern.cc
-src/RandomAccessPattern.cc
-src/SimulationWorker.cc
-src/DummyKeyValueDB.cc
-src/ReadOnlyAccessPattern.cc
-src/Simulator.cc
 src/DBConnector.cc
-src/KeyValueClusterPerf.cc
-src/MQ.cc
-src/request.pb.cc
-src/WriteOnlyAccessPattern.cc
+src/DummyKeyValueDB.cc
 src/KeyValueDB.cc
+src/KeyValueClusterPerf.cc
+src/MessageSender.cc
+src/MQ.cc
+src/OCDBAccessPattern.cc
+src/RamCloudKeyValueDB.cc
+src/RandomAccessPattern.cc
+src/ReadOnlyAccessPattern.cc
+src/request.pb.cc
 src/RiakJavaKeyValueDB.cc
+src/SimulationController.cc
+src/SimulationWorker.cc
+src/WriteOnlyAccessPattern.cc
 src/rijndael-alg-fst.c
+src/sha1.cc
 src/vmac.c)
 
 set(CONFIG_LIST controllerConfiguration.xml

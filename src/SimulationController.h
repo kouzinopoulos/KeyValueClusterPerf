@@ -4,6 +4,7 @@
 #include "MQ.h"
 
 #include <list>
+#include <map>
 #include <string>
 
 #include <zmq.hpp>
@@ -33,6 +34,9 @@ private:
   void sendAllNodes(string command);
   /*! receive an expected reply from all host nodes */
   void getAllNodes(string command);
+
+  /*! Merge the results of multiple simulators */
+  void mergeResults(list<map<string, string>> results, string csvFilePath);
 
   /*! List of command MQs */
   list<MQ> mCommandMQs;

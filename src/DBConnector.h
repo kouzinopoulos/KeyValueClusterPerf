@@ -22,8 +22,6 @@ class DBConnector {
 public:
   /*! Constructor for worker node to pass the configuration */
   DBConnector(Configuration* _config);
-  /*! Separate contructor for controller because it does not use any configuration */
-  DBConnector();
   ~DBConnector();
 
   /*! start the simulation */
@@ -32,8 +30,6 @@ public:
   void burnInOut(int runs);
   /*! Get the statistics results from the last simulation */
   map<string, string> getResults();
-  /*! Merge the results of multiple simulators */
-  void mergeResults(list<map<string, string>> results, string csvFilePath);
 
 private:
   /*! Count the number of loaded objects */

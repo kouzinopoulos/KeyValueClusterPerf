@@ -1,5 +1,6 @@
 #include <map>
 #include <list>
+#include <fstream>
 #include <sstream>
 #include <string>
 
@@ -8,13 +9,10 @@
 #include "ConfigurationManager.h"
 #include "logger.h"
 #include "SimulationController.h"
-#include "Simulator.h"
+
 
 SimulationController::SimulationController(Configuration* _config)
 {
-  // Determine the iteration
-  this->simulationIteration = simulationIteration;
-
   mConfiguration = _config;
 }
 
@@ -28,10 +26,28 @@ SimulationController::~SimulationController()
   }
 }
 
+void SimulationController::mergeResults(list<map<string, string>> results, string csvFilePath)
+{
+  ofstream csvFile(csvFilePath);
+  if (csvFile.is_open()) {
+    // Add header
+    csvFile << "Hostname, "
+            << "Loaded objects, "
+            << "Total data size, "
+            << "Time duration" << endl;
+    // Add results
+    for (list<map<string, string>>::iterator it = results.begin(); it != results.end(); it++) {
+      map<string, string> hostResults = *it;
+      csvFile << hostResults["hostname"] << "," << hostResults["objects"] << "," << hostResults["size"] << ","
+              << hostResults["duration"] << endl;
+    }
+    csvFile.close();
+  }
+}
+
 void SimulationController::receiveDataFromWorker(char*& buffer)
 {
   MQ mq;
-
   mq.openSocket(ZMQ_PAIR);
 
   stringstream sshost;
@@ -119,15 +135,13 @@ void SimulationController::run()
   // Merge the results and write out to file
   LOG_DEBUG("MERGING");
 
-  Simulator sim;
-
-  if (simulationIteration == -1) {
-    sim.mergeResults(allResults, "results.csv");
+  if (mConfiguration->simulationIteration == -1) {
+    mergeResults(allResults, "results.csv");
   } else {
     stringstream ss;
     ss << "results" << simulationIteration << ".csv";
     LOG_DEBUG(ss.str());
-    sim.mergeResults(allResults, ss.str());
+    mergeResults(allResults, ss.str());
   }
 
   LOG_DEBUG("COMPLETE");
