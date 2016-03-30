@@ -191,11 +191,11 @@ std::vector<char> DBConnector::getValue(std::string key)
 void DBConnector::run()
 {
   boost::filesystem::path dataPath("/root/charis/OCDB/");
-  boost::filesystem::directory_iterator endIterator;
+  boost::filesystem::recursive_directory_iterator endIterator;
 
   // Traverse the filesystem and load each root file found
   if (boost::filesystem::exists(dataPath) && boost::filesystem::is_directory(dataPath)) {
-    for (boost::filesystem::directory_iterator directoryIterator(dataPath); directoryIterator != endIterator;
+    for (boost::filesystem::recursive_directory_iterator directoryIterator(dataPath); directoryIterator != endIterator;
          ++directoryIterator) {
       if (boost::filesystem::is_regular_file(directoryIterator->status())) {
 
